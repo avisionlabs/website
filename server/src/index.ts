@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { db } from './db';
-import { products, categories, subcategories } from './db/schema';
+import { products, categories, subcategories, productSpecs } from './db/schema';
 import { eq, and } from 'drizzle-orm';
 
 const app = express();
@@ -50,6 +50,29 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+
+app.get('/api/products/:model/specs', async (req, res) => {
+  try {
+    const { model } = req.params;
+
+    const product = await db
+      .select({ id: products.id })
+      .from(products)
+      .where(eq(products.model, model));
+
+    if (product.length === 0) return res.status(404).json({ error: 'Product not found' });
+
+    const result = await db
+      .select()
+      .from(productSpecs)
+      .where(eq(productSpecs.productId, product[0].id));
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch specs', detail: String(err) });
+  }
+});
 
 app.get('/api/products/:model', async (req, res) => {
   try {

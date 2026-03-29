@@ -220,7 +220,7 @@ export default function Navbar() {
           <DropdownNavItem
             label="Products"
             items={[
-              { name: "Printers", href: "/printers" },
+              { name: "Printers & MFPs", href: "/printers" },
               { name: "Scanners", href: "/scanners" },
             ]}
           />

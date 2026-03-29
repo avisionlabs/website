@@ -3,7 +3,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Company from './pages/Company'
-import Printers from './pages/Printers'
+import Printers from './pages/products/Printers'
+import ProductOverview from './pages/products/ProductOverview'
 import Contact from './pages/Contact'
 import Support from './pages/Support'
 
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/company/*" element={<Company />} />
+        <Route path="/printers/:model" element={<ProductOverview />} />
         <Route path="/printers/*" element={<Printers />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/support" element={<Support />} />
