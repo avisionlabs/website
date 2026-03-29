@@ -159,7 +159,11 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 
-const mobileNavItems = [
+type MobileNavItem =
+  | { label: string; href: string; items?: never }
+  | { label: string; href?: never; items: { name: string; href: string }[] }
+
+const mobileNavItems: MobileNavItem[] = [
   { label: "Home", href: "/" },
   {
     label: "Company",
@@ -306,7 +310,7 @@ export default function Navbar() {
                 </button>
                 {expandedSection === item.label && (
                   <div style={{ paddingBottom: "8px", paddingLeft: "12px" }}>
-                    {item.items.map((sub) => (
+                    {item.items?.map((sub) => (
                       <a
                         key={sub.name}
                         href={sub.href}
