@@ -1,5 +1,6 @@
-import { ClockIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline'
+import { ClockIcon, EnvelopeIcon, PhoneIcon, WrenchIcon, ShieldCheckIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import Button from '../components/Button'
 
 export default function Contact() {
   const [result, setResult] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -30,9 +31,9 @@ export default function Contact() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           {/* Left — info */}
           <div className="flex flex-col justify-center">
-            <h2 className="text-4xl font-semibold tracking-tight text-gray-900">Get in touch.</h2>
+            <h2 className="text-4xl font-semibold tracking-tight text-gray-900">Get in Touch.</h2>
             <h3 className="mt-4 text-base leading-relaxed text-gray-700">
-              Please call us during our office hours or send us an inquiry. We'll get back to you promptly.
+              Please call us during our office hours or send us an inquiry. We'll get back to you promptly. Thank you!
             </h3>
 
             <dl className="mt-10 space-y-4 text-base text-gray-600">
@@ -140,16 +141,65 @@ export default function Contact() {
             <div className="mt-8 flex items-center justify-end gap-4">
               {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
               {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
-              <button
-                type="submit"
-                disabled={result === 'loading'}
-                className="rounded-md px-6 py-2.5 text-sm font-semibold text-white shadow-sm disabled:opacity-60"
-                style={{ background: 'var(--primary)' }}
-              >
+              <Button variant="outline">
                 {result === 'loading' ? 'Sending...' : 'Send message'}
-              </button>
+              </Button>
             </div>
           </form>
+        </div>
+      </div>
+
+      {/* Support tiles — full width */}
+      
+      <div className="mt-24 bg-gray-50 px-6 py-8 lg:px-0">
+        <h2 className="mx-auto max-w-7xl text-4xl font-semibold tracking-tight text-gray-900 mb-8">We're with you after the sale.</h2>
+        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {[
+            {
+              icon: WrenchIcon,
+              accent: 'var(--primary)',
+              title: 'Technical Support & Services',
+              description: 'If you need help with our products, please call or email our technical support team.',
+              phone: '510-739-2369',
+              email: 'support@avision-labs.com',
+            },
+            {
+              icon: ShieldCheckIcon,
+              accent: 'var(--secondary)',
+              title: 'Manufacturer Warranty',
+              description: 'All Avision products include a 1-Year Parts & Labor Warranty. Contact our warranty support team for claims and assistance.',
+              phone: '510-739-2369',
+              email: 'support@avision-labs.com',
+            },
+            {
+              icon: CpuChipIcon,
+              accent: 'var(--text)',
+              title: 'Parts & Extended Warranty',
+              description: 'Looking to purchase replacement parts or extend your coverage beyond the standard warranty? Get in touch with our sales team.',
+              phone: '510-739-2369',
+              email: 'sales@avision-labs.com',
+            },
+          ].map((tile) => (
+            <div key={tile.title} className="flex gap-4 bg-white px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-base">
+                <tile.icon className="h-5 w-5" style={{ color: tile.accent }} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">{tile.title}</h3>
+                <p className="mt-1 text-xs text-gray-500">{tile.description}</p>
+                <div className="mt-3 flex gap-8">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Phone</p>
+                    <a href={`tel:${tile.phone}`} className="mt-0.5 block text-xs font-bold text-gray-900 hover:underline">{tile.phone}</a>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Email</p>
+                    <a href={`mailto:${tile.email}`} className="mt-0.5 block text-xs font-bold text-gray-900 hover:underline">{tile.email}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
