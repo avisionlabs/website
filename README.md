@@ -1,4 +1,4 @@
-## tech stack
-frontend: react/typescript/vite with tailwind and headless
+## TECH STACK
+Frontend: React + Vite + TypeScript, Tailwind CSS, Headless UI, Heroicons, React Router
 
-backend: want to set up neondb with yarn soon
+Backend: Express, Drizzle ORM, PostgreSQL (NeonDB)

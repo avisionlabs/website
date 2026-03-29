@@ -37,6 +37,8 @@ export const products = pgTable('products', {
 
 /* speed: 40 ppm, resolution: 600 dpi */
 export const productSpecs = pgTable('product_specs', {
+  id: serial('id').primaryKey(),
+  
   productId: integer('product_id')
     .notNull()
     .references(() => products.id),
