@@ -42,11 +42,10 @@ export default function Printers() {
       setError(null)
 
       try {
-        const url = new URL(apiUrl('/api/products'), window.location.origin)
-        url.searchParams.set('category', 'Printers and MFPs')
-        if (selectedSubcategory) url.searchParams.set('subcategory', selectedSubcategory)
+        const params = new URLSearchParams({ category: 'Printers and MFPs' })
+        if (selectedSubcategory) params.set('subcategory', selectedSubcategory)
 
-        const res = await fetch(url.toString(), { signal: controller.signal })
+        const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
 
         setProducts(await res.json())
