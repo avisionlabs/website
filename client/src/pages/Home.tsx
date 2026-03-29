@@ -6,7 +6,6 @@ import heroMfp from "../assets/hero-mfp.png";
 import heroS from "../assets/hero-s.png";
 import { BoltIcon, LockClosedIcon, PrinterIcon } from "@heroicons/react/24/outline";
 
-import { useRef } from "react";
 
 function Blobs({ flip = false }: { flip?: boolean }) {
   return (
@@ -26,12 +25,6 @@ function Blobs({ flip = false }: { flip?: boolean }) {
 }
 
 export default function Home() {
-
-  const ProductsRef = useRef<HTMLDivElement>(null);
-
-  const scrollToProducts = () => {
-    ProductsRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <div className="w-full bg-[var(--bg)]">
@@ -118,7 +111,7 @@ export default function Home() {
       </div>
 
       {/* Explore Our Products section */}
-      <div ref={ProductsRef} id="products" className="w-full px-6 lg:px-16 py-24">
+      <div id="products" className="w-full px-6 lg:px-16 py-24">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-4xl font-bold text-[var(--text-h)] lg:text-5xl">Explore Our Products.</h2>
           <p className="mt-6 text-lg text-[var(--text-2)]">
