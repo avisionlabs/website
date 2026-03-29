@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary: #0F3192;
+  --secondary: #1F9A53;
+  --text: #000000;
+  --text-h: #000000;
+  --text-2: #616262;
+  --bg: #ffffff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: rgb(58, 93, 195);
+  --accent-bg: rgba(106, 153, 78, 0.1);
+  --accent-border: rgba(58, 93, 195, 0.5);
+  --social-bg: rgba(58, 93, 195, 0.15);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: 'Roboto', system-ui, sans-serif;
+  --heading: 'Poppins', system-ui, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  overflow-x: clip;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes scanLine {
+  0%    { top: -4px; opacity: 0; }
+  2%    { opacity: 1; }
+  12%   { top: 100%; opacity: 1; }
+  14%   { top: 100%; opacity: 0; }
+  14.1% { top: -4px; opacity: 0; }
+  100%  { top: -4px; opacity: 0; }
+}
+
+@keyframes textGlowBand {
+  0%    { clip-path: inset(-30% 0 100% 0); }
+  2%    { clip-path: inset(-30% 0 100% 0); }
+  12%   { clip-path: inset(100% 0 -30% 0); }
+  12.1% { clip-path: inset(-30% 0 100% 0); }
+  100%  { clip-path: inset(-30% 0 100% 0); }
+}
+
+.scan-text-reveal {
+  position: absolute;
+  inset: 0;
+  color: var(--accent-border);
+  filter: blur(0.3px) brightness(1.3);
+  animation: textGlowBand 10s linear infinite;
+  pointer-events: none;
+}
+
+.scan-line-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.scan-line-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--secondary) 70%, transparent);
+  box-shadow: 0 0 12px 4px rgba(58, 93, 195, 0.4);
+  animation: scanLine 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.7s ease both;
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
