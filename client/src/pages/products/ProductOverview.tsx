@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import { apiUrl } from "../../lib/api";
 
 type Product = {
   id: number;
@@ -55,10 +56,10 @@ export default function ProductOverview() {
       setError(null);
       try {
         const [productRes, specsRes] = await Promise.all([
-          fetch(`/api/products/${encodeURIComponent(model!)}`, {
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), {
             signal: controller.signal,
           }),
-          fetch(`/api/products/${encodeURIComponent(model!)}/specs`, {
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), {
             signal: controller.signal,
           }),
         ]);

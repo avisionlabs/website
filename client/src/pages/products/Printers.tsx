@@ -2,6 +2,7 @@
 
 import PrintersTable from '../../components/PrintersTable'
 import { useEffect, useMemo, useState } from 'react'
+import { apiUrl } from '../../lib/api'
 
 type Product = {
   id: number
@@ -41,7 +42,7 @@ export default function Printers() {
       setError(null)
 
       try {
-        const url = new URL('/api/products', window.location.origin)
+        const url = new URL(apiUrl('/api/products'), window.location.origin)
         url.searchParams.set('category', 'Printers and MFPs')
         if (selectedSubcategory) url.searchParams.set('subcategory', selectedSubcategory)
 
