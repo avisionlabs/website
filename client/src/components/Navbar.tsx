@@ -212,15 +212,16 @@ export default function Navbar() {
           <DropdownNavItem
             label="Company"
             items={[
-              { name: "Overview", href: "/company" },
+              { name: "About Us", href: "/company" },
               { name: "Team", href: "/team" },
-              { name: "Careers", href: "/careers" },
+              { name: "Sustainability", href: "/sustainability" },
             ]}
           />
           <DropdownNavItem
             label="Products"
             items={[
-              { name: "Overview", href: "/products" },
+              { name: "Printers", href: "/printers" },
+              { name: "Scanners", href: "/scanners" },
             ]}
           />
           <NavLink href="/contact">Contact</NavLink>
