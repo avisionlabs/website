@@ -1,0 +1,24 @@
+{
+  "name": "avision-labs",
+  "version": "1.0.0",
+  "description": "Frontend: React + Vite + TypeScript, Tailwind CSS, Headless UI, Heroicons, React Router",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avisionlabs/website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/avisionlabs/website/issues"
+  },
+  "homepage": "https://github.com/avisionlabs/website#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

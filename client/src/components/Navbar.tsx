@@ -159,9 +159,30 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 
+const mobileNavItems = [
+  { label: "Home", href: "/" },
+  {
+    label: "Company",
+    items: [
+      { name: "About Us", href: "/company" },
+      { name: "Team", href: "/team" },
+      { name: "Sustainability", href: "/sustainability" },
+    ],
+  },
+  {
+    label: "Products",
+    items: [
+      { name: "Printers & MFPs", href: "/printers" },
+      { name: "Scanners", href: "/scanners" },
+    ],
+  },
+  { label: "Contact", href: "/contact" },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -256,29 +277,66 @@ export default function Navbar() {
           style={{
             display: "none",
             flexDirection: "column",
-            gap: "0",
             background: "var(--bg)",
             borderTop: "1px solid var(--border)",
             padding: "16px 24px 24px",
           }}
         >
-          {["Home", "Company", "Products", "Contact"].map((item) => (
-            <a
-              key={item}
-              href={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
-              onClick={() => setMobileOpen(false)}
-              style={{
-                display: "block",
-                padding: "14px 0",
-                borderBottom: "1px solid var(--border)",
-                fontSize: "17px",
-                color: "var(--text-2)",
-                textDecoration: "none",
-              }}
-            >
-              {item}
-            </a>
-          ))}
+          {mobileNavItems.map((item) =>
+            'items' in item ? (
+              <div key={item.label} style={{ borderBottom: "1px solid var(--border)" }}>
+                <button
+                  onClick={() => setExpandedSection(expandedSection === item.label ? null : item.label)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    padding: "14px 0",
+                    background: "none",
+                    border: "none",
+                    fontSize: "17px",
+                    color: "var(--text-2)",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                >
+                  {item.label}
+                  <ChevronDownIcon style={{ width: "16px", height: "16px", opacity: 0.6, transform: expandedSection === item.label ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                </button>
+                {expandedSection === item.label && (
+                  <div style={{ paddingBottom: "8px", paddingLeft: "12px" }}>
+                    {item.items.map((sub) => (
+                      <a
+                        key={sub.name}
+                        href={sub.href}
+                        onClick={() => setMobileOpen(false)}
+                        style={{ display: "block", padding: "8px 0", fontSize: "15px", color: "var(--text-2)", textDecoration: "none" }}
+                      >
+                        {sub.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: "block",
+                  padding: "14px 0",
+                  borderBottom: "1px solid var(--border)",
+                  fontSize: "17px",
+                  color: "var(--text-2)",
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </a>
+            )
+          )}
           <Button href="/support" className="mt-5">
             Support
           </Button>

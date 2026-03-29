@@ -137,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* CTA section */}
-      <div className="relative isolate w-full py-56 flex items-center justify-center overflow-hidden">
+      <div className="relative isolate w-full py-56 flex items-center justify-center overflow-show">
         <Blobs />
         {/* Concentric rings */}
         {[480, 360, 240, 120].map((size) => (
