@@ -1,5 +1,6 @@
-const base = import.meta.env.VITE_API_URL ?? ''
+const base = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 export function apiUrl(path: string) {
-  return `${base}${path}`
+  console.log(`${base}${path}`);
+  return `${base}${path}`;
 }
