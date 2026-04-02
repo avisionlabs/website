@@ -55,7 +55,7 @@ export default function Home() {
               <Button href="#products">
                 Get Started
               </Button>
-              <Button href="/contact" variant="outline">
+              <Button href="/company" variant="outline">
                 About Us
               </Button>
             </div>
