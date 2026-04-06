@@ -2,7 +2,7 @@
 
 import PrintersTable from '../../components/PrintersTable'
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useProductFilters } from '../../hooks/useProductFilters'
 import { apiUrl } from '../../lib/api'
 
 type Product = {
@@ -20,58 +20,19 @@ const subcategoryOptions = [
 ]
 
 export default function Printers() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const {
+    selectedSubcategory, 
+    search, 
+    view, 
+    handleSubcategoryChange, 
+    handleSearchChange, 
+    handleViewChange,
+    handleClear,
+  } = useProductFilters()
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const selectedSubcategory = searchParams.get('subcategory')
-  const search = searchParams.get('q') ?? ''
-  const view = (searchParams.get('view') ?? 'grid') as 'grid' | 'list'
-
-  const handleSubcategoryChange = (value: string) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      if (next.get('subcategory') === value) {
-        next.delete('subcategory')
-      } else {
-        next.set('subcategory', value)
-      }
-      return next
-    }, { replace: true })
-  }
-
-  const handleSearchChange = (value: string) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      if (value.trim()) {
-        next.set('q', value)
-      } else {
-        next.delete('q')
-      }
-      return next
-    }, { replace: true })
-  }
-  
-  const handleViewChange = (value: 'grid' | 'list') => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      if (value === 'list') {
-        next.set('view', 'list')
-      } else {
-        next.delete('view')
-      }
-      return next
-    }, { replace: true })
-  }
-
-  const handleClear = () => {
-    setSearchParams(
-      view === 'list' ? { view: 'list' } : {},
-      { replace: true }
-    )
-  }
 
   const filtered = useMemo(() => {
     if (!search.trim()) return products

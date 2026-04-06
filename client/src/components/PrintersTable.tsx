@@ -14,7 +14,7 @@ export default function PrintersTable({
   products,
   view,
   onViewChange,
- }: { 
+}: { 
   products: Product[]
   view: 'grid' | 'list'
   onViewChange: (view: 'grid' | 'list') => void
