@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
 
@@ -11,16 +10,22 @@ type Product = {
   subcategory: string | null
 }
 
-export default function PrintersTable({ products }: { products: Product[] }) {
-  const [view, setView] = useState<'grid' | 'list'>('grid')
-
+export default function PrintersTable({ 
+  products,
+  view,
+  onViewChange,
+}: { 
+  products: Product[]
+  view: 'grid' | 'list'
+  onViewChange: (view: 'grid' | 'list') => void
+}) {
   return (
     <div className="bg-white">
       {/* toggle */}
       <div className="flex justify-front gap-1 mb-4">
         <button
           type="button"
-          onClick={() => setView('grid')}
+          onClick={() => onViewChange('grid')}
           className={`rounded p-1.5 ${view === 'grid' ? 'bg-[var(--accent)] text-white' : 'text-gray-400 hover:text-gray-600'}`}
           aria-label="Grid view"
         >
@@ -28,7 +33,7 @@ export default function PrintersTable({ products }: { products: Product[] }) {
         </button>
         <button
           type="button"
-          onClick={() => setView('list')}
+          onClick={() => onViewChange('list')}
           className={`rounded p-1.5 ${view === 'list' ? 'bg-[var(--accent)] text-white' : 'text-gray-400 hover:text-gray-600'}`}
           aria-label="List view"
         >
