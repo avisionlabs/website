@@ -2,6 +2,7 @@
 
 import PrintersTable from '../../components/PrintersTable'
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { apiUrl } from '../../lib/api'
 
 type Product = {
@@ -19,12 +20,58 @@ const subcategoryOptions = [
 ]
 
 export default function Printers() {
+  const [searchParams, setSearchParams] = useSearchParams()
+
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
+  const selectedSubcategory = searchParams.get('subcategory')
+  const search = searchParams.get('q') ?? ''
+  const view = (searchParams.get('view') ?? 'grid') as 'grid' | 'list'
+
+  const handleSubcategoryChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (next.get('subcategory') === value) {
+        next.delete('subcategory')
+      } else {
+        next.set('subcategory', value)
+      }
+      return next
+    }, { replace: true })
+  }
+
+  const handleSearchChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value.trim()) {
+        next.set('q', value)
+      } else {
+        next.delete('q')
+      }
+      return next
+    }, { replace: true })
+  }
+  
+  const handleViewChange = (value: 'grid' | 'list') => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value === 'list') {
+        next.set('view', 'list')
+      } else {
+        next.delete('view')
+      }
+      return next
+    }, { replace: true })
+  }
+
+  const handleClear = () => {
+    setSearchParams(
+      view === 'list' ? { view: 'list' } : {},
+      { replace: true }
+    )
+  }
 
   const filtered = useMemo(() => {
     if (!search.trim()) return products
@@ -91,9 +138,7 @@ export default function Printers() {
                         ? 'bg-[var(--accent)] text-white'
                         : 'bg-white text-gray-800 hover:bg-gray-100'
                     }`}
-                    onClick={() =>
-                      setSelectedSubcategory(selectedSubcategory === opt.value ? null : opt.value)
-                    }
+                    onClick={() => handleSubcategoryChange(opt.value)}
                   >
                     {opt.label}
                   </button>
@@ -109,7 +154,7 @@ export default function Printers() {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by model..."
                 className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
@@ -120,10 +165,7 @@ export default function Printers() {
             {/* Clear filters */}
             <div className="py-6">
               <button
-                onClick={() => {
-                  setSelectedSubcategory(null)
-                  setSearch('')
-                }}
+                onClick={handleClear}
                 className="rounded bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
               >
                 Clear Filters
@@ -139,7 +181,7 @@ export default function Printers() {
               <p className="text-lg text-gray-600">No products found.</p>
             )}
 
-            <PrintersTable products={filtered} />
+            <PrintersTable products={filtered} view={view} onViewChange={handleViewChange}/>
           </div>
         </div>
       </main>
