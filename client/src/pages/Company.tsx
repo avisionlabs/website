@@ -7,12 +7,30 @@ import location from "../assets/location.png";
 
 import { BuildingOffice2Icon, PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
+function Blobs({ flip = false }: { flip?: boolean }) {
+  return (
+    <>
+      <div
+        aria-hidden="true"
+        className={`absolute -z-10 top-0 ${flip ? "right-[-4rem]" : "left-[-4rem]"} w-[16rem] h-[16rem] sm:w-[26rem] sm:h-[26rem] lg:w-[36rem] lg:h-[36rem] lg:${flip ? "right-[-8rem]" : "left-[-8rem]"} rounded-full opacity-25 blur-3xl`}
+        style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className={`absolute -z-10 bottom-0 ${flip ? "left-[-4rem]" : "right-[-4rem]"} w-[16rem] h-[16rem] sm:w-[26rem] sm:h-[26rem] lg:w-[36rem] lg:h-[36rem] lg:${flip ? "left-[-8rem]" : "right-[-8rem]"} rounded-full opacity-25 blur-3xl`}
+        style={{ background: "radial-gradient(circle, var(--secondary), transparent 70%)" }}
+      />
+    </>
+  );
+}
+
 
 export default function Company() {
   return (
     <main className="w-full bg-[var(--bg)]">
       {/* hero section */}
       <div className="relative isolate w-full lg:px-0 py-4 overflow-hidden">
+        <Blobs />
         <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-8 items-center">
           {/* left: text content */}
           <div className="animate-fade-slide-up w-full">
@@ -141,7 +159,8 @@ export default function Company() {
 
       {/* our story */}
       <div className="w-full flex flex-col gap-10 py-15 px-8 lg:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 py-10 items-start">
+        <div className="relative isolate grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 py-10 items-start">
+          <Blobs flip />
           <div className="flex flex-col gap-2 mx-auto">
             {/* left: our story */}
             <div className="flex flex-col gap-2 mx-auto">
