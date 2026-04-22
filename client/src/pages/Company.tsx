@@ -78,7 +78,7 @@ export default function Company() {
       </div>
 
       {/* by the numbers */}
-      <div className="bg-[#CECECE] w-full flex items-center justify-center flex-col gap-10 py-10 px-8">
+      <div className="bg-[#CECECE] w-full flex items-center justify-center flex-col gap-10 py-20 px-8">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-[100px] w-full items-center px-8">
           <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
             {" "}
@@ -130,6 +130,81 @@ export default function Company() {
             <p className="font-medium text-[14px] lg:text-[24px] leading-[100%] tracking-[-0.02em] text-black">
               UNITS PER MONTH
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* our story */}
+      <div className="w-full flex flex-col gap-10 py-10 px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 px-8 py-10 items-start">
+          <div className="flex flex-col gap-2 mx-auto">
+            {/* left: our story */}
+            <div className="flex flex-col gap-2 mx-auto">
+              {/* mobile: one line */}
+              <p className="lg:hidden font-extrabold text-[40px] leading-[100%] tracking-[-0.02em] text-black">
+                OUR STORY
+              </p>
+              {/* desktop: two lines */}
+              <div className="hidden lg:flex flex-col gap-2">
+                <p className="font-extrabold text-[62px] leading-[100%] tracking-[-0.02em] text-black">
+                  OUR
+                </p>
+                <p className="font-extrabold text-[62px] leading-[100%] tracking-[-0.02em] text-black">
+                  STORY
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* right: company background */}
+          <div>
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-[80px] w-full items-center lg:max-w-[650px]">
+              <p className="font-medium text-[14px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                COMPANY BACKGROUND
+              </p>
+              <div className="h-[1px] w-full lg:flex-1 bg-[#616262]"></div>
+            </div>
+              
+            <div className="lg:max-w-[650px] mt-15">
+            <p className="mt-5 text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
+              Founded in April 1991 by a group of engineers with strong
+              engineering expertise, Avision designs, manufactures, and markets
+              a complete range of quality, high performance scanners and key
+              components for multi-function products. Through innovative product
+              development, strategic partnerships and successful business
+              models, Avision has become a leading supplier in the scanner
+              industry.
+            </p>
+            <p className="mt-5 text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
+              To ensure the world class product quality and reliability, Avision
+              attained ISO-9001 certification in 1993 and ISO-14001
+              certification in early 2002. The implementation of ISO-9001
+              significantly helps every employee build quality into every aspect
+              of the company’s operation.
+            </p>
+            <div className="my-10 pl-10 border-l-4 border-[var(--secondary)] pl-4">
+              <p
+                className="font-light italic text-[20px] lg:text-[32px] leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black"
+                style={{ fontFamily: "var(--sans)" }}
+              >
+                “Avision understands that continuous innovation is the key to
+                success.”
+              </p>
+            </div>
+            <p className="text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
+              We unceasingly encourage creative ideas and invest a significant
+              portion of our revenue in research and development to enhance our
+              product quality and features. Due to these efforts, our business
+              success is achieved.
+            </p>
+            <p className="mt-5 text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
+              To meet the strong demand from the market, Avision has expanded
+              its scanner capacity to 300,000 units each month and also extended
+              its factories overseas. As a reputable company committed to
+              providing complete customer satisfaction, Avision will continue to
+              provide high-performance and innovative products for its worldwide
+              customers.
+            </p>
+            </div>
           </div>
         </div>
       </div>
