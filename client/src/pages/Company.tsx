@@ -215,9 +215,9 @@ export default function Company() {
       </div>
 
       {/* distribution */}
-      <div className="w-full py-15 px-20 bg-[#616262]">
+      <div className="w-full py-15 px-5 lg:px-20 bg-[#616262]">
         {/* header */}
-        <div className="flex flex-col py-4 lg:flex-row gap-4 lg:gap-[80px] w-full items-center">
+        <div className="flex flex-col py-0 lg:py-4 lg:flex-row gap-4 lg:gap-[80px] w-full items-center">
           <p className="font-bold text-[24px] leading-[100%] tracking-[0.08em] text-white">
             DISTRIBUTION
           </p>
@@ -225,11 +225,11 @@ export default function Company() {
         </div>
 
         {/* map + floating card */}
-        <div className="relative">
+        <div className="relative py-2">
           <img src={map} className="w-full" alt="Distribution map" />
 
           {/* floating card */}
-          <div className="absolute top-1/2 -translate-y-1/2 right-8 lg:right-16 bg-white p-6 lg:p-12 w-[90%] lg:w-[550px] lg:h-[650px] shadow-xl">
+          <div className="static lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:right-16 bg-white p-6 lg:p-12 w-full lg:w-[550px] lg:h-[650px] shadow-xl mt-4 lg:mt-0">
             <h2 className="font-bold text-[24px] lg:text-[38px] leading-[48px] tracking-[0.08em] text-black mb-4">
               Serving customers, from{" "}
               <span style={{ color: "var(--primary)" }} className="underline">
@@ -273,29 +273,29 @@ export default function Company() {
       </div>
 
       {/* visit us */}
-      <div className="relative w-full py-15 px-20">
-        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 items-start">
+      <div className="relative w-full py-15 px-5 lg:px-20">
+        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-0 items-start">
           {/* left */}
           <div>
-            <h2 className="font-bold lg:text-[62px] leading-[80px] tracking-[0.08em] text-black">
+            <h2 className="font-bold text-[32px] lg:text-[62px] leading-[40px] lg:leading-[80px] tracking-[0.08em] text-black">
               VISIT US
             </h2>
             <div className="flex flex-col gap-4 mt-10 lg:max-w-[400px]">
               <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
                 <BuildingOffice2Icon className="w-6 h-6 text-black" />
-                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
                   COMPANY ADDRESS
                 </p>
               </div>
               <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
                 <PhoneIcon className="w-6 h-6 text-black" />
-                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
                   COMPANY PHONE
                 </p>
               </div>
               <div className="flex flex-row items-center gap-8 h-[50px] py-8">
                 <EnvelopeIcon className="w-6 h-6 text-black" />
-                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
                   COMPANY EMAIL
                 </p>
               </div>
