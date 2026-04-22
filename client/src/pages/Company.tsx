@@ -11,7 +11,7 @@ export default function Company() {
         <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-0 items-center">
           {/* left: text content */}
           <div className="animate-fade-slide-up w-full">
-            <h1 className="mt-30 lg:mt-[120px] text-center lg:text-left text-[40px] lg:text-[62px] tracking-[0.08em] font-bold leading-[110%] lg:leading-[80px] text-[var(--text-h)] max-w-[650px]">
+            <h1 className="mt-30 lg:mt-[120px] md:px-40 lg:px-0 text-center lg:text-left text-[40px] lg:text-[62px] tracking-[0.08em] font-bold leading-[110%] lg:leading-[80px] text-[var(--text-h)]">
               Founded by{" "}
               <span style={{ color: "var(--primary)" }}>Engineers</span>
               {", "}driven{"\n"}by{" "}
@@ -19,7 +19,7 @@ export default function Company() {
               {"."}
             </h1>
 
-            <p className="mt-3 text-[16px] lg:text-[32px] text-center lg:text-left tracking-[0.08em] leading-[100%] text-black leading-relaxed max-w-[600px]">
+            <p className="mt-4 md:px-60 lg:px-0 text-[18px] lg:text-[32px] text-center lg:text-left tracking-[0.08em] leading-[100%] text-black">
               For over three decades, Avision has delivered dependable,
               high-performance scanning solutions to customers around the world.
             </p>
@@ -27,7 +27,7 @@ export default function Company() {
             {/* founded badge */}
             <div className="justify-center lg:justify-start w-full flex">
               <div
-                className="mt-2 lg:mt-10 font-light inline-flex items-center gap-2 px-4 lg:px-8 py-2 lg:py-4 text-[12px] lg:text-[24px] text-[var(--text-2)] tracking-[0.08em] mx-auto lg:mx-0"
+                className="mt-4 lg:mt-10 font-light inline-flex items-center gap-2 px-4 lg:px-8 py-2 lg:py-4 text-[12px] lg:text-[24px] text-[var(--text-2)] tracking-[0.08em] mx-auto lg:mx-0"
                 style={{
                   border: "1px dashed var(--text-2)",
                   borderRadius: "4px",
@@ -39,11 +39,11 @@ export default function Company() {
             </div>
 
             {/* we manufacture + company logos*/}
-            <div className="mt-20">
+            <div className="mt-20 flex flex-col items-center lg:items-start">
               <p className="text-[24px] font-medium tracking-[0.08em] uppercase text-black mb-3">
                 We Manufacture
               </p>
-              <div className="flex mb-20 items-center gap-2 flex-wrap lg:flex-nowrap">
+              <div className="flex mb-20 items-center gap-6 flex-col md:flex-row lg:flex-row">
                 <img
                   src={xeroxLogo}
                   alt="Xerox"
@@ -135,7 +135,7 @@ export default function Company() {
       </div>
 
       {/* our story */}
-      <div className="w-full flex flex-col gap-10 py-10 px-8">
+      <div className="w-full flex flex-col gap-10 py-15 px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 px-8 py-10 items-start">
           <div className="flex flex-col gap-2 mx-auto">
             {/* left: our story */}
@@ -158,13 +158,13 @@ export default function Company() {
           {/* right: company background */}
           <div>
             <div className="flex flex-col lg:flex-row gap-4 lg:gap-[80px] w-full items-center lg:max-w-[650px]">
-              <p className="font-medium text-[14px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+              <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262] text-center lg:text-left">
                 COMPANY BACKGROUND
               </p>
               <div className="h-[1px] w-full lg:flex-1 bg-[#616262]"></div>
             </div>
               
-            <div className="lg:max-w-[650px] mt-15">
+            <div className="lg:max-w-[650px] mt-5 lg:mt-10">
             <p className="mt-5 text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
               Founded in April 1991 by a group of engineers with strong
               engineering expertise, Avision designs, manufactures, and markets
