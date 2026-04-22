@@ -13,7 +13,7 @@ export default function Company() {
     <main className="w-full bg-[var(--bg)]">
       {/* hero section */}
       <div className="relative isolate w-full lg:px-0 py-4 overflow-hidden">
-        <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-8 items-center">
           {/* left: text content */}
           <div className="animate-fade-slide-up w-full">
             <h1 className="mt-30 lg:mt-[120px] md:px-40 lg:px-0 text-center lg:text-left text-[40px] lg:text-[62px] tracking-[0.08em] font-bold leading-[110%] lg:leading-[80px] text-[var(--text-h)]">
@@ -83,7 +83,7 @@ export default function Company() {
       </div>
 
       {/* by the numbers */}
-      <div className="bg-[#CECECE] w-full flex items-center justify-center flex-col gap-10 py-20 px-20">
+      <div className="bg-[#CECECE] w-full flex items-center justify-center flex-col gap-10 py-10 lg:py-20 px-10 lg:px-20">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-[100px] w-full items-center">
           <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
             {" "}
@@ -140,8 +140,8 @@ export default function Company() {
       </div>
 
       {/* our story */}
-      <div className="w-full flex flex-col gap-10 py-15 px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 px-8 py-10 items-start">
+      <div className="w-full flex flex-col gap-10 py-15 px-8 lg:px-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-10 lg:gap-50 py-10 items-start">
           <div className="flex flex-col gap-2 mx-auto">
             {/* left: our story */}
             <div className="flex flex-col gap-2 mx-auto">
@@ -241,7 +241,7 @@ export default function Company() {
               </span>
             </h2>
 
-            <p className="text-[14px] lg:text-[20px] leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black my-10">
+            <p className="text-[14px] lg:text-[20px] leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black my-5 lg:my-10">
               Avision sells and supports its full line of scanners and imaging
               products across the entire North American market — including the
               United States, Canada, and Mexico. Whether you're a reseller,
@@ -250,9 +250,9 @@ export default function Company() {
               support wherever you operate.
             </p>
 
-            <div className="justify-center lg:justify-start w-full flex">
+            <div className="justify-start w-full flex">
               <div
-                className="flex flex-col font-light inline-flex gap-3 px-4 lg:px-6 py-2 lg:py-4 text-[12px] lg:text-[24px] text-[var(--text-2)] tracking-[0.08em] mx-auto lg:mx-0"
+                className="flex flex-col font-light inline-flex gap-3 px-4 lg:px-6 py-2 lg:py-4 text-[12px] lg:text-[24px] text-[var(--text-2)] tracking-[0.08em] lg:mx-0"
                 style={{
                   border: "1px dashed var(--text-2)",
                   borderRadius: "4px",
