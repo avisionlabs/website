@@ -257,7 +257,7 @@ export default function Company() {
           <img src={map} className="w-full" alt="Distribution map" />
 
           {/* floating card */}
-          <div className="static lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:right-16 bg-white p-6 lg:p-12 w-full lg:w-[550px] lg:h-[650px] shadow-xl mt-4 lg:mt-0">
+          <div className="rounded-md static lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:right-16 bg-white p-6 lg:p-12 w-full lg:w-[550px] lg:h-[650px] shadow-xl mt-4 lg:mt-0">
             <h2 className="font-bold text-[24px] lg:text-[38px] leading-[48px] tracking-[0.08em] text-black mb-4">
               Serving customers, from{" "}
               <span style={{ color: "var(--primary)" }} className="underline">
