@@ -5,7 +5,11 @@ import pandigitalLogo from "../assets/pandigital-logo.png";
 import map from "../assets/map.png";
 import location from "../assets/location.png";
 
-import { BuildingOffice2Icon, PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import {
+  BuildingOffice2Icon,
+  PhoneIcon,
+  EnvelopeIcon,
+} from "@heroicons/react/24/outline";
 
 function Blobs({ flip = false }: { flip?: boolean }) {
   return (
@@ -13,17 +17,22 @@ function Blobs({ flip = false }: { flip?: boolean }) {
       <div
         aria-hidden="true"
         className={`absolute -z-10 top-0 ${flip ? "right-[-4rem]" : "left-[-4rem]"} w-[16rem] h-[16rem] sm:w-[26rem] sm:h-[26rem] lg:w-[36rem] lg:h-[36rem] lg:${flip ? "right-[-8rem]" : "left-[-8rem]"} rounded-full opacity-25 blur-3xl`}
-        style={{ background: "radial-gradient(circle, var(--primary), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, var(--primary), transparent 70%)",
+        }}
       />
       <div
         aria-hidden="true"
         className={`absolute -z-10 bottom-0 ${flip ? "left-[-4rem]" : "right-[-4rem]"} w-[16rem] h-[16rem] sm:w-[26rem] sm:h-[26rem] lg:w-[36rem] lg:h-[36rem] lg:${flip ? "left-[-8rem]" : "right-[-8rem]"} rounded-full opacity-25 blur-3xl`}
-        style={{ background: "radial-gradient(circle, var(--secondary), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, var(--secondary), transparent 70%)",
+        }}
       />
     </>
   );
 }
-
 
 export default function Company() {
   return (
@@ -292,8 +301,9 @@ export default function Company() {
       </div>
 
       {/* visit us */}
-      <div className="relative w-full py-15 px-5 lg:px-20">
-        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-0 items-start">
+      <div className="w-full py-15 px-5 lg:px-20">
+        <div className="relative isolate mx-auto grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-0 items-start">
+          <Blobs />
           {/* left */}
           <div>
             <h2 className="font-bold text-[32px] lg:text-[62px] leading-[40px] lg:leading-[80px] tracking-[0.08em] text-black">
@@ -302,31 +312,51 @@ export default function Company() {
             <div className="flex flex-col gap-4 mt-10 lg:max-w-[400px]">
               <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
                 <BuildingOffice2Icon className="w-6 h-6 text-black" />
-                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <a
+                  href="https://www.google.com/maps/place/5694+Stewart+Ave,+Fremont,+CA+94538/@37.5158922,-121.9849446,815m/data=!3m2!1e3!4b1!4m6!3m5!1s0x808fc751ce0c0211:0xf05beae8974d39e3!8m2!3d37.515888!4d-121.9823697!16s%2Fg%2F11pcnfm6rk?entry=ttu&g_ep=EgoyMDI2MDQyMC4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]"
+                >
                   COMPANY ADDRESS
-                </p>
+                </a>
               </div>
               <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
                 <PhoneIcon className="w-6 h-6 text-black" />
-                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <a
+                  href="tel:510-739-2369"
+                  className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]"
+                >
                   COMPANY PHONE
-                </p>
+                </a>
               </div>
               <div className="flex flex-row items-center gap-8 h-[50px] py-8">
                 <EnvelopeIcon className="w-6 h-6 text-black" />
-                <p className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                <a
+                  href="mailto:avision@gmail.com"
+                  className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]"
+                >
                   COMPANY EMAIL
-                </p>
+                </a>
               </div>
             </div>
           </div>
           {/* right */}
           <div>
             <img src={location} alt="Company location" className="w-full h-auto object-cover rounded-lg shadow-md" />
+            {/* <iframe
+              src="https://www.google.com/maps/place/5694+Stewart+Ave,+Fremont,+CA+94538/@37.5158922,-121.9849446,815m/data=!3m2!1e3!4b1!4m6!3m5!1s0x808fc751ce0c0211:0xf05beae8974d39e3!8m2!3d37.515888!4d-121.9823697!16s%2Fg%2F11pcnfm6rk?entry=ttu&g_ep=EgoyMDI2MDQyMC4wIKXMDSoASAFQAw%3D%3D"
+              width="100%"
+              height="450"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="rounded-lg shadow-md"
+            /> */}
           </div>
         </div>
       </div>
-
     </main>
   );
 }
