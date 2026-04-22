@@ -9,7 +9,7 @@ export default function Company() {
     <main className="w-full bg-[var(--bg)]">
       {/* hero section */}
       <div className="relative isolate w-full lg:px-0 py-4 overflow-hidden">
-        <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-0 items-center">
+        <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* left: text content */}
           <div className="animate-fade-slide-up w-full">
             <h1 className="mt-30 lg:mt-[120px] md:px-40 lg:px-0 text-center lg:text-left text-[40px] lg:text-[62px] tracking-[0.08em] font-bold leading-[110%] lg:leading-[80px] text-[var(--text-h)]">
@@ -211,14 +211,59 @@ export default function Company() {
       </div>
 
       {/* distribution */}
-      <div className="w-full flex flex-col gap-10 py-15 px-20 bg-[#616262]">
+      <div className="w-full py-15 px-20 bg-[#616262]">
+        {/* header */}
         <div className="flex flex-col py-4 lg:flex-row gap-4 lg:gap-[80px] w-full items-center">
-          <p className="font-bold text-[24px] leading-[100%] tracking-[0.08em] text-white text-center lg:text-left">
+          <p className="font-bold text-[24px] leading-[100%] tracking-[0.08em] text-white">
             DISTRIBUTION
           </p>
           <div className="h-[1px] w-full lg:flex-1 bg-white"></div>
         </div>
-        <img src={map}></img>
+
+        {/* map + floating card */}
+        <div className="relative">
+          <img src={map} className="w-full" alt="Distribution map" />
+
+          {/* floating card */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-8 lg:right-16 bg-white p-6 lg:p-12 w-[90%] lg:w-[550px] lg:h-[650px] shadow-xl">
+            <h2 className="font-bold text-[24px] lg:text-[38px] leading-[48px] tracking-[0.08em] text-black mb-4">
+              Serving customers, from{" "}
+              <span style={{ color: "var(--primary)" }} className="underline">
+                coast
+              </span>{" "}
+              to{" "} <br />
+              <span style={{ color: "var(--secondary)" }} className="underline">
+                coast.
+              </span>
+            </h2>
+
+            <p className="text-[14px] lg:text-[20px] leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black my-10">
+              Avision sells and supports its full line of scanners and imaging
+              products across the entire North American market — including the
+              United States, Canada, and Mexico. Whether you're a reseller,
+              systems integrator, or enterprise buyer, our sales and
+              distribution network ensures fast access to our products and local
+              support wherever you operate.
+            </p>
+
+            <div className="justify-center lg:justify-start w-full flex">
+              <div
+                className="flex flex-col font-light inline-flex gap-3 px-4 lg:px-6 py-2 lg:py-4 text-[12px] lg:text-[24px] text-[var(--text-2)] tracking-[0.08em] mx-auto lg:mx-0"
+                style={{
+                  border: "1px dashed var(--text-2)",
+                  borderRadius: "4px",
+                  opacity: 0.7,
+                  fontFamily: "var(--heading)",
+                }}
+              >
+                <p className="text-[12px] font-light leading-[100%] tracking-[0.08em] text-[#616262]">
+                  United States · Mexico · Canada
+                </p>
+                <p className="text-[18px] font-light leading-[100%] tracking-[0.08em] text-[#616262]">NORTH AMERICA</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
