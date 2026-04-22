@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import heroPrinter from "../assets/hero-printer.png";
 import xeroxLogo from "../assets/xerox-logo.png";
 import visioneerLogo from "../assets/visioneer-logo.png";
@@ -10,6 +11,21 @@ import {
   PhoneIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
+
+function useCountUp(target: number, inView: boolean, duration = 1400) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!inView || target === 0) return;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      setCount(Math.round((1 - Math.pow(2, -10 * t)) * target));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [inView, target, duration]);
+  return count;
+}
 
 function Blobs({ flip = false }: { flip?: boolean }) {
   return (
@@ -35,6 +51,24 @@ function Blobs({ flip = false }: { flip?: boolean }) {
 }
 
 export default function Company() {
+  const [inView, setInView] = useState(false);
+  const numbersRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = numbersRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => e.isIntersecting && setInView(true),
+      { threshold: 0.3 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const years = useCountUp(33, inView);
+  const warranty = useCountUp(1, inView);
+  const units = useCountUp(300, inView);
+
   return (
     <main className="w-full bg-[var(--bg)]">
       {/* hero section */}
@@ -113,25 +147,27 @@ export default function Company() {
       <div className="bg-[#CECECE] w-full flex items-center justify-center flex-col gap-10 py-10 lg:py-20 px-10 lg:px-20">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-[100px] w-full items-center">
           <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
-            {" "}
-            BY THE NUMBERS{" "}
+            BY THE NUMBERS
           </p>
           <div className="h-[1px] w-full lg:flex-1 bg-[#616262]"></div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-40 items-center pt-0 lg:pt-4 px-0 justify-center">
+        <div
+          ref={numbersRef}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-40 items-center pt-0 lg:pt-4 px-0 justify-center"
+        >
           <div className="flex flex-col justify-center gap-2">
-            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black]">
-              33+
+            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black">
+              {years}+
             </p>
             <p className="font-medium text-[14px] lg:text-[24px] leading-[100%] tracking-[-0.02em] text-black">
               YEARS IN OPERATION
             </p>
           </div>
           <div className="flex flex-col justify-center gap-2">
-            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black]">
+            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black">
               ISO
               <span
-                className="font-extrabold  text-[20px] lg:text-[35px] leading-[100%] tracking-[-0.02em]"
+                className="font-extrabold text-[20px] lg:text-[35px] leading-[100%] tracking-[-0.02em]"
                 style={{ color: "var(--secondary)" }}
               >
                 x2
@@ -142,10 +178,10 @@ export default function Company() {
             </p>
           </div>
           <div className="flex flex-col justify-center gap-2">
-            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black]">
-              1
+            <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black">
+              {warranty}
               <span
-                className="font-extrabold  text-[20px] lg:text-[35px] leading-[100%] tracking-[-0.02em]"
+                className="font-extrabold text-[20px] lg:text-[35px] leading-[100%] tracking-[-0.02em]"
                 style={{ color: "var(--secondary)" }}
               >
                 yr
@@ -157,7 +193,7 @@ export default function Company() {
           </div>
           <div className="flex flex-col justify-center gap-2">
             <p className="font-extrabold text-[40px] lg:text-[70px] leading-[100%] tracking-[-0.02em] text-black">
-              300k
+              {units}k
             </p>
             <p className="font-medium text-[14px] lg:text-[24px] leading-[100%] tracking-[-0.02em] text-black">
               UNITS PER MONTH
@@ -212,15 +248,15 @@ export default function Company() {
                 Avision attained ISO-9001 certification in 1993 and ISO-14001
                 certification in early 2002. The implementation of ISO-9001
                 significantly helps every employee build quality into every
-                aspect of the company’s operation.
+                aspect of the company's operation.
               </p>
               <div className="my-10 pl-10 border-l-4 border-[var(--secondary)] pl-4">
                 <p
                   className="font-light italic text-[20px] lg:text-[32px] leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black"
                   style={{ fontFamily: "var(--sans)" }}
                 >
-                  “Avision understands that continuous innovation is the key to
-                  success.”
+                  "Avision understands that continuous innovation is the key to
+                  success."
                 </p>
               </div>
               <p className="text-[14px] lg:text-[19px] font-regular leading-[24px] lg:leading-[28px] tracking-[0.08em] text-black mt-4">
@@ -343,7 +379,11 @@ export default function Company() {
           </div>
           {/* right */}
           <div>
-            <img src={location} alt="Company location" className="w-full h-auto object-cover rounded-lg shadow-md" />
+            <img
+              src={location}
+              alt="Company location"
+              className="w-full h-auto object-cover rounded-lg shadow-md"
+            />
             {/* <iframe
               src="https://www.google.com/maps/place/5694+Stewart+Ave,+Fremont,+CA+94538/@37.5158922,-121.9849446,815m/data=!3m2!1e3!4b1!4m6!3m5!1s0x808fc751ce0c0211:0xf05beae8974d39e3!8m2!3d37.515888!4d-121.9823697!16s%2Fg%2F11pcnfm6rk?entry=ttu&g_ep=EgoyMDI2MDQyMC4wIKXMDSoASAFQAw%3D%3D"
               width="100%"
