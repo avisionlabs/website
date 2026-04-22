@@ -3,6 +3,10 @@ import xeroxLogo from "../assets/xerox-logo.png";
 import visioneerLogo from "../assets/visioneer-logo.png";
 import pandigitalLogo from "../assets/pandigital-logo.png";
 import map from "../assets/map.png";
+import location from "../assets/location.png";
+
+import { BuildingOffice2Icon, PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+
 
 export default function Company() {
   return (
@@ -231,7 +235,7 @@ export default function Company() {
               <span style={{ color: "var(--primary)" }} className="underline">
                 coast
               </span>{" "}
-              to{" "} <br />
+              to <br />
               <span style={{ color: "var(--secondary)" }} className="underline">
                 coast.
               </span>
@@ -259,12 +263,51 @@ export default function Company() {
                 <p className="text-[12px] font-light leading-[100%] tracking-[0.08em] text-[#616262]">
                   United States · Mexico · Canada
                 </p>
-                <p className="text-[18px] font-light leading-[100%] tracking-[0.08em] text-[#616262]">NORTH AMERICA</p>
+                <p className="text-[18px] font-light leading-[100%] tracking-[0.08em] text-[#616262]">
+                  NORTH AMERICA
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* visit us */}
+      <div className="relative w-full py-15 px-20">
+        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 items-start">
+          {/* left */}
+          <div>
+            <h2 className="font-bold lg:text-[62px] leading-[80px] tracking-[0.08em] text-black">
+              VISIT US
+            </h2>
+            <div className="flex flex-col gap-4 mt-10 lg:max-w-[400px]">
+              <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
+                <BuildingOffice2Icon className="w-6 h-6 text-black" />
+                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                  COMPANY ADDRESS
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
+                <PhoneIcon className="w-6 h-6 text-black" />
+                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                  COMPANY PHONE
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-8 h-[50px] py-8">
+                <EnvelopeIcon className="w-6 h-6 text-black" />
+                <p className="font-light text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]">
+                  COMPANY EMAIL
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* right */}
+          <div>
+            <img src={location} alt="Company location" className="w-full h-auto object-cover rounded-lg shadow-md" />
+          </div>
+        </div>
+      </div>
+
     </main>
   );
 }

@@ -30,7 +30,6 @@
 html, body {
   overflow-x: clip;
   scroll-behavior: smooth;
-  font-family: var(--sans);
 }
 
 #root {
