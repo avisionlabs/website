@@ -293,7 +293,7 @@ export default function Company() {
           <img src={map} className="w-full" alt="Distribution map" />
 
           {/* floating card */}
-          <div className="rounded-md static lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:right-16 bg-white p-6 lg:p-12 w-full lg:w-[550px] lg:h-[650px] shadow-xl mt-4 lg:mt-0">
+          <div className="rounded-md static lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:right-16 bg-white p-6 lg:p-12 w-full lg:w-[550px] lg:min-h-[650px] shadow-xl mt-4 lg:mt-0">
             <h2 className="font-bold text-[24px] lg:text-[38px] leading-[48px] tracking-[0.08em] text-black mb-4">
               Serving customers, from{" "}
               <span style={{ color: "var(--primary)" }} className="underline">
@@ -337,7 +337,7 @@ export default function Company() {
       </div>
 
       {/* visit us */}
-      <div className="w-full py-15 px-5 lg:px-20">
+      <div className="w-full py-33 px-5 lg:px-20">
         <div className="relative isolate mx-auto grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-0 items-start">
           <Blobs />
           {/* left */}
@@ -346,7 +346,7 @@ export default function Company() {
               VISIT US
             </h2>
             <div className="flex flex-col gap-4 mt-10 lg:max-w-[400px]">
-              <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
+              <div className="flex flex-row items-center gap-8 min-h-[72px] py-4 border-b border-[#8A8A8A]">
                 <BuildingOffice2Icon className="w-6 h-6 text-black" />
                 <a
                   href="https://www.google.com/maps/place/5694+Stewart+Ave,+Fremont,+CA+94538/@37.5158922,-121.9849446,815m/data=!3m2!1e3!4b1!4m6!3m5!1s0x808fc751ce0c0211:0xf05beae8974d39e3!8m2!3d37.515888!4d-121.9823697!16s%2Fg%2F11pcnfm6rk?entry=ttu&g_ep=EgoyMDI2MDQyMC4wIKXMDSoASAFQAw%3D%3D"
@@ -357,7 +357,7 @@ export default function Company() {
                   COMPANY ADDRESS
                 </a>
               </div>
-              <div className="flex flex-row items-center gap-8 h-[50px] py-8 border-b border-[#8A8A8A]">
+              <div className="flex flex-row items-center gap-8 min-h-[72px] py-4 border-b border-[#8A8A8A]">
                 <PhoneIcon className="w-6 h-6 text-black" />
                 <a
                   href="tel:510-739-2369"
@@ -366,7 +366,7 @@ export default function Company() {
                   COMPANY PHONE
                 </a>
               </div>
-              <div className="flex flex-row items-center gap-8 h-[50px] py-8">
+              <div className="flex flex-row items-center gap-8 min-h-[72px] py-4">
                 <EnvelopeIcon className="w-6 h-6 text-black" />
                 <a
                   href="mailto:avision@gmail.com"
