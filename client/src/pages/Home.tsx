@@ -137,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* CTA section */}
-      <div className="relative isolate w-full py-56 flex items-center justify-center overflow-show">
+      <div className="relative isolate w-full px-6 lg:px-16 py-24 flex items-center justify-center overflow-show">
         <Blobs />
         {/* Concentric rings */}
         {[480, 360, 240, 120].map((size) => (
@@ -148,13 +148,13 @@ export default function Home() {
           />
         ))}
 
-        <div className="relative z-10 flex flex-col items-center text-center gap-8 m-10">
+        <div className="relative z-10 flex flex-col items-center text-center gap-8">
           <h2 className="text-4xl font-bold text-[var(--text-h)] sm:text-5xl">
             Looking for assistance?<br />Get started below.
           </h2>
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <Button href="/support">
-              Explore Support Resources
+              Get Support
             </Button>
             <Button href="/contact" variant="outline">
               Contact Us
