@@ -148,7 +148,7 @@ export default function Home() {
           />
         ))}
 
-        <div className="relative z-10 flex flex-col items-center text-center gap-8">
+        <div className="relative z-10 flex flex-col items-center text-center gap-8 m-10">
           <h2 className="text-4xl font-bold text-[var(--text-h)] sm:text-5xl">
             Looking for assistance?<br />Get started below.
           </h2>
