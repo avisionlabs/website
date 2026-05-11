@@ -1,6 +1,6 @@
 'use client'
 
-import PrintersTable from '../../components/PrintersTable'
+import ProductsTable from '../../components/ProductsTable'
 import { useEffect, useMemo, useState } from 'react'
 import { useProductFilters } from "../../hooks/useProductFilters"
 import { apiUrl } from '../../lib/api'
@@ -144,7 +144,7 @@ export default function Scanners() {
               <p className="text-lg text-gray-600">No products found.</p>
             )}
 
-            <PrintersTable products={filtered} view={view} onViewChange={handleViewChange} />
+            <ProductsTable products={filtered} view={view} onViewChange={handleViewChange} />
           </div>
         </div>
       </main>

@@ -10,7 +10,7 @@ type Product = {
   subcategory: string | null
 }
 
-export default function PrintersTable({ 
+export default function ProductsTable({ 
   products,
   view,
   onViewChange,
@@ -70,7 +70,7 @@ export default function PrintersTable({
       ) : (
         <ul className="divide-y divide-gray-200">
           {products.map((product) => (
-            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="flex items-center gap-4 py-4 hover:bg-gray-50">
+            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="flex items-center gap-4 py-4 px-3 hover:bg-gray-50">
               {product.imageUrl ? (
                 <img
                   alt={product.model}

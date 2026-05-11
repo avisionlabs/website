@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { db } from './db';
 import { products, categories, subcategories, productSpecs } from './db/schema';
@@ -9,8 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function httpCache(maxAgeSeconds = 600) {
+  return (_req: Request, res: Response, next: NextFunction) => {
+    res.set('Cache-Control', `public, max-age=${maxAgeSeconds}`);
+    next();
+  };
+}
 
-app.get('/api/products', async (req, res) => {
+
+app.get('/api/products', httpCache(), async (req, res) => {
   try {
     const { category, subcategory } = req.query;
 
@@ -51,9 +58,9 @@ app.get('/api/products', async (req, res) => {
 });
 
 
-app.get('/api/products/:model/specs', async (req, res) => {
+app.get('/api/products/:model/specs', httpCache(), async (req, res) => {
   try {
-    const { model } = req.params;
+    const model = req.params.model as string;
 
     const product = await db
       .select({ id: products.id })
@@ -74,9 +81,9 @@ app.get('/api/products/:model/specs', async (req, res) => {
   }
 });
 
-app.get('/api/products/:model', async (req, res) => {
+app.get('/api/products/:model', httpCache(), async (req, res) => {
   try {
-    const { model } = req.params;
+    const model = req.params.model as string;
 
     const result = await db
       .select({
@@ -105,7 +112,7 @@ app.get('/api/products/:model', async (req, res) => {
 });
 
 
-app.get('/api/categories', async (_req, res) => {
+app.get('/api/categories', httpCache(), async (_req, res) => {
   try {
     const result = await db.select().from(categories);
     res.json(result);
@@ -115,7 +122,7 @@ app.get('/api/categories', async (_req, res) => {
 });
 
 
-app.get('/api/subcategories', async (req, res) => {
+app.get('/api/subcategories', httpCache(), async (req, res) => {
   try {
     const { category } = req.query;
 
