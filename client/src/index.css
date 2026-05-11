@@ -67,7 +67,7 @@ html, body {
 .scan-line-wrapper {
   position: relative;
   display: inline-block;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .scan-line-wrapper::after {
