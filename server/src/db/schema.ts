@@ -1,4 +1,4 @@
-import { pgTable, serial, text, boolean, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, boolean, integer, jsonb, timestamp, index } from 'drizzle-orm/pg-core';
 
 /* scanners or printer/mfps */
 export const categories = pgTable('categories', {
@@ -58,3 +58,25 @@ export const productImages = pgTable('product_images', {
 
   url: text('url').notNull(),
 });
+
+/* scraped product data from avision.com — full product pages */
+export const avisionProducts = pgTable('avision_products', {
+  id:          serial('id').primaryKey(),
+  model:       text('model').notNull(),
+  tagline:     text('tagline'),
+  description: text('description'),
+  category:    text('category').notNull(),
+  series:      text('series').notNull().default(''),
+  url:         text('url').notNull().unique(),
+  imageUrl:    text('image_url'),
+  features:    jsonb('features'),
+  specs:       jsonb('specs'),
+  downloads:   jsonb('downloads'),
+  supplies:    jsonb('supplies'),
+  faq:         jsonb('faq'),
+  scrapedAt:   timestamp('scraped_at', { mode: 'date' }).notNull(),
+  createdAt:   timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt:   timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
+}, (t) => [
+  index('avision_products_model_idx').on(t.model),
+]);
