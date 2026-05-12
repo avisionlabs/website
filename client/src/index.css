@@ -115,3 +115,12 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  opacity: 0.5;
+}
