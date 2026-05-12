@@ -369,7 +369,7 @@ export default function Company() {
               <div className="flex flex-row items-center gap-8 min-h-[72px] py-4">
                 <EnvelopeIcon className="w-6 h-6 text-black" />
                 <a
-                  href="mailto:avision@gmail.com"
+                  href="mailto:support@avision-labs.com"
                   className="font-light text-[18px] lg:text-[24px] leading-[100%] tracking-[0.08em] text-[#616262]"
                 >
                   COMPANY EMAIL
