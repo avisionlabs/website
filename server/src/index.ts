@@ -2,8 +2,8 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { db } from './db';
-import { products, categories, subcategories, productSpecs } from './db/schema';
-import { eq, and } from 'drizzle-orm';
+import { products, categories, subcategories, productSpecs, avisionProducts } from './db/schema';
+import { eq, and, ilike, or, sql } from 'drizzle-orm';
 
 const app = express();
 app.use(cors());
@@ -146,6 +146,30 @@ app.get('/api/subcategories', httpCache(), async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch subcategories' });
   }
 });
+
+app.get('/api/avision/search', httpCache(), async (req, res) => {
+  try {
+    const q = ((req.query.q as string) ?? '').trim();
+    if (!q) return res.json([]);
+
+    const result = await db
+      .select()
+      .from(avisionProducts)
+      .where(or(
+        ilike(avisionProducts.model,    `%${q}%`),
+        ilike(avisionProducts.category, `%${q}%`),
+        ilike(avisionProducts.series,   `%${q}%`),
+        ilike(avisionProducts.tagline,  `%${q}%`),
+        sql`cast(${avisionProducts.specs} as text) ilike ${'%' + q + '%'}`,
+      ));
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
 
 app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:3000');
