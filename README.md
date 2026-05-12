@@ -43,16 +43,20 @@ DATABASE_URL=postgres://...
 ```bash
 # Install all dependencies
 npm install
+cd client && npm intall
 cd server && npm install
 
 # Push schema to database
 cd server && npm run db:push
 
-# Start API server (port 3000)
+# Start backend server (port 3000)
 cd server && npm run dev
 
 # Start frontend (port 5173)
 cd client && npm run dev
+
+# Start Both
+cd main folder && npm run dev
 ```
 
 ## Scraper
