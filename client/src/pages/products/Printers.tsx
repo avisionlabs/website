@@ -38,6 +38,7 @@ export default function Printers() {
 
   useEffect(() => {
     const controller = new AbortController()
+    let active = true
 
     async function load() {
       setLoading(true)
@@ -49,18 +50,19 @@ export default function Printers() {
         const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
 
-        setProducts(await res.json())
+        const data: Product[] = await res.json()
+        if (active) setProducts(data)
       } catch (err) {
-        if ((err as DOMException).name !== 'AbortError') {
+        if (active && (err as DOMException).name !== 'AbortError') {
           setError((err as Error).message)
         }
       } finally {
-        setLoading(false)
+        if (active) setLoading(false)
       }
     }
 
     load()
-    return () => controller.abort()
+    return () => { active = false; controller.abort() }
   }, [])
 
   return (

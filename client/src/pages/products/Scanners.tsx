@@ -49,6 +49,7 @@ export default function Scanners() {
 
   useEffect(() => {
     const controller = new AbortController()
+    let active = true
 
     async function load() {
       setLoading(true)
@@ -62,23 +63,25 @@ export default function Scanners() {
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
 
         const data: Product[] = await res.json()
-        setProducts(data)
-        if (!selectedSubcategory) {
-          setAvailableSubcategories(
-            new Set(data.filter(p => p.inStock).map(p => p.subcategory).filter(Boolean) as string[])
-          )
+        if (active) {
+          setProducts(data)
+          if (!selectedSubcategory) {
+            setAvailableSubcategories(
+              new Set(data.filter(p => p.inStock).map(p => p.subcategory).filter(Boolean) as string[])
+            )
+          }
         }
       } catch (err) {
-        if ((err as DOMException).name !== 'AbortError') {
+        if (active && (err as DOMException).name !== 'AbortError') {
           setError((err as Error).message)
         }
       } finally {
-        setLoading(false)
+        if (active) setLoading(false)
       }
     }
 
     load()
-    return () => controller.abort()
+    return () => { active = false; controller.abort() }
   }, [selectedSubcategory])
 
   return (
