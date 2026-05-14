@@ -2,8 +2,8 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { db } from './db';
-import { products, categories, subcategories, productSpecs, avisionProducts } from './db/schema';
-import { eq, and, ilike, or, sql } from 'drizzle-orm';
+import { avisionProducts } from './db/schema';
+import { eq, and, ne, ilike, or, sql } from 'drizzle-orm';
 
 const app = express();
 app.use(cors());
@@ -16,6 +16,18 @@ function httpCache(maxAgeSeconds = 600) {
   };
 }
 
+const SCANNER_CATEGORIES = [
+  'DocumentScanner',
+  'Flatbed Scanner',
+  'Network Scanner',
+  'Mobile Scanner',
+  'PaperAir Series',
+] as const;
+
+function isScanner(category: string): boolean {
+  return (SCANNER_CATEGORIES as readonly string[]).includes(category);
+}
+
 
 app.get('/api/products', httpCache(), async (req, res) => {
   try {
@@ -23,33 +35,39 @@ app.get('/api/products', httpCache(), async (req, res) => {
 
     let query = db
       .select({
-        id: products.id,
-        model: products.model,
-        imageUrl: products.imageUrl,
-        inStock: products.inStock,
-        category: categories.name,
-        subcategory: subcategories.name,
+        id: avisionProducts.id,
+        model: avisionProducts.model,
+        imageUrl: avisionProducts.imageUrl,
+        inStock: avisionProducts.inStock,
+        avCategory: avisionProducts.category,
       })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(subcategories, eq(products.subcategoryId, subcategories.id))
+      .from(avisionProducts)
       .$dynamic();
 
     const conditions = [];
 
-    if (category) {
-      conditions.push(eq(categories.name, category as string));
-    }
-
     if (subcategory) {
-      conditions.push(eq(subcategories.name, subcategory as string));
+      conditions.push(eq(avisionProducts.category, subcategory as string));
+    } else if (category === 'Scanners') {
+      conditions.push(or(...SCANNER_CATEGORIES.map(c => eq(avisionProducts.category, c)))!);
+    } else if (category === 'Printers and MFPs') {
+      conditions.push(and(...SCANNER_CATEGORIES.map(c => ne(avisionProducts.category, c)))!);
     }
 
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
 
-    const result = await query;
+    const rows = await query;
+    const result = rows.map(r => ({
+      id: r.id,
+      model: r.model,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      category: isScanner(r.avCategory) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.avCategory,
+    }));
+
     res.json(result);
   } catch (err) {
     console.error(err);
@@ -60,19 +78,27 @@ app.get('/api/products', httpCache(), async (req, res) => {
 
 app.get('/api/products/:model/specs', httpCache(), async (req, res) => {
   try {
-    const model = req.params.model as string;
+    const model = req.params.model;
 
-    const product = await db
-      .select({ id: products.id })
-      .from(products)
-      .where(eq(products.model, model));
+    const rows = await db
+      .select({ id: avisionProducts.id, specs: avisionProducts.specs })
+      .from(avisionProducts)
+      .where(eq(avisionProducts.model, model));
 
-    if (product.length === 0) return res.status(404).json({ error: 'Product not found' });
+    if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
 
-    const result = await db
-      .select()
-      .from(productSpecs)
-      .where(eq(productSpecs.productId, product[0].id));
+    const { id, specs } = rows[0];
+    if (!specs || typeof specs !== 'object') return res.json([]);
+
+    const result = Object.entries(specs as Record<string, string>).map(([key, value]) => {
+      const sep = key.indexOf(' / ');
+      return {
+        productId: id,
+        specCategory: sep !== -1 ? key.slice(0, sep) : '',
+        specName: sep !== -1 ? key.slice(sep + 3) : key,
+        specValue: value,
+      };
+    });
 
     res.json(result);
   } catch (err) {
@@ -83,28 +109,32 @@ app.get('/api/products/:model/specs', httpCache(), async (req, res) => {
 
 app.get('/api/products/:model', httpCache(), async (req, res) => {
   try {
-    const model = req.params.model as string;
+    const model = req.params.model;
 
-    const result = await db
+    const rows = await db
       .select({
-        id: products.id,
-        model: products.model,
-        description: products.description,
-        imageUrl: products.imageUrl,
-        inStock: products.inStock,
-        category: categories.name,
-        subcategory: subcategories.name,
+        id: avisionProducts.id,
+        model: avisionProducts.model,
+        description: avisionProducts.description,
+        imageUrl: avisionProducts.imageUrl,
+        inStock: avisionProducts.inStock,
+        avCategory: avisionProducts.category,
       })
-      .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(subcategories, eq(products.subcategoryId, subcategories.id))
-      .where(eq(products.model, model));
+      .from(avisionProducts)
+      .where(eq(avisionProducts.model, model));
 
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
+    if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
 
-    res.json(result[0]);
+    const r = rows[0];
+    res.json({
+      id: r.id,
+      model: r.model,
+      description: r.description,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      category: isScanner(r.avCategory) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.avCategory,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch product' });
@@ -113,12 +143,10 @@ app.get('/api/products/:model', httpCache(), async (req, res) => {
 
 
 app.get('/api/categories', httpCache(), async (_req, res) => {
-  try {
-    const result = await db.select().from(categories);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch categories' });
-  }
+  res.json([
+    { id: 1, name: 'Scanners' },
+    { id: 2, name: 'Printers and MFPs' },
+  ]);
 });
 
 
@@ -126,26 +154,24 @@ app.get('/api/subcategories', httpCache(), async (req, res) => {
   try {
     const { category } = req.query;
 
-    let query = db
-      .select({
-        id: subcategories.id,
-        name: subcategories.name,
-        category: categories.name,
-      })
-      .from(subcategories)
-      .leftJoin(categories, eq(subcategories.categoryId, categories.id))
-      .$dynamic();
+    const rows = await db
+      .selectDistinct({ name: avisionProducts.category })
+      .from(avisionProducts);
 
-    if (category) {
-      query = query.where(eq(categories.name, category as string));
+    let names = rows.map(r => r.name);
+
+    if (category === 'Scanners') {
+      names = names.filter(isScanner);
+    } else if (category === 'Printers and MFPs') {
+      names = names.filter(n => !isScanner(n));
     }
 
-    const result = await query;
-    res.json(result);
+    res.json(names.map((name, i) => ({ id: i + 1, name, category: category ?? null })));
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch subcategories' });
   }
 });
+
 
 app.get('/api/avision/search', httpCache(), async (req, res) => {
   try {

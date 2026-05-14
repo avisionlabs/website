@@ -15,10 +15,11 @@ type Product = {
 }
 
 const subcategoryOptions = [
-  { value: 'Document Scanners',  label: 'Document Scanners' },
-  { value: 'Book Scanners',      label: 'Book Scanners' },
-  { value: 'Network Scanners',   label: 'Network Scanners' },
-  { value: 'Production Scanners', label: 'Production Scanners' },
+  { value: 'DocumentScanner',  label: 'Document Scanner' },
+  { value: 'Flatbed Scanner',  label: 'Flatbed Scanner' },
+  { value: 'Network Scanner',  label: 'Network Scanner' },
+  { value: 'Mobile Scanner',   label: 'Mobile Scanner' },
+  { value: 'PaperAir Series',  label: 'PaperAir Series' },
 ]
 
 export default function Scanners() {
@@ -79,7 +80,7 @@ export default function Scanners() {
         <div className="pt-16 pb-6">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">Scanners</h1>
           <p className="mt-2 text-md text-gray-500">
-            Browse our full lineup of document, book, network, and production scanners.
+            Browse our full lineup of document, flatbed, network, mobile, and PaperAir scanners.
           </p>
           <hr className="mt-6 border-gray-200" />
         </div>
