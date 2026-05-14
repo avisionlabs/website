@@ -36,13 +36,15 @@ export default function Scanners() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [availableSubcategories, setAvailableSubcategories] = useState<Set<string> | null>(null)
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return products
-    const term = search.toLowerCase()
-    return products.filter((p) =>
-      [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
-    )
+    return products.filter((p) => {
+      if (!p.inStock) return false
+      if (!search.trim()) return true
+      const term = search.toLowerCase()
+      return [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
+    })
   }, [products, search])
 
   useEffect(() => {
@@ -59,7 +61,13 @@ export default function Scanners() {
         const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
 
-        setProducts(await res.json())
+        const data: Product[] = await res.json()
+        setProducts(data)
+        if (!selectedSubcategory) {
+          setAvailableSubcategories(
+            new Set(data.filter(p => p.inStock).map(p => p.subcategory).filter(Boolean) as string[])
+          )
+        }
       } catch (err) {
         if ((err as DOMException).name !== 'AbortError') {
           setError((err as Error).message)
@@ -93,7 +101,7 @@ export default function Scanners() {
             <div className="pb-6">
               <h3 className="mb-4 text-md font-semibold text-gray-900">Type</h3>
               <div className="grid grid-cols-1 gap-2">
-                {subcategoryOptions.map((opt) => (
+                {subcategoryOptions.filter(opt => !availableSubcategories || availableSubcategories.has(opt.value)).map((opt) => (
                   <button
                     key={opt.value}
                     type="button"

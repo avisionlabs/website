@@ -14,18 +14,11 @@ type Product = {
   subcategory: string | null
 }
 
-const subcategoryOptions = [
-  { value: 'Printers', label: 'Printers' },
-  { value: 'MFPs',     label: 'MFPs' },
-]
-
 export default function Printers() {
   const {
-    selectedSubcategory, 
-    search, 
-    view, 
-    handleSubcategoryChange, 
-    handleSearchChange, 
+    search,
+    view,
+    handleSearchChange,
     handleViewChange,
     handleClear,
   } = useProductFilters()
@@ -35,11 +28,12 @@ export default function Printers() {
   const [error, setError] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return products
-    const term = search.toLowerCase()
-    return products.filter((p) =>
-      [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
-    )
+    return products.filter((p) => {
+      if (!p.inStock) return false
+      if (!search.trim()) return true
+      const term = search.toLowerCase()
+      return [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
+    })
   }, [products, search])
 
   useEffect(() => {
@@ -51,7 +45,6 @@ export default function Printers() {
 
       try {
         const params = new URLSearchParams({ category: 'Printers and MFPs' })
-        if (selectedSubcategory) params.set('subcategory', selectedSubcategory)
 
         const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
@@ -68,7 +61,7 @@ export default function Printers() {
 
     load()
     return () => controller.abort()
-  }, [selectedSubcategory])
+  }, [])
 
   return (
     <div className="bg-white">
@@ -86,31 +79,8 @@ export default function Printers() {
         <div className="grid grid-cols-1 gap-x-8 pb-24 lg:grid-cols-4">
           {/* Sidebar */}
           <aside className="hidden lg:block">
-            {/* Subcategory */}
-            <div className="pb-6">
-              <h3 className="mb-4 text-md font-semibold text-gray-900">Type</h3>
-              <div className="grid grid-cols-1 gap-2">
-                {subcategoryOptions.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    className={`rounded border px-2 py-1 text-sm ${
-                      selectedSubcategory === opt.value
-                        ? 'bg-[var(--accent)] text-white'
-                        : 'bg-white text-gray-800 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleSubcategoryChange(opt.value)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <hr className="border-gray-200" />
-
             {/* Search */}
-            <div className="py-6">
+            <div className="pb-6">
               <h3 className="mb-4 text-md font-semibold text-gray-900">Search</h3>
               <input
                 type="text"
