@@ -78,17 +78,16 @@ function normalizeUrl(raw: string, base: string): string {
 }
 
 function isProductUrl(url: string): boolean {
-  return /\/en\/shop\/[^/]+\/[^/]+(\/[^/]+)?\/?$/.test(new URL(url).pathname);
+  return /\/en\/shop\/[^/]+\/[^/]+(?:\/[^/]+)?\/?$/.test(new URL(url).pathname);
 }
 
 function isSeriesUrl(url: string, categoryUrl: string): boolean {
   const catPath = new URL(categoryUrl).pathname;
   const urlPath = new URL(url).pathname;
   return (
-    urlPath.startsWith(catPath) &&
     urlPath !== catPath &&
-    !urlPath.includes('/en/shop/') &&
-    urlPath.split('/').filter(Boolean).length > catPath.split('/').filter(Boolean).length
+    urlPath.includes('/product-category/') &&
+    !urlPath.includes('/en/shop/')
   );
 }
 
