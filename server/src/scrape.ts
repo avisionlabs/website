@@ -147,8 +147,9 @@ function parseBreadcrumbs(
     .get()
     .filter(t => t && !/^home$/i.test(t));
 
-  let category = links[links.length - 2] ?? '';
-  let series   = links[links.length - 1] ?? '';
+  // 3-level URL: links = [Category, Series] — 2-level URL: links = [Category]
+  let category = links.length >= 2 ? links[links.length - 2] : (links[0] ?? '');
+  let series   = links.length >= 2 ? links[links.length - 1] : '';
 
   if (!category || !series) {
     const parts = new URL(url).pathname.split('/').filter(Boolean);
@@ -481,19 +482,16 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
 
 // ─── DB upsert ────────────────────────────────────────────────────────────────
 
-async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated'> {
+async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated' | 'unchanged'> {
   const existing = await db
-    .select({ url: avisionProducts.url, downloads: avisionProducts.downloads })
+    .select({
+      url:       avisionProducts.url,
+      features:  avisionProducts.features,
+      specs:     avisionProducts.specs,
+      downloads: avisionProducts.downloads,
+    })
     .from(avisionProducts)
     .where(eq(avisionProducts.url, data.url));
-
-  const isNew = existing.length === 0;
-
-  if (!isNew && existing[0].downloads) {
-    const oldDrivers = JSON.stringify((existing[0].downloads as any)?.drivers);
-    const newDrivers = JSON.stringify(data.downloads.drivers);
-    if (oldDrivers !== newDrivers) console.log(`    ↻ driver versions changed for ${data.model}`);
-  }
 
   const row = {
     model:       data.model,
@@ -511,15 +509,29 @@ async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated'>
     scrapedAt:   data.scrapedAt,
   };
 
+  if (existing.length === 0) {
+    await db.insert(avisionProducts).values(row);
+    return 'inserted';
+  }
+
+  const ex = existing[0];
+  const driversChanged = JSON.stringify((ex.downloads as any)?.drivers) !== JSON.stringify(data.downloads.drivers);
+  if (driversChanged) console.log(`    ↻ driver versions changed for ${data.model}`);
+
+  const changed =
+    driversChanged ||
+    JSON.stringify(ex.specs)    !== JSON.stringify(data.specs    as unknown) ||
+    JSON.stringify(ex.features) !== JSON.stringify(data.features as unknown);
+
   await db
     .insert(avisionProducts)
     .values(row)
     .onConflictDoUpdate({
       target: avisionProducts.url,
-      set: { ...row, updatedAt: new Date() },
+      set: changed ? { ...row, updatedAt: new Date() } : { scrapedAt: row.scrapedAt },
     });
 
-  return isNew ? 'inserted' : 'updated';
+  return changed ? 'updated' : 'unchanged';
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -530,7 +542,7 @@ async function main() {
   const productUrls = await discoverProductUrls();
   console.log(`\nFound ${productUrls.size} product pages. Scraping…\n`);
 
-  let inserted = 0, updated = 0, failed = 0;
+  let inserted = 0, updated = 0, unchanged = 0, failed = 0;
 
   for (const url of productUrls) {
     console.log(`Scraping: ${url}`);
@@ -540,15 +552,18 @@ async function main() {
     if (!data) { failed++; continue; }
 
     const outcome = await upsertProduct(data);
-    if (outcome === 'inserted') inserted++;
-    else updated++;
-    console.log(`  ${outcome === 'inserted' ? '+' : '~'} ${data.model} (${data.category})`);
+    if (outcome === 'inserted')       inserted++;
+    else if (outcome === 'updated')   updated++;
+    else                              unchanged++;
+    const icon = outcome === 'inserted' ? '+' : outcome === 'updated' ? '~' : '=';
+    console.log(`  ${icon} ${data.model} (${data.category})`);
   }
 
   console.log('\n─── Scrape complete ───────────────────────');
-  console.log(`  Inserted : ${inserted}`);
-  console.log(`  Updated  : ${updated}`);
-  console.log(`  Failed   : ${failed}`);
+  console.log(`  Inserted  : ${inserted}`);
+  console.log(`  Updated   : ${updated}`);
+  console.log(`  Unchanged : ${unchanged}`);
+  console.log(`  Failed    : ${failed}`);
   process.exit(0);
 }
 

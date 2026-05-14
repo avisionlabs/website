@@ -10,6 +10,11 @@ type Product = {
   subcategory: string | null
 }
 
+function formatSubcategory(s: string | null): string {
+  if (!s) return ''
+  return s.replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
 export default function ProductsTable({ 
   products,
   view,
@@ -58,11 +63,11 @@ export default function ProductsTable({
               <div className="mt-4 flex justify-between">
                 <div>
                   <h3 className="text-sm text-gray-700">{product.model}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.subcategory}</p>
+                  <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
                 </div>
-                <p className="text-sm font-medium text-gray-900">
+                <span className={`self-start rounded-full px-2 py-0.5 text-xs font-medium ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </p>
+                </span>
               </div>
             </Link>
           ))}
@@ -83,11 +88,11 @@ export default function ProductsTable({
               <div className="flex flex-1 justify-between">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">{product.model}</h3>
-                  <p className="text-sm text-gray-500">{product.subcategory}</p>
+                  <p className="text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
                 </div>
-                <p className="text-sm font-medium text-gray-900 self-center">
+                <span className={`self-center rounded-full px-2 py-0.5 text-xs font-medium ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </p>
+                </span>
               </div>
             </Link>
           ))}
