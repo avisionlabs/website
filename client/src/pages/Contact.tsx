@@ -4,6 +4,7 @@ import Button from '../components/Button'
 
 export default function Contact() {
   const [result, setResult] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [tab, setTab] = useState<'general' | 'sales'>('general')
 
   async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -30,7 +31,7 @@ export default function Contact() {
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           {/* Left — info */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-start">
             <h2 className="text-4xl font-semibold tracking-tight text-gray-900">Get in Touch.</h2>
             <h3 className="mt-4 text-base leading-relaxed text-gray-700">
               Please call us during our office hours or send us an inquiry. We'll get back to you promptly. Thank you!
@@ -66,9 +67,28 @@ export default function Contact() {
             </dl>
           </div>
 
-          {/* Right — form */}
-          <form onSubmit={onSubmit}>
-            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+          {/* Right — form with tabs */}
+          <div>
+            <div className="mb-6 flex gap-2 rounded bg-white p-1">
+              <button
+                type="button"
+                onClick={() => setTab('general')}
+                className={`px-4 py-2 text-sm font-semibold ${tab === 'general' ? 'bg-[var(--primary)] text-white' : 'text-gray-700'}`}
+              >
+                General Inquiry
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('sales')}
+                className={`px-4 py-2 text-sm font-semibold ${tab === 'sales' ? 'bg-[var(--primary)] text-white' : 'text-gray-700'}`}
+              >
+                Sales Inquiry
+              </button>
+            </div>
+
+            {tab === 'general' && (
+              <form onSubmit={onSubmit}>
+                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First name</label>
                 <div className="mt-2.5">
@@ -97,7 +117,7 @@ export default function Contact() {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email</label>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address</label>
                 <div className="mt-2.5">
                   <input
                     id="email"
@@ -111,7 +131,7 @@ export default function Contact() {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="phone-number" className="block text-sm font-semibold text-gray-900">Phone number</label>
+                <label htmlFor="phone-number" className="block text-sm font-semibold text-gray-900">Phone</label>
                 <div className="mt-2.5">
                   <input
                     id="phone-number"
@@ -124,7 +144,20 @@ export default function Contact() {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-900">Message</label>
+                <label htmlFor="subject" className="block text-sm font-semibold text-gray-900">Subject</label>
+                <div className="mt-2.5">
+                  <input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    required
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label htmlFor="message" className="block text-sm font-semibold text-gray-900">Messages / Comments</label>
                 <div className="mt-2.5">
                   <textarea
                     id="message"
@@ -136,16 +169,147 @@ export default function Contact() {
                   />
                 </div>
               </div>
-            </div>
+                </div>
 
-            <div className="mt-8 flex items-center justify-end gap-4">
-              {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
-              {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
-              <Button variant="outline">
-                {result === 'loading' ? 'Sending...' : 'Send message'}
-              </Button>
-            </div>
-          </form>
+                <div className="mt-8 flex items-center justify-end gap-4">
+                  {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
+                  {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
+                  <Button variant="outline">
+                    {result === 'loading' ? 'Sending...' : 'Send message'}
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {tab === 'sales' && (
+              <form onSubmit={onSubmit}>
+                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First name</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="first-name"
+                        name="first-name"
+                        type="text"
+                        autoComplete="given-name"
+                        required
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last name</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="last-name"
+                        name="last-name"
+                        type="text"
+                        autoComplete="family-name"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="company" className="block text-sm font-semibold text-gray-900">Company</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="company"
+                        name="company"
+                        type="text"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="address" className="block text-sm font-semibold text-gray-900">Address</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="address"
+                        name="address"
+                        type="text"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="phone-number" className="block text-sm font-semibold text-gray-900">Phone</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="phone-number"
+                        name="phone-number"
+                        type="tel"
+                        autoComplete="tel"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="model-needed" className="block text-sm font-semibold text-gray-900">Model Needed</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="model-needed"
+                        name="model-needed"
+                        type="text"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="quantity" className="block text-sm font-semibold text-gray-900">Quantity</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="quantity"
+                        name="quantity"
+                        type="number"
+                        min={1}
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="date-needed" className="block text-sm font-semibold text-gray-900">Date Needed (MM/DD/YYYY)</label>
+                    <div className="mt-2.5">
+                      <input
+                        id="date-needed"
+                        name="date-needed"
+                        type="text"
+                        placeholder="MM/DD/YYYY"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label htmlFor="comments" className="block text-sm font-semibold text-gray-900">Other Comments</label>
+                    <div className="mt-2.5">
+                      <textarea
+                        id="comments"
+                        name="comments"
+                        rows={4}
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+                        defaultValue=""
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex items-center justify-end gap-4">
+                  {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
+                  {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
+                  <Button variant="outline">
+                    {result === 'loading' ? 'Sending...' : 'Send message'}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
 
