@@ -9,8 +9,8 @@ export default function Contact() {
   async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setResult('loading')
-
-    const formData = new FormData(e.currentTarget)
+    const formEl = e.currentTarget as HTMLFormElement
+    const formData = new FormData(formEl)
     formData.append('access_key', '8acb327a-7250-40c3-9885-246fafde833a')
 
     const siteFrom = 'service@avision-labs.com'
@@ -35,7 +35,12 @@ export default function Contact() {
 
     const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
     const data = await res.json()
-    setResult(data.success ? 'success' : 'error')
+    if (data.success) {
+      formEl.reset()
+      setResult('success')
+    } else {
+      setResult('error')
+    }
   }
 
   return (
