@@ -496,19 +496,50 @@ type ExistingRow = {
   faq:         unknown;
 };
 
-export function getChangedFields(ex: ExistingRow, data: ProductData): string[] {
+// Postgres JSONB sorts object keys alphabetically on storage, so we must sort
+// keys before comparing to avoid false positives on every scrape.
+function stableStr(val: unknown): string {
+  if (val === null || typeof val !== 'object') return JSON.stringify(val);
+  if (Array.isArray(val)) return '[' + (val as unknown[]).map(stableStr).join(',') + ']';
+  const obj = val as Record<string, unknown>;
+  return '{' + Object.keys(obj).sort().map(k => JSON.stringify(k) + ':' + stableStr(obj[k])).join(',') + '}';
+}
+
+export function getChangedFields(ex: ExistingRow, data: ProductData, debug = false): string[] {
   const changed: string[] = [];
-  if (ex.model       !== data.model)       changed.push('model');
-  if (ex.tagline     !== data.tagline)     changed.push('tagline');
-  if (ex.description !== data.description) changed.push('description');
-  if (ex.category    !== data.category)    changed.push('category');
-  if (ex.series      !== data.series)      changed.push('series');
-  if (ex.imageUrl    !== data.imageUrl)    changed.push('image');
-  if (JSON.stringify(ex.features)  !== JSON.stringify(data.features))  changed.push('features');
-  if (JSON.stringify(ex.specs)     !== JSON.stringify(data.specs))     changed.push('specs');
-  if (JSON.stringify(ex.downloads) !== JSON.stringify(data.downloads)) changed.push('downloads');
-  if (JSON.stringify(ex.supplies)  !== JSON.stringify(data.supplies))  changed.push('supplies');
-  if (JSON.stringify(ex.faq)       !== JSON.stringify(data.faq))       changed.push('faq');
+
+  function checkText(field: string, a: string | null | undefined, b: string | null | undefined) {
+    if (a !== b) {
+      changed.push(field);
+      if (debug) console.log(`    [diff] ${field}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);
+    }
+  }
+
+  function checkJson(field: string, a: unknown, b: unknown) {
+    const sa = stableStr(a), sb = stableStr(b);
+    if (sa !== sb) {
+      changed.push(field);
+      if (debug) {
+        const preview = (s: string) => s.length > 120 ? s.slice(0, 120) + '…' : s;
+        console.log(`    [diff] ${field}:`);
+        console.log(`      db:      ${preview(sa)}`);
+        console.log(`      scraped: ${preview(sb)}`);
+      }
+    }
+  }
+
+  checkText('model',       ex.model,       data.model);
+  checkText('tagline',     ex.tagline,     data.tagline);
+  checkText('description', ex.description, data.description);
+  checkText('category',    ex.category,    data.category);
+  checkText('series',      ex.series,      data.series);
+  checkText('image',       ex.imageUrl,    data.imageUrl);
+  checkJson('features',    ex.features,    data.features);
+  checkJson('specs',       ex.specs,       data.specs);
+  checkJson('downloads',   ex.downloads,   data.downloads);
+  checkJson('supplies',    ex.supplies,    data.supplies);
+  checkJson('faq',         ex.faq,         data.faq);
+
   return changed;
 }
 
@@ -560,7 +591,7 @@ async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
     return { outcome: 'inserted' };
   }
 
-  const changedFields = getChangedFields(existing[0], data);
+  const changedFields = getChangedFields(existing[0], data, true);
   if (changedFields.length === 0) {
     return { outcome: 'unchanged' };
   }

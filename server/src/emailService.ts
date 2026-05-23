@@ -28,7 +28,7 @@ export async function sendScrapeReport(report: ScrapeReport): Promise<void> {
   const html = buildHtml(report, date);
 
   const { error } = await resend.emails.send({
-    from:    'Avision Labs Scraper <scraper@notifications.avisionlabs.com>',
+    from:    'Avision Scraper <onboarding@resend.dev>',
     to,
     subject,
     html,
