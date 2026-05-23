@@ -89,5 +89,36 @@ assert(
   ['model', 'specs'],
 );
 
+// ── JSONB key-order false-positive regression ──────────────────────────────────
+// Postgres JSONB returns keys in alphabetical order, not insertion order.
+// Simulates DB returning specs with sorted keys vs scraper returning them in DOM order.
+const specsInDomOrder    = { 'Scan Speed': '100 ppm', Resolution: '600 dpi', Interface: 'USB' };
+const specsInSortedOrder = { Interface: 'USB', Resolution: '600 dpi', 'Scan Speed': '100 ppm' };
+assert(
+  'specs same data, different key order (JSONB false-positive) → no change',
+  getChangedFields(
+    { ...dbRow(), specs: specsInSortedOrder },
+    { ...base, specs: specsInDomOrder },
+  ),
+  [],
+);
+
+const downloadsReordered = {
+  drivers:       base.downloads.drivers,
+  software:      [],         // moved to front vs original order
+  manuals:       [],
+  brochures:     [],
+  quickGuides:   [],
+  productPhotos: [],
+};
+assert(
+  'downloads same data, different object key order → no change',
+  getChangedFields(
+    { ...dbRow(), downloads: downloadsReordered },
+    base,
+  ),
+  [],
+);
+
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);
