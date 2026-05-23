@@ -20,20 +20,16 @@ type Spec = {
   specValue: string;
 };
 
-type Download = {
-  name: string;
-  type: string;
-  size: string;
-  href: string;
+type DriverItem = { name: string; version?: string; size?: string; os?: string; url: string };
+type DownloadFile = { language?: string; resolution?: string; size?: string; url: string };
+type Downloads = {
+  drivers?: DriverItem[];
+  software?: DriverItem[];
+  manuals?: DownloadFile[];
+  brochures?: DownloadFile[];
+  quickGuides?: DownloadFile[];
+  productPhotos?: DownloadFile[];
 };
-
-const PLACEHOLDER_DOWNLOADS: Download[] = [
-  { name: "Windows Driver (64-bit)", type: "Driver", size: "42 MB", href: "#" },
-  { name: "macOS Driver", type: "Driver", size: "38 MB", href: "#" },
-  { name: "User Manual", type: "Manual", size: "4.2 MB", href: "#" },
-  { name: "Brochure", type: "Manual", size: "1.1 MB", href: "#" },
-  { name: "Firmware Update v2.1", type: "Firmware", size: "18 MB", href: "#" },
-];
 
 type Tab = "specs" | "downloads";
 
@@ -43,6 +39,7 @@ export default function ProductOverview() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [specs, setSpecs] = useState<Spec[]>([]);
+  const [downloads, setDownloads] = useState<Downloads>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("specs");
@@ -56,19 +53,17 @@ export default function ProductOverview() {
       setLoading(true);
       setError(null);
       try {
-        const [productRes, specsRes] = await Promise.all([
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), {
-            signal: controller.signal,
-          }),
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), {
-            signal: controller.signal,
-          }),
+        const [productRes, specsRes, downloadsRes] = await Promise.all([
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`), { signal: controller.signal }),
         ]);
 
         if (!productRes.ok) throw new Error("Product not found");
         if (active) {
           setProduct(await productRes.json());
           if (specsRes.ok) setSpecs(await specsRes.json());
+          if (downloadsRes.ok) setDownloads(await downloadsRes.json());
         }
       } catch (err) {
         if (active && (err as DOMException).name !== "AbortError") {
@@ -227,32 +222,88 @@ export default function ProductOverview() {
                   </p>
                 ))}
 
-              {activeTab === "downloads" && (
-                <ul className="divide-y divide-gray-100">
-                  {PLACEHOLDER_DOWNLOADS.map((dl) => (
-                    <li
-                      key={dl.name}
-                      className="flex items-center justify-between py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {dl.name}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {dl.type} · {dl.size}
-                        </p>
+              {activeTab === "downloads" && (() => {
+                const sections: { label: string; items: { title: string; subtitle?: string; url: string }[] }[] = [
+                  {
+                    label: "Drivers",
+                    items: (downloads.drivers ?? []).map(d => ({
+                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                      url: d.url,
+                    })),
+                  },
+                  {
+                    label: "Software",
+                    items: (downloads.software ?? []).map(d => ({
+                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                      url: d.url,
+                    })),
+                  },
+                  {
+                    label: "Manuals",
+                    items: (downloads.manuals ?? []).map(f => ({
+                      title: f.language ?? "Manual",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Brochures",
+                    items: (downloads.brochures ?? []).map(f => ({
+                      title: f.language ?? "Brochure",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Quick Guides",
+                    items: (downloads.quickGuides ?? []).map(f => ({
+                      title: f.language ?? "Quick Guide",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Product Photos",
+                    items: (downloads.productPhotos ?? []).map(f => ({
+                      title: f.resolution ?? "Photo",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                ].filter(s => s.items.length > 0);
+
+                if (sections.length === 0)
+                  return <p className="text-sm text-gray-400">No downloads available.</p>;
+
+                return (
+                  <div className="space-y-8">
+                    {sections.map(section => (
+                      <div key={section.label}>
+                        <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--primary)" }}>{section.label}</h2>
+                        <ul className="divide-y divide-gray-100">
+                          {section.items.map((item, i) => (
+                            <li key={i} className="flex items-center justify-between py-3">
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{item.title}</p>
+                                {item.subtitle && <p className="text-xs text-gray-400">{item.subtitle}</p>}
+                              </div>
+                              <a
+                                href={item.url}
+                                className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                              >
+                                <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                                Download
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <a
-                        href={dl.href}
-                        className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
-                      >
-                        <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                        Download
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
