@@ -93,26 +93,38 @@ export default function Contact() {
           </div>
 
           {/* Right — form with tabs */}
-          <div>
-            <div className="mb-6 flex gap-2 rounded bg-white p-1">
+          <div className="flex flex-col">
+            <div
+              className="inline-flex w-full gap-2 rounded-2xl border border-[var(--border)] bg-[var(--social-bg)] p-1 shadow-sm"
+            >
               <button
                 type="button"
                 onClick={() => setTab('general')}
-                className={`px-4 py-2 text-sm font-semibold ${tab === 'general' ? 'bg-[var(--primary)] text-white' : 'text-gray-700'}`}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  tab === 'general'
+                    ? 'bg-white text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)]'
+                    : 'text-[var(--primary)] hover:bg-white/80'
+                }`}
               >
                 General Inquiry
               </button>
               <button
                 type="button"
                 onClick={() => setTab('sales')}
-                className={`px-4 py-2 text-sm font-semibold ${tab === 'sales' ? 'bg-[var(--primary)] text-white' : 'text-gray-700'}`}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  tab === 'sales'
+                    ? 'bg-white text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)]'
+                    : 'text-[var(--primary)] hover:bg-white/80'
+                }`}
               >
                 Sales Inquiry
               </button>
             </div>
 
-            {tab === 'general' && <GeneralForm onSubmit={onSubmit} result={result} />}
-            {tab === 'sales' && <SalesForm onSubmit={onSubmit} result={result} />}
+            <div className="mt-6">
+              {tab === 'general' && <GeneralForm onSubmit={onSubmit} result={result} />}
+              {tab === 'sales' && <SalesForm onSubmit={onSubmit} result={result} />}
+            </div>
           </div>
         </div>
       </div>
