@@ -20,20 +20,16 @@ type Spec = {
   specValue: string;
 };
 
-type Download = {
-  name: string;
-  type: string;
-  size: string;
-  href: string;
+type DriverItem = { name: string; version?: string; size?: string; os?: string; url: string };
+type DownloadFile = { language?: string; resolution?: string; size?: string; url: string };
+type Downloads = {
+  drivers?: DriverItem[];
+  software?: DriverItem[];
+  manuals?: DownloadFile[];
+  brochures?: DownloadFile[];
+  quickGuides?: DownloadFile[];
+  productPhotos?: DownloadFile[];
 };
-
-const PLACEHOLDER_DOWNLOADS: Download[] = [
-  { name: "Windows Driver (64-bit)", type: "Driver", size: "42 MB", href: "#" },
-  { name: "macOS Driver", type: "Driver", size: "38 MB", href: "#" },
-  { name: "User Manual", type: "Manual", size: "4.2 MB", href: "#" },
-  { name: "Brochure", type: "Manual", size: "1.1 MB", href: "#" },
-  { name: "Firmware Update v2.1", type: "Firmware", size: "18 MB", href: "#" },
-];
 
 type Tab = "specs" | "downloads";
 
@@ -43,6 +39,7 @@ export default function ProductOverview() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [specs, setSpecs] = useState<Spec[]>([]);
+  const [downloads, setDownloads] = useState<Downloads>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("specs");
@@ -50,34 +47,35 @@ export default function ProductOverview() {
   useEffect(() => {
     if (!model) return;
     const controller = new AbortController();
+    let active = true;
 
     async function load() {
       setLoading(true);
       setError(null);
       try {
-        const [productRes, specsRes] = await Promise.all([
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), {
-            signal: controller.signal,
-          }),
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), {
-            signal: controller.signal,
-          }),
+        const [productRes, specsRes, downloadsRes] = await Promise.all([
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`), { signal: controller.signal }),
         ]);
 
         if (!productRes.ok) throw new Error("Product not found");
-        setProduct(await productRes.json());
-        if (specsRes.ok) setSpecs(await specsRes.json());
+        if (active) {
+          setProduct(await productRes.json());
+          if (specsRes.ok) setSpecs(await specsRes.json());
+          if (downloadsRes.ok) setDownloads(await downloadsRes.json());
+        }
       } catch (err) {
-        if ((err as DOMException).name !== "AbortError") {
+        if (active && (err as DOMException).name !== "AbortError") {
           setError((err as Error).message);
         }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }
 
     load();
-    return () => controller.abort();
+    return () => { active = false; controller.abort(); };
   }, [model]);
 
   if (loading) {
@@ -136,6 +134,7 @@ export default function ProductOverview() {
               <p className="mb-2 text-sm text-gray-400">
                 {[product.category, product.subcategory]
                   .filter(Boolean)
+                  .map(s => s!.replace(/([a-z])([A-Z])/g, '$1 $2'))
                   .join(" / ")}
               </p>
             )}
@@ -157,38 +156,10 @@ export default function ProductOverview() {
             </div>
 
             {product.description && (
-              <p className="mt-6 text-base leading-relaxed text-gray-600">
+              <p className="mt-8 flex gap-3 text-base leading-relaxed text-black">
                 {product.description}
               </p>
             )}
-
-            <div className="mt-8 flex gap-3">
-              <p>
-                The Avision AP33Q Series is a compact monochrome laser printer
-                designed to simplify your office life with reliable,
-                high-quality printing at affordable operating costs. It produces
-                professional black and white output at impressive print speeds
-                of up to 33 pages per minute with built-in automatic duplex
-                printing to help save paper and reduce costs. The printer
-                features a 250-sheet input capacity, compact desktop design, and
-                user-friendly operation for small to medium office environments.
-                Key connectivity features include USB interface and built-in
-                network capability with remote device management via embedded
-                web page, allowing administrators to monitor supplies status,
-                scan count, and copy count by simply entering the printer's IP
-                address in a web browser. The AP33Q Series incorporates optional
-                mobile printing capabilities that enable wireless connectivity
-                to Android devices via Mopria or iOS devices via AirPrint for
-                convenient on-the-go printing. The printer supports various
-                media sizes and types including plain paper, envelopes, labels,
-                and card stock. With its reliable performance, energy-efficient
-                operation, and cost-effective consumables including EzRefill
-                toner options, the AP33Q delivers exceptional value for
-                businesses seeking dependable document output. The compact
-                design makes it suitable for desktop placement while providing
-                professional-quality results for everyday office printing needs.
-              </p>
-            </div>
 
             <div className="mt-8 flex gap-3">
               <a
@@ -236,10 +207,10 @@ export default function ProductOverview() {
                     {specs.map((spec, i) => (
                       <div
                         key={i}
-                        className="flex justify-between border-b border-gray-100 py-3 text-sm"
+                        className="flex items-start justify-between gap-6 border-b border-gray-100 py-3 text-sm"
                       >
-                        <dt className="text-gray-500">{spec.specName}</dt>
-                        <dd className="font-medium text-gray-900">
+                        <dt className="shrink-0 text-gray-500">{spec.specName}</dt>
+                        <dd className="text-right font-medium text-gray-900">
                           {spec.specValue}
                         </dd>
                       </div>
@@ -251,32 +222,88 @@ export default function ProductOverview() {
                   </p>
                 ))}
 
-              {activeTab === "downloads" && (
-                <ul className="divide-y divide-gray-100">
-                  {PLACEHOLDER_DOWNLOADS.map((dl) => (
-                    <li
-                      key={dl.name}
-                      className="flex items-center justify-between py-3"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {dl.name}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {dl.type} · {dl.size}
-                        </p>
+              {activeTab === "downloads" && (() => {
+                const sections: { label: string; items: { title: string; subtitle?: string; url: string }[] }[] = [
+                  {
+                    label: "Drivers",
+                    items: (downloads.drivers ?? []).map(d => ({
+                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                      url: d.url,
+                    })),
+                  },
+                  {
+                    label: "Software",
+                    items: (downloads.software ?? []).map(d => ({
+                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                      url: d.url,
+                    })),
+                  },
+                  {
+                    label: "Manuals",
+                    items: (downloads.manuals ?? []).map(f => ({
+                      title: f.language ?? "Manual",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Brochures",
+                    items: (downloads.brochures ?? []).map(f => ({
+                      title: f.language ?? "Brochure",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Quick Guides",
+                    items: (downloads.quickGuides ?? []).map(f => ({
+                      title: f.language ?? "Quick Guide",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                  {
+                    label: "Product Photos",
+                    items: (downloads.productPhotos ?? []).map(f => ({
+                      title: f.resolution ?? "Photo",
+                      subtitle: f.size,
+                      url: f.url,
+                    })),
+                  },
+                ].filter(s => s.items.length > 0);
+
+                if (sections.length === 0)
+                  return <p className="text-sm text-gray-400">No downloads available.</p>;
+
+                return (
+                  <div className="space-y-8">
+                    {sections.map(section => (
+                      <div key={section.label}>
+                        <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--primary)" }}>{section.label}</h2>
+                        <ul className="divide-y divide-gray-100">
+                          {section.items.map((item, i) => (
+                            <li key={i} className="flex items-center justify-between py-3">
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{item.title}</p>
+                                {item.subtitle && <p className="text-xs text-gray-400">{item.subtitle}</p>}
+                              </div>
+                              <a
+                                href={item.url}
+                                className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                              >
+                                <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                                Download
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <a
-                        href={dl.href}
-                        className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
-                      >
-                        <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                        Download
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

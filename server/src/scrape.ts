@@ -482,13 +482,59 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
 
 // ─── DB upsert ────────────────────────────────────────────────────────────────
 
-async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated' | 'unchanged'> {
+type ExistingRow = {
+  model:       string;
+  tagline:     string | null;
+  description: string | null;
+  category:    string;
+  series:      string;
+  imageUrl:    string | null;
+  features:    unknown;
+  specs:       unknown;
+  downloads:   unknown;
+  supplies:    unknown;
+  faq:         unknown;
+};
+
+export function getChangedFields(ex: ExistingRow, data: ProductData): string[] {
+  const changed: string[] = [];
+  if (ex.model       !== data.model)       changed.push('model');
+  if (ex.tagline     !== data.tagline)     changed.push('tagline');
+  if (ex.description !== data.description) changed.push('description');
+  if (ex.category    !== data.category)    changed.push('category');
+  if (ex.series      !== data.series)      changed.push('series');
+  if (ex.imageUrl    !== data.imageUrl)    changed.push('image');
+  if (JSON.stringify(ex.features)  !== JSON.stringify(data.features))  changed.push('features');
+  if (JSON.stringify(ex.specs)     !== JSON.stringify(data.specs))     changed.push('specs');
+  if (JSON.stringify(ex.downloads) !== JSON.stringify(data.downloads)) changed.push('downloads');
+  if (JSON.stringify(ex.supplies)  !== JSON.stringify(data.supplies))  changed.push('supplies');
+  if (JSON.stringify(ex.faq)       !== JSON.stringify(data.faq))       changed.push('faq');
+  return changed;
+}
+
+export function hasProductChanged(ex: ExistingRow, data: ProductData): boolean {
+  return getChangedFields(ex, data).length > 0;
+}
+
+type UpsertOutcome =
+  | { outcome: 'inserted' }
+  | { outcome: 'updated'; changedFields: string[] }
+  | { outcome: 'unchanged' };
+
+async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
   const existing = await db
     .select({
-      url:       avisionProducts.url,
-      features:  avisionProducts.features,
-      specs:     avisionProducts.specs,
-      downloads: avisionProducts.downloads,
+      model:       avisionProducts.model,
+      tagline:     avisionProducts.tagline,
+      description: avisionProducts.description,
+      category:    avisionProducts.category,
+      series:      avisionProducts.series,
+      imageUrl:    avisionProducts.imageUrl,
+      features:    avisionProducts.features,
+      specs:       avisionProducts.specs,
+      downloads:   avisionProducts.downloads,
+      supplies:    avisionProducts.supplies,
+      faq:         avisionProducts.faq,
     })
     .from(avisionProducts)
     .where(eq(avisionProducts.url, data.url));
@@ -511,62 +557,77 @@ async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated' 
 
   if (existing.length === 0) {
     await db.insert(avisionProducts).values(row);
-    return 'inserted';
+    return { outcome: 'inserted' };
   }
 
-  const ex = existing[0];
-  const driversChanged = JSON.stringify((ex.downloads as any)?.drivers) !== JSON.stringify(data.downloads.drivers);
-  if (driversChanged) console.log(`    ↻ driver versions changed for ${data.model}`);
-
-  const changed =
-    driversChanged ||
-    JSON.stringify(ex.specs)    !== JSON.stringify(data.specs    as unknown) ||
-    JSON.stringify(ex.features) !== JSON.stringify(data.features as unknown);
+  const changedFields = getChangedFields(existing[0], data);
+  if (changedFields.length === 0) {
+    return { outcome: 'unchanged' };
+  }
 
   await db
-    .insert(avisionProducts)
-    .values(row)
-    .onConflictDoUpdate({
-      target: avisionProducts.url,
-      set: changed ? { ...row, updatedAt: new Date() } : { scrapedAt: row.scrapedAt },
-    });
+    .update(avisionProducts)
+    .set({ ...row, updatedAt: new Date() })
+    .where(eq(avisionProducts.url, data.url));
 
-  return changed ? 'updated' : 'unchanged';
+  return { outcome: 'updated', changedFields };
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('Starting Avision product scrape…\n');
+  const { sendScrapeReport } = await import('./emailService');
 
-  const productUrls = await discoverProductUrls();
-  console.log(`\nFound ${productUrls.size} product pages. Scraping…\n`);
+  try {
+    console.log('Starting Avision product scrape…\n');
 
-  let inserted = 0, updated = 0, unchanged = 0, failed = 0;
+    const productUrls = await discoverProductUrls();
+    console.log(`\nFound ${productUrls.size} product pages. Scraping…\n`);
 
-  for (const url of productUrls) {
-    console.log(`Scraping: ${url}`);
-    const data = await scrapeProduct(url);
-    await sleep(DELAY_MS);
+    const insertedProducts: { model: string; category: string; url: string }[] = [];
+    const updatedProducts:  { model: string; category: string; url: string; changedFields: string[] }[] = [];
+    const failedUrls:       string[] = [];
+    let unchanged = 0;
 
-    if (!data) { failed++; continue; }
+    for (const url of productUrls) {
+      console.log(`Scraping: ${url}`);
+      const data = await scrapeProduct(url);
+      await sleep(DELAY_MS);
 
-    const outcome = await upsertProduct(data);
-    if (outcome === 'inserted')       inserted++;
-    else if (outcome === 'updated')   updated++;
-    else                              unchanged++;
-    const icon = outcome === 'inserted' ? '+' : outcome === 'updated' ? '~' : '=';
-    console.log(`  ${icon} ${data.model} (${data.category})`);
+      if (!data) {
+        failedUrls.push(url);
+        continue;
+      }
+
+      const result = await upsertProduct(data);
+      if (result.outcome === 'inserted') {
+        insertedProducts.push({ model: data.model, category: data.category, url: data.url });
+      } else if (result.outcome === 'updated') {
+        updatedProducts.push({ model: data.model, category: data.category, url: data.url, changedFields: result.changedFields });
+      } else {
+        unchanged++;
+      }
+      const icon = result.outcome === 'inserted' ? '+' : result.outcome === 'updated' ? '~' : '=';
+      console.log(`  ${icon} ${data.model} (${data.category})`);
+    }
+
+    console.log('\n─── Scrape complete ───────────────────────');
+    console.log(`  Inserted  : ${insertedProducts.length}`);
+    console.log(`  Updated   : ${updatedProducts.length}`);
+    console.log(`  Unchanged : ${unchanged}`);
+    console.log(`  Failed    : ${failedUrls.length}`);
+
+    await sendScrapeReport({ inserted: insertedProducts, updated: updatedProducts, failed: failedUrls, unchanged });
+    process.exit(0);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const stack   = err instanceof Error ? (err.stack ?? message) : message;
+    console.error('Fatal scrape error:', stack);
+    await sendScrapeReport({ inserted: [], updated: [], failed: [], unchanged: 0, error: stack });
+    process.exit(1);
   }
-
-  console.log('\n─── Scrape complete ───────────────────────');
-  console.log(`  Inserted  : ${inserted}`);
-  console.log(`  Updated   : ${updated}`);
-  console.log(`  Unchanged : ${unchanged}`);
-  console.log(`  Failed    : ${failed}`);
-  process.exit(0);
 }
 
 if (require.main === module) {
-  main().catch(err => { console.error(err); process.exit(1); });
+  main();
 }
