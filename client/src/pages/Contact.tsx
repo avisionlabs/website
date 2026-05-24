@@ -44,7 +44,7 @@ export default function Contact() {
   }
 
   return (
-    <div className="isolate relative bg-white px-6 py-24 sm:py-32 lg:px-8">
+    <div className="isolate relative bg-slate-100 px-6 py-24 sm:py-32 lg:px-8">
       {/* Blobs */}
       <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
         <div
@@ -93,17 +93,17 @@ export default function Contact() {
           </div>
 
           {/* Right — form with tabs */}
-          <div className="flex flex-col">
+          <div className="flex flex-col rounded-[32px] border border-slate-200 bg-slate-50 p-8 shadow-sm">
             <div
-              className="inline-flex w-full gap-2 rounded-2xl border border-[var(--border)] bg-[var(--social-bg)] p-1 shadow-sm"
+              className="inline-flex w-full gap-2 rounded-2xl border border-blue-100 bg-blue-50 p-1 shadow-sm"
             >
               <button
                 type="button"
                 onClick={() => setTab('general')}
                 className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                   tab === 'general'
-                    ? 'bg-white text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)]'
-                    : 'text-[var(--primary)] hover:bg-white/80'
+                    ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
+                    : 'text-blue-800 hover:bg-blue-100'
                 }`}
               >
                 General Inquiry
@@ -113,8 +113,8 @@ export default function Contact() {
                 onClick={() => setTab('sales')}
                 className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
                   tab === 'sales'
-                    ? 'bg-white text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)]'
-                    : 'text-[var(--primary)] hover:bg-white/80'
+                    ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
+                    : 'text-blue-800 hover:bg-blue-100'
                 }`}
               >
                 Sales Inquiry
@@ -131,7 +131,7 @@ export default function Contact() {
 
       {/* Support tiles — full width */}
       
-      <div className="mt-24 bg-gray-50 px-6 py-8 lg:px-0">
+      <div className="mt-24 bg-slate-100 px-6 py-8 lg:px-0">
         <h2 className="mx-auto max-w-7xl text-4xl font-semibold tracking-tight text-gray-900 mb-8">We're with you after the sale.</h2>
         <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 lg:grid-cols-3">
           {[
@@ -160,8 +160,8 @@ export default function Contact() {
               email: 'sales@avision-labs.com',
             },
           ].map((tile) => (
-            <div key={tile.title} className="flex gap-4 bg-white px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-base">
+            <div key={tile.title} className="flex gap-4 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-base">
                 <tile.icon className="h-5 w-5" style={{ color: tile.accent }} />
               </div>
               <div>
