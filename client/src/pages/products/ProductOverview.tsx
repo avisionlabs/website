@@ -103,6 +103,8 @@ export default function ProductOverview() {
     setLoading(true);
     setError(null);
 
+    window.scrollTo(0, 0);
+
     async function load() {
       try {
         const [productRes, specsRes, downloadsRes] = await Promise.all([
