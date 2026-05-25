@@ -22,7 +22,7 @@ function NavLink({
     <a
       href={href}
       style={{
-        fontSize: "18px",
+        fontSize: "16px",
         fontWeight: active ? 600 : 400,
         color: active ? "var(--text)" : "var(--text-2)",
         textDecoration: "none",
@@ -64,7 +64,7 @@ function DropdownNavItem({
               outline: "none",
               cursor: "pointer",
               padding: 0,
-              fontSize: "18px",
+              fontSize: "16px",
               fontWeight: 400,
               color: open ? "var(--text)" : "var(--text-2)",
               transition: "color 0.2s",
@@ -102,7 +102,7 @@ function DropdownNavItem({
                 style={{
                   display: "block",
                   padding: "10px 20px",
-                  fontSize: "15px",
+                  fontSize: "14px",
                   color: "var(--text-2)",
                   textDecoration: "none",
                   transition: "background 0.15s, color 0.15s",
