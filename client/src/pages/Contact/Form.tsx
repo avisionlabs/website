@@ -13,7 +13,7 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
     <form onSubmit={onSubmit}>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First name</label>
+          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name</label>
           <div className="mt-2.5">
             <input
               id="first-name"
@@ -27,7 +27,7 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div>
-          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last name</label>
+          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name</label>
           <div className="mt-2.5">
             <input
               id="last-name"
@@ -97,7 +97,7 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
       <div className="mt-8 flex items-center justify-end gap-4">
         {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
         {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
-        <Button variant="outline">{result === 'loading' ? 'Sending...' : 'Send message'}</Button>
+        <Button variant="outline" style={{ fontSize: '16px', padding: '4px 12px' }}>{result === 'loading' ? 'Sending...' : 'Send message'}</Button>
       </div>
     </form>
   )
@@ -108,7 +108,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
     <form onSubmit={onSubmit}>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First name</label>
+          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name</label>
           <div className="mt-2.5">
             <input
               id="first-name"
@@ -122,7 +122,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div>
-          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last name</label>
+          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name</label>
           <div className="mt-2.5">
             <input
               id="last-name"
@@ -135,7 +135,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email</label>
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address</label>
           <div className="mt-2.5">
             <input
               id="email"
@@ -149,7 +149,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="company" className="block text-sm font-semibold text-gray-900">Company</label>
+          <label htmlFor="company" className="block text-sm font-semibold text-gray-900">Company Name</label>
           <div className="mt-2.5">
             <input
               id="company"
@@ -161,7 +161,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="address" className="block text-sm font-semibold text-gray-900">Address</label>
+          <label htmlFor="address" className="block text-sm font-semibold text-gray-900">Company Address</label>
           <div className="mt-2.5">
             <input
               id="address"
@@ -240,7 +240,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
       <div className="mt-8 flex items-center justify-end gap-4">
         {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
         {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
-        <Button variant="outline">{result === 'loading' ? 'Sending...' : 'Send message'}</Button>
+        <Button variant="outline" style={{ fontSize: '16px', padding: '4px 12px' }}>{result === 'loading' ? 'Sending...' : 'Send message'}</Button>
       </div>
     </form>
   )

@@ -93,12 +93,12 @@ export default function Contact() {
           {/* Right — form with tabs */}
           <div className="flex flex-col rounded-[32px] border border-slate-200 bg-slate-50 p-8 shadow-sm">
             <div
-              className="inline-flex w-full gap-2 rounded-2xl border border-blue-100 bg-blue-50 p-1 shadow-sm"
+              className="inline-flex w-full gap-2 rounded-2xl border border-blue-100 bg-blue-50 shadow-sm"
             >
               <button
                 type="button"
                 onClick={() => setTab('general')}
-                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
                   tab === 'general'
                     ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
                     : 'text-blue-800 hover:bg-blue-100'
@@ -109,7 +109,7 @@ export default function Contact() {
               <button
                 type="button"
                 onClick={() => setTab('sales')}
-                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
                   tab === 'sales'
                     ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
                     : 'text-blue-800 hover:bg-blue-100'
