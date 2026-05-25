@@ -252,7 +252,7 @@ export default function Navbar() {
         </div>
 
         {/* CTA Button */}
-        <Button href="/support" className="desktop-nav">
+        <Button href="/support" className="desktop-nav" style={{ fontSize: "16px" }}>
           Support
         </Button>
 
