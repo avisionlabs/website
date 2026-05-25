@@ -8,7 +8,7 @@ Product catalog and search site for Avision scanners and printers.
 |---|---|
 | Frontend | React + Vite + TypeScript, Tailwind CSS, Headless UI, Heroicons, React Router |
 | Backend | Express, Drizzle ORM, PostgreSQL (Neon) |
-| Scraper | Cheerio, native fetch |
+| Scraper | Cheerio, native fetch, Resend (email reports) |
 | Automation | GitHub Actions |
 
 ## Project Structure
@@ -17,12 +17,13 @@ Product catalog and search site for Avision scanners and printers.
 client/   React frontend
 server/   Express API + scraper
   src/
-    index.ts       API server
-    scrape.ts      Avision.com product scraper
+    index.ts          API server
+    scrape.ts         Avision.com product scraper
+    scrape.test.ts    Scraper unit tests (change-detection logic)
+    emailService.ts   Post-scrape HTML email reports via Resend
     db/
-      schema.ts    Drizzle table definitions
-      seed.ts      Manual product seed data
-      index.ts     DB client (Neon serverless)
+      schema.ts       Drizzle table definitions
+      index.ts        DB client (Neon serverless)
 ```
 
 ## Setup
@@ -36,6 +37,10 @@ server/   Express API + scraper
 Create `server/.env`:
 ```
 DATABASE_URL=postgres://...
+
+# Optional — enables post-scrape email reports via Resend
+RESEND_API_KEY=re_...
+REPORT_EMAIL=you@example.com
 ```
 
 ### Install & run
@@ -61,7 +66,9 @@ cd main folder && npm run dev
 
 ## Scraper
 
-Crawls all product pages on avision.com and stores structured data in the `avision_products` table. Extracts features, specs, drivers, manuals, brochures, quick guides, product photos, and FAQ.
+Crawls all product pages on avision.com and stores structured data in the `avision_products` table. Extracts features, specs, drivers, manuals, brochures, quick guides, and product photos.
+
+After each run, a summary email is sent via Resend listing inserted, updated, unchanged, and failed products — if `RESEND_API_KEY` and `REPORT_EMAIL` are set.
 
 ```bash
 cd server && npm run scrape
@@ -77,6 +84,8 @@ Runs automatically every Sunday at 3 AM UTC via GitHub Actions. Can also be trig
 | GET | `/api/products` | All products (supports `?category=` `?subcategory=`) |
 | GET | `/api/products/:model` | Single product by model |
 | GET | `/api/products/:model/specs` | Specs for a product |
+| GET | `/api/products/:model/features` | Features for a product |
+| GET | `/api/products/:model/downloads` | Downloads (drivers, manuals, etc.) for a product |
 | GET | `/api/categories` | All categories |
 | GET | `/api/subcategories` | All subcategories (supports `?category=`) |
 | GET | `/api/avision/search?q=` | Full-text search across scraped products |
