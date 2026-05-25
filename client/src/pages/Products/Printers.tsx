@@ -1,6 +1,6 @@
 'use client'
 
-import ProductsTable from '../../components/ProductsTable'
+import ProductsTable, { ProductsSkeleton } from '../../components/ProductsTable'
 import { useEffect, useMemo, useState } from 'react'
 import { useProductFilters } from '../../hooks/useProductFilters'
 import { apiUrl } from '../../lib/api'
@@ -40,9 +40,10 @@ export default function Printers() {
     const controller = new AbortController()
     let active = true
 
+    setLoading(true)
+    setError(null)
+
     async function load() {
-      setLoading(true)
-      setError(null)
 
       try {
         const params = new URLSearchParams({ category: 'Printers and MFPs' })
@@ -108,7 +109,7 @@ export default function Printers() {
 
           {/* Product grid */}
           <div className="lg:col-span-3">
-            {loading && <p className="text-lg text-gray-600">Loading...</p>}
+            {loading && <ProductsSkeleton view={view} />}
             {error && <p className="text-lg text-red-500">Error: {error}</p>}
             {!loading && !error && filtered.length === 0 && (
               <p className="text-lg text-gray-600">No products found.</p>

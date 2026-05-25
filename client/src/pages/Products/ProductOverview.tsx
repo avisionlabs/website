@@ -20,8 +20,19 @@ type Spec = {
   specValue: string;
 };
 
-type DriverItem = { name: string; version?: string; size?: string; os?: string; url: string };
-type DownloadFile = { language?: string; resolution?: string; size?: string; url: string };
+type DriverItem = {
+  name: string;
+  version?: string;
+  size?: string;
+  os?: string;
+  url: string;
+};
+type DownloadFile = {
+  language?: string;
+  resolution?: string;
+  size?: string;
+  url: string;
+};
 type Downloads = {
   drivers?: DriverItem[];
   software?: DriverItem[];
@@ -32,6 +43,77 @@ type Downloads = {
 };
 
 type Tab = "specs" | "downloads";
+
+function ProductOverviewSkeleton() {
+  return (
+    <div className="bg-white">
+      <main className="mx-auto max-w-7xl px-6 py-12 lg:px-0">
+        <div className="mb-8 h-4 w-12 rounded bg-gray-200 animate-pulse" />
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 animate-pulse">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg
+                className="h-10 w-10 animate-spin text-gray-300"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div className="flex flex-col animate-pulse">
+            <div className="mb-2 h-3 w-36 rounded bg-gray-100" />
+            <div className="h-8 w-64 rounded bg-gray-200" />
+            <div className="mt-3 h-5 w-16 rounded-full bg-gray-200" />
+            <div className="mt-8 space-y-2">
+              <div className="h-3.5 w-full rounded bg-gray-100" />
+              <div className="h-3.5 w-full rounded bg-gray-100" />
+              <div className="h-3.5 w-5/6 rounded bg-gray-100" />
+              <div className="h-3.5 w-4/6 rounded bg-gray-100" />
+            </div>
+            <div className="mt-8 h-11 w-36 rounded-lg bg-gray-200" />
+          </div>
+        </div>
+        <div className="mt-16 animate-pulse">
+          <div className="flex gap-6 border-b border-gray-200 pb-3">
+            <div className="h-4 w-40 rounded bg-gray-200" />
+            <div className="h-4 w-36 rounded bg-gray-100" />
+          </div>
+          <div className="mt-6 grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-y-0 sm:gap-x-12">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between gap-6 border-b border-gray-100 py-3"
+              >
+                <div
+                  className="h-3 rounded bg-gray-100"
+                  style={{ width: `${90 + (i % 4) * 20}px` }}
+                />
+                <div
+                  className="h-3 rounded bg-gray-200"
+                  style={{ width: `${60 + (i % 3) * 15}px` }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
 
 export default function ProductOverview() {
   const { model } = useParams<{ model: string }>();
@@ -49,14 +131,24 @@ export default function ProductOverview() {
     const controller = new AbortController();
     let active = true;
 
+    setLoading(true);
+    setError(null);
+
+    window.scrollTo(0, 0);
+
     async function load() {
-      setLoading(true);
-      setError(null);
       try {
         const [productRes, specsRes, downloadsRes] = await Promise.all([
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), { signal: controller.signal }),
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), { signal: controller.signal }),
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), {
+            signal: controller.signal,
+          }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), {
+            signal: controller.signal,
+          }),
+          fetch(
+            apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`),
+            { signal: controller.signal },
+          ),
         ]);
 
         if (!productRes.ok) throw new Error("Product not found");
@@ -75,16 +167,13 @@ export default function ProductOverview() {
     }
 
     load();
-    return () => { active = false; controller.abort(); };
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [model]);
 
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl px-6 pt-24">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
+  if (loading) return <ProductOverviewSkeleton />;
 
   if (error || !product) {
     return (
@@ -134,7 +223,7 @@ export default function ProductOverview() {
               <p className="mb-2 text-sm text-gray-400">
                 {[product.category, product.subcategory]
                   .filter(Boolean)
-                  .map(s => s!.replace(/([a-z])([A-Z])/g, '$1 $2'))
+                  .map((s) => s!.replace(/([a-z])([A-Z])/g, "$1 $2"))
                   .join(" / ")}
               </p>
             )}
@@ -209,7 +298,9 @@ export default function ProductOverview() {
                         key={i}
                         className="flex items-start justify-between gap-6 border-b border-gray-100 py-3 text-sm"
                       >
-                        <dt className="shrink-0 text-gray-500">{spec.specName}</dt>
+                        <dt className="shrink-0 text-gray-500">
+                          {spec.specName}
+                        </dt>
                         <dd className="text-right font-medium text-gray-900">
                           {spec.specValue}
                         </dd>
@@ -222,88 +313,110 @@ export default function ProductOverview() {
                   </p>
                 ))}
 
-              {activeTab === "downloads" && (() => {
-                const sections: { label: string; items: { title: string; subtitle?: string; url: string }[] }[] = [
-                  {
-                    label: "Drivers",
-                    items: (downloads.drivers ?? []).map(d => ({
-                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
-                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
-                      url: d.url,
-                    })),
-                  },
-                  {
-                    label: "Software",
-                    items: (downloads.software ?? []).map(d => ({
-                      title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
-                      subtitle: [d.os, d.size].filter(Boolean).join(" · "),
-                      url: d.url,
-                    })),
-                  },
-                  {
-                    label: "Manuals",
-                    items: (downloads.manuals ?? []).map(f => ({
-                      title: f.language ?? "Manual",
-                      subtitle: f.size,
-                      url: f.url,
-                    })),
-                  },
-                  {
-                    label: "Brochures",
-                    items: (downloads.brochures ?? []).map(f => ({
-                      title: f.language ?? "Brochure",
-                      subtitle: f.size,
-                      url: f.url,
-                    })),
-                  },
-                  {
-                    label: "Quick Guides",
-                    items: (downloads.quickGuides ?? []).map(f => ({
-                      title: f.language ?? "Quick Guide",
-                      subtitle: f.size,
-                      url: f.url,
-                    })),
-                  },
-                  {
-                    label: "Product Photos",
-                    items: (downloads.productPhotos ?? []).map(f => ({
-                      title: f.resolution ?? "Photo",
-                      subtitle: f.size,
-                      url: f.url,
-                    })),
-                  },
-                ].filter(s => s.items.length > 0);
+              {activeTab === "downloads" &&
+                (() => {
+                  const sections: {
+                    label: string;
+                    items: { title: string; subtitle?: string; url: string }[];
+                  }[] = [
+                    {
+                      label: "Drivers",
+                      items: (downloads.drivers ?? []).map((d) => ({
+                        title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                        subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                        url: d.url,
+                      })),
+                    },
+                    {
+                      label: "Software",
+                      items: (downloads.software ?? []).map((d) => ({
+                        title: `${d.name}${d.version ? ` v${d.version}` : ""}`,
+                        subtitle: [d.os, d.size].filter(Boolean).join(" · "),
+                        url: d.url,
+                      })),
+                    },
+                    {
+                      label: "Manuals",
+                      items: (downloads.manuals ?? []).map((f) => ({
+                        title: f.language ?? "Manual",
+                        subtitle: f.size,
+                        url: f.url,
+                      })),
+                    },
+                    {
+                      label: "Brochures",
+                      items: (downloads.brochures ?? []).map((f) => ({
+                        title: f.language ?? "Brochure",
+                        subtitle: f.size,
+                        url: f.url,
+                      })),
+                    },
+                    {
+                      label: "Quick Guides",
+                      items: (downloads.quickGuides ?? []).map((f) => ({
+                        title: f.language ?? "Quick Guide",
+                        subtitle: f.size,
+                        url: f.url,
+                      })),
+                    },
+                    {
+                      label: "Product Photos",
+                      items: (downloads.productPhotos ?? []).map((f) => ({
+                        title: f.resolution ?? "Photo",
+                        subtitle: f.size,
+                        url: f.url,
+                      })),
+                    },
+                  ].filter((s) => s.items.length > 0);
 
-                if (sections.length === 0)
-                  return <p className="text-sm text-gray-400">No downloads available.</p>;
+                  if (sections.length === 0)
+                    return (
+                      <p className="text-sm text-gray-400">
+                        No downloads available.
+                      </p>
+                    );
 
-                return (
-                  <div className="space-y-8">
-                    {sections.map(section => (
-                      <div key={section.label}>
-                        <h2 className="mb-2 text-sm font-semibold" style={{ color: "var(--primary)" }}>{section.label}</h2>
-                        <ul className="divide-y divide-gray-100">
-                          {section.items.map((item, i) => (
-                            <li key={i} className="flex items-center justify-between py-3">
-                              <div>
-                                <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                                {item.subtitle && <p className="text-xs text-gray-400">{item.subtitle}</p>}
-                              </div>
-                              <a
-                                href={item.url}
-                                className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                  return (
+                    <div className="space-y-8">
+                      {sections.map((section) => (
+                        <div key={section.label}>
+                          <h2
+                            className="mb-2 text-sm font-semibold"
+                            style={{ color: "var(--primary)" }}
+                          >
+                            {section.label}
+                          </h2>
+                          <ul className="divide-y divide-gray-100">
+                            {section.items.map((item, i) => (
+                              <li
+                                key={i}
+                                className="flex items-center justify-between py-3"
                               >
-                                <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-                                Download
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {item.title}
+                                  </p>
+                                  {item.subtitle && (
+                                    <p className="text-xs text-gray-400">
+                                      {item.subtitle}
+                                    </p>
+                                  )}
+                                </div>
+                                <a
+                                  href={item.url}
+                                  className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                                >
+                                  <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                                  Download
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
             </div>
           </div>
         </div>
