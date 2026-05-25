@@ -83,7 +83,7 @@ app.get('/api/products/:model/specs', httpCache(), async (req, res) => {
     const rows = await db
       .select({ id: avisionProducts.id, specs: avisionProducts.specs })
       .from(avisionProducts)
-      .where(eq(avisionProducts.model, model));
+      .where(eq(avisionProducts.model, model as string));
 
     if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
 
@@ -113,7 +113,7 @@ app.get('/api/products/:model/features', httpCache(), async (req, res) => {
     const rows = await db
       .select({ features: avisionProducts.features })
       .from(avisionProducts)
-      .where(eq(avisionProducts.model, model));
+      .where(eq(avisionProducts.model, model as string));
 
     if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
 
@@ -131,7 +131,7 @@ app.get('/api/products/:model/downloads', httpCache(), async (req, res) => {
     const rows = await db
       .select({ downloads: avisionProducts.downloads })
       .from(avisionProducts)
-      .where(eq(avisionProducts.model, req.params.model));
+      .where(eq(avisionProducts.model, req.params.model as string));
 
     if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
     res.json(rows[0].downloads ?? {});
@@ -155,7 +155,7 @@ app.get('/api/products/:model', httpCache(), async (req, res) => {
         avCategory: avisionProducts.category,
       })
       .from(avisionProducts)
-      .where(eq(avisionProducts.model, model));
+      .where(eq(avisionProducts.model, model as string));
 
     if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
 
