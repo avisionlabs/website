@@ -352,6 +352,8 @@ export default function ProductOverview() {
                                 </div>
                                 <a
                                   href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
                                 >
                                   <ArrowDownTrayIcon className="h-3.5 w-3.5" />
