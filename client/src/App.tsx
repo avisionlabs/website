@@ -29,8 +29,8 @@ function App() {
             <Route path="/support" element={<Support />} />
           </Routes>
         </div>
+        <Footer />
       </Suspense>
-      <Footer />
     </>
   )
 }
