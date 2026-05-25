@@ -1,6 +1,7 @@
 'use client'
 
-import ProductsTable, { ProductsSkeleton } from '../../components/ProductsTable'
+import ProductsTable from '../../components/ProductsTable'
+import { ProductsSkeleton } from '../../components/Skeletons'
 import { useEffect, useMemo, useState } from 'react'
 import { useProductFilters } from "../../hooks/useProductFilters"
 import { apiUrl } from '../../lib/api'
