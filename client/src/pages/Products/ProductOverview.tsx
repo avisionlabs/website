@@ -171,7 +171,7 @@ export default function ProductOverview() {
                     : "bg-gray-100 text-gray-500"
                 }`}
               >
-                {product.inStock ? "In Stock" : "Out of Stock"}
+                {product.inStock ? "In Stock" : "Not Available"}
               </span>
             </div>
 

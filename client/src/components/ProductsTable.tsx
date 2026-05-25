@@ -65,14 +65,14 @@ export default function ProductsTable({
                   <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 rounded-b-lg bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
               )}
-              <div className="mt-4 flex justify-between">
-                <div>
-                  <h3 className="text-sm text-gray-700">{product.model}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
+              <div className="mt-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                  <span className={`self-start shrink-0 rounded-full px-2 py-0.5 text-xs font-medium sm:order-last sm:ml-2 ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {product.inStock ? 'In Stock' : 'Not Available'}
+                  </span>
+                  <h3 className="mt-1 text-sm text-gray-700 sm:order-first sm:mt-0">{product.model}</h3>
                 </div>
-                <span className={`self-start rounded-full px-2 py-0.5 text-xs font-medium ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </span>
+                <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
               </div>
             </Link>
           ))}
