@@ -22,13 +22,13 @@ export async function sendScrapeReport(report: ScrapeReport): Promise<void> {
   const isError = !!report.error;
 
   const subject = isError
-    ? `⚠️ Avision Scrape FAILED — ${date}`
-    : `Avision Scrape — ${date} | +${report.inserted.length} ~${report.updated.length} ✗${report.failed.length}`;
+    ? `⚠️ Avision Labs Products Scrape FAILED — ${date}`
+    : `Avision Labs Products Scrape — ${date} | +${report.inserted.length} ~${report.updated.length} ✗${report.failed.length}`;
 
   const html = buildHtml(report, date);
 
   const { error } = await resend.emails.send({
-    from:    'Avision Scraper <onboarding@resend.dev>',
+    from:    'Avision Labs Products Scraper <onboarding@resend.dev>',
     to,
     subject,
     html,

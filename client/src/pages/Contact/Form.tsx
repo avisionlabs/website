@@ -135,6 +135,20 @@ export function SalesForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div className="sm:col-span-2">
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email</label>
+          <div className="mt-2.5">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
+            />
+          </div>
+        </div>
+
+        <div className="sm:col-span-2">
           <label htmlFor="company" className="block text-sm font-semibold text-gray-900">Company</label>
           <div className="mt-2.5">
             <input

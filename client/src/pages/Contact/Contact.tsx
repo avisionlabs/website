@@ -13,8 +13,6 @@ export default function Contact() {
     const formData = new FormData(formEl)
     formData.append('access_key', '8acb327a-7250-40c3-9885-246fafde833a')
 
-    const siteFrom = 'service@avision-labs.com'
-    formData.append('from', siteFrom)
     const userEmail = formData.get('email')
     if (userEmail) formData.append('reply_to', String(userEmail))
 
