@@ -1,10 +1,13 @@
 import { ClockIcon, EnvelopeIcon, PhoneIcon, WrenchIcon, ShieldCheckIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { GeneralForm, SalesForm } from './Form'
 
 export default function Contact() {
+  const [searchParams] = useSearchParams()
   const [result, setResult] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [tab, setTab] = useState<'general' | 'sales'>('general')
+  const [tab, setTab] = useState<'general' | 'sales'>(searchParams.get('tab') === 'sales' ? 'sales' : 'general')
+  const defaultModel = searchParams.get('model') ?? undefined
 
   async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -121,7 +124,7 @@ export default function Contact() {
 
             <div className="mt-6">
               {tab === 'general' && <GeneralForm onSubmit={onSubmit} result={result} />}
-              {tab === 'sales' && <SalesForm onSubmit={onSubmit} result={result} />}
+              {tab === 'sales' && <SalesForm onSubmit={onSubmit} result={result} defaultModel={defaultModel} />}
             </div>
           </div>
         </div>

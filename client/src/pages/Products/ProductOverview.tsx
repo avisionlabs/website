@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { apiUrl } from "../../lib/api";
+import Button from "../../components/Button";
 
 type Product = {
   id: number;
@@ -251,13 +252,9 @@ export default function ProductOverview() {
             )}
 
             <div className="mt-8 flex gap-3">
-              <a
-                href="/contact"
-                className="rounded-lg px-6 py-3 text-sm font-semibold text-white"
-                style={{ background: "var(--primary)" }}
-              >
+              <Button onClick={() => navigate(`/contact?tab=sales&model=${encodeURIComponent(product.model)}`)} style={{ fontSize: "16px", boxShadow: "none" }}>
                 Request a Quote
-              </a>
+              </Button>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ type ResultState = 'idle' | 'loading' | 'success' | 'error'
 interface FormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
   result: ResultState
+  defaultModel?: string
 }
 
 export function GeneralForm({ onSubmit, result }: FormProps) {
@@ -103,7 +104,7 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
   )
 }
 
-export function SalesForm({ onSubmit, result }: FormProps) {
+export function SalesForm({ onSubmit, result, defaultModel }: FormProps) {
   return (
     <form onSubmit={onSubmit}>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -192,6 +193,7 @@ export function SalesForm({ onSubmit, result }: FormProps) {
               id="model-needed"
               name="model-needed"
               type="text"
+              defaultValue={defaultModel}
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
