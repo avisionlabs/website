@@ -219,8 +219,7 @@ app.get('/api/avision/search', httpCache(), async (req, res) => {
         ilike(avisionProducts.model,    `%${q}%`),
         ilike(avisionProducts.category, `%${q}%`),
         ilike(avisionProducts.series,   `%${q}%`),
-        ilike(avisionProducts.tagline,  `%${q}%`),
-        sql`cast(${avisionProducts.specs} as text) ilike ${'%' + q + '%'}`,
+sql`cast(${avisionProducts.specs} as text) ilike ${'%' + q + '%'}`,
       ));
 
     res.json(result);

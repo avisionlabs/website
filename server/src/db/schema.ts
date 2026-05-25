@@ -4,7 +4,6 @@ import { pgTable, serial, text, jsonb, timestamp, boolean, index } from 'drizzle
 export const avisionProducts = pgTable('avision_products', {
   id:          serial('id').primaryKey(),
   model:       text('model').notNull(),
-  tagline:     text('tagline'),
   description: text('description'),
   category:    text('category').notNull(),
   series:      text('series').notNull().default(''),
@@ -13,8 +12,6 @@ export const avisionProducts = pgTable('avision_products', {
   features:    jsonb('features'),
   specs:       jsonb('specs'),
   downloads:   jsonb('downloads'),
-  supplies:    jsonb('supplies'),
-  faq:         jsonb('faq'),
   inStock:     boolean('in_stock').default(false).notNull(),
   scrapedAt:   timestamp('scraped_at', { mode: 'date' }).notNull(),
   createdAt:   timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),

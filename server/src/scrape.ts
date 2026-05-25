@@ -32,12 +32,8 @@ interface Downloads {
   software:      DriverItem[];
 }
 
-interface SupplyItem { name: string; description: string; url: string; }
-interface FaqItem    { title: string; steps: string[]; }
-
 interface ProductData {
   model:       string;
-  tagline:     string | null;
   description: string | null;
   category:    string;
   series:      string;
@@ -47,8 +43,6 @@ interface ProductData {
   features:    Feature[];
   specs:       Record<string, string>;
   downloads:   Downloads;
-  supplies:    SupplyItem[];
-  faq:         FaqItem[];
 }
 
 // ─── Network helpers ──────────────────────────────────────────────────────────
@@ -162,24 +156,14 @@ function parseBreadcrumbs(
   return { category, series };
 }
 
-// Tagline + description live in .woocommerce-product-details__short-description
-// <h3><span>Tagline</span></h3>  <p>Description text</p>
-function parseTaglineAndDescription($: cheerio.CheerioAPI): {
-  tagline: string | null;
-  description: string | null;
-} {
+function parseDescription($: cheerio.CheerioAPI): string | null {
   const container = $('.woocommerce-product-details__short-description');
-  if (!container.length) return { tagline: null, description: null };
-
-  const tagline = container.find('h3').first().text().trim() || null;
-  const description =
-    container.find('p')
-      .map((_, el) => $(el).text().replace(/ /g, ' ').trim())
-      .get()
-      .filter(Boolean)
-      .join('\n\n') || null;
-
-  return { tagline, description };
+  if (!container.length) return null;
+  return container.find('p')
+    .map((_, el) => $(el).text().replace(/ /g, ' ').trim())
+    .get()
+    .filter(Boolean)
+    .join('\n\n') || null;
 }
 
 // Main product image has class wp-post-image
@@ -387,71 +371,6 @@ function parseDownloads($: cheerio.CheerioAPI): Downloads {
   return result;
 }
 
-function parseSupplies($: cheerio.CheerioAPI, pageUrl: string): SupplyItem[] {
-  const items: SupplyItem[] = [];
-  const origin = new URL(pageUrl).origin;
-
-  let container = $('[id*="suppli"],[id*="accessor"],[class*="suppli"],[class*="accessor"]').first();
-  if (!container.length) {
-    $('h2,h3,h4,p,strong').each((_, el) => {
-      if (container.length) return false;
-      if (!/suppli|accessor/i.test($(el).text())) return;
-      container = $(el).parent();
-    });
-  }
-  if (!container.length) return items;
-
-  container.find('a[href]').each((_, el) => {
-    const href = $(el).attr('href') ?? '';
-    if (!href.includes('/shop/')) return;
-    const abs = normalizeUrl(href, origin);
-    if (!abs || abs === pageUrl) return;
-    const name = $(el).find('h2,h3,h4,h5,strong,b').first().text().trim()
-               || $(el).attr('title')?.trim() || '';
-    const description = $(el).find('p').first().text().trim();
-    if (name && !items.some(i => i.url === abs)) items.push({ name, description, url: abs });
-  });
-
-  return items;
-}
-
-// FAQ data is in a <script> tag: window.HELPIE_FAQS = [{collection:{},items:[...]}]
-function parseFaq($: cheerio.CheerioAPI): FaqItem[] {
-  const items: FaqItem[] = [];
-
-  $('script').each((_, el) => {
-    const content = $(el).html() ?? '';
-    const match = content.match(/window\.HELPIE_FAQS\s*=\s*(\[[\s\S]*?\]);/);
-    if (!match) return;
-
-    let faqData: any;
-    try { faqData = JSON.parse(match[1]); } catch { return; }
-    if (!Array.isArray(faqData)) return;
-
-    for (const collection of faqData) {
-      if (!Array.isArray(collection?.items)) continue;
-      for (const faqItem of collection.items) {
-        const title    = (faqItem?.post_title ?? '').trim();
-        const bodyHtml = faqItem?.post_content ?? '';
-        if (!title) continue;
-
-        const steps: string[] = [];
-        const $b = cheerio.load(bodyHtml);
-        $b('li, p').each((_, el) => {
-          const text = $b(el).text().trim()
-            .replace(/<Video Link>/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-          if (text) steps.push(text);
-        });
-
-        items.push({ title, steps });
-      }
-    }
-  });
-
-  return items;
-}
 
 // ─── Product scraper ──────────────────────────────────────────────────────────
 
@@ -464,19 +383,17 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
   const model = $('h1').first().text().trim();
   if (!model) return null;
 
-  const { tagline, description } = parseTaglineAndDescription($);
+  const description              = parseDescription($);
   const { category, series }     = parseBreadcrumbs($, url);
   const imageUrl                 = parseImageUrl($);
   const features                 = parseFeatures($);
   const specs                    = parseSpecs($);
   const downloads                = parseDownloads($);
-  const supplies                 = parseSupplies($, url);
-  const faq                      = parseFaq($);
 
   return {
-    model, tagline, description, category, series,
+    model, description, category, series,
     url, imageUrl, scrapedAt: new Date(),
-    features, specs, downloads, supplies, faq,
+    features, specs, downloads,
   };
 }
 
@@ -484,7 +401,6 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
 
 type ExistingRow = {
   model:       string;
-  tagline:     string | null;
   description: string | null;
   category:    string;
   series:      string;
@@ -492,8 +408,6 @@ type ExistingRow = {
   features:    unknown;
   specs:       unknown;
   downloads:   unknown;
-  supplies:    unknown;
-  faq:         unknown;
 };
 
 // Postgres JSONB sorts object keys alphabetically on storage, so we must sort
@@ -529,7 +443,6 @@ export function getChangedFields(ex: ExistingRow, data: ProductData, debug = fal
   }
 
   checkText('model',       ex.model,       data.model);
-  checkText('tagline',     ex.tagline,     data.tagline);
   checkText('description', ex.description, data.description);
   checkText('category',    ex.category,    data.category);
   checkText('series',      ex.series,      data.series);
@@ -537,8 +450,6 @@ export function getChangedFields(ex: ExistingRow, data: ProductData, debug = fal
   checkJson('features',    ex.features,    data.features);
   checkJson('specs',       ex.specs,       data.specs);
   checkJson('downloads',   ex.downloads,   data.downloads);
-  checkJson('supplies',    ex.supplies,    data.supplies);
-  checkJson('faq',         ex.faq,         data.faq);
 
   return changed;
 }
@@ -556,7 +467,6 @@ async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
   const existing = await db
     .select({
       model:       avisionProducts.model,
-      tagline:     avisionProducts.tagline,
       description: avisionProducts.description,
       category:    avisionProducts.category,
       series:      avisionProducts.series,
@@ -564,15 +474,12 @@ async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
       features:    avisionProducts.features,
       specs:       avisionProducts.specs,
       downloads:   avisionProducts.downloads,
-      supplies:    avisionProducts.supplies,
-      faq:         avisionProducts.faq,
     })
     .from(avisionProducts)
     .where(eq(avisionProducts.url, data.url));
 
   const row = {
     model:       data.model,
-    tagline:     data.tagline,
     description: data.description,
     category:    data.category,
     series:      data.series,
@@ -581,8 +488,6 @@ async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
     features:    data.features  as unknown,
     specs:       data.specs     as unknown,
     downloads:   data.downloads as unknown,
-    supplies:    data.supplies  as unknown,
-    faq:         data.faq       as unknown,
     scrapedAt:   data.scrapedAt,
   };
 
