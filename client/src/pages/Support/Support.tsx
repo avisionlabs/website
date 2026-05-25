@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MagnifyingGlassIcon, MicrophoneIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import Catalogue from './Catalogue'
 
 export default function Support() {
@@ -15,7 +15,7 @@ export default function Support() {
           </h2>
 
           {/* Search bar */}
-          <div className="mt-10 flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.10)] border border-gray-100">
+          <div className="mt-10 flex items-center gap-2 rounded-full bg-white px-4 py-3 shadow-[0_4px_24px_rgba(15,49,146,0.25)] border border-gray-100">
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 shrink-0" />
             <input
               type="text"
@@ -24,19 +24,6 @@ export default function Support() {
               placeholder="Which model are you looking for?"
               className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 text-base focus:outline-none min-w-0"
             />
-            <button
-              type="button"
-              className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Voice search"
-            >
-              <MicrophoneIcon className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              className="rounded-full bg-[#1c3c8c] px-5 py-2 text-sm font-semibold text-white hover:bg-[#162e6b] transition-colors shrink-0"
-            >
-              Search
-            </button>
           </div>
         </div>
       </section>

@@ -37,6 +37,7 @@ function subcategoryLabel(s: string): string {
 export default function Catalogue({ search }: { search: string }) {
   const [category, setCategory] = useState('')
   const [subcategory, setSubcategory] = useState('')
+  const [inStockOnly, setInStockOnly] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -76,12 +77,16 @@ export default function Catalogue({ search }: { search: string }) {
   , [products])
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return products
-    const term = search.toLowerCase()
-    return products.filter(p =>
-      [p.model, p.subcategory ?? '', p.category ?? ''].join(' ').toLowerCase().includes(term)
-    )
-  }, [products, search])
+    let result = products
+    if (search.trim()) {
+      const term = search.toLowerCase()
+      result = result.filter(p =>
+        [p.model, p.subcategory ?? '', p.category ?? ''].join(' ').toLowerCase().includes(term)
+      )
+    }
+    if (inStockOnly) result = result.filter(p => p.inStock === true)
+    return result
+  }, [products, search, inStockOnly])
 
   function handleCategoryChange(val: string) {
     setCategory(val)
@@ -142,10 +147,26 @@ export default function Catalogue({ search }: { search: string }) {
           </>
         )}
 
+        {/* In Stock */}
+        <div className="py-6">
+          <h3 className="mb-4 text-md font-semibold text-gray-900">Availability</h3>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={inStockOnly}
+              onChange={e => setInStockOnly(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 accent-[var(--accent)]"
+            />
+            <span className="text-sm text-gray-800">In Stock Only</span>
+          </label>
+        </div>
+
+        <hr className="border-gray-200" />
+
         {/* Clear */}
         <div className="py-6">
           <button
-            onClick={() => { setCategory(''); setSubcategory('') }}
+            onClick={() => { setCategory(''); setSubcategory(''); setInStockOnly(false) }}
             className="rounded bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
           >
             Clear Filters
