@@ -161,22 +161,22 @@ export default function Contact() {
               email: 'sales@avision-labs.com',
             },
           ].map((tile) => (
-            <div key={tile.title} className="flex gap-4 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-base">
-                <tile.icon className="h-5 w-5" style={{ color: tile.accent }} />
+            <div key={tile.title} className="flex flex-col rounded-xl border border-slate-200 bg-white px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white">
+                  <tile.icon className="h-5 w-5 text-gray-800" />
+                </div>
+                <h3 className="font-bold text-gray-900">{tile.title}</h3>
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-gray-900">{tile.title}</h3>
-                <p className="mt-1 text-xs text-gray-500">{tile.description}</p>
-                <div className="mt-3 flex gap-8">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Phone</p>
-                    <a href={`tel:${tile.phone}`} className="mt-0.5 block text-xs font-bold text-gray-900 hover:underline">{tile.phone}</a>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Email</p>
-                    <a href={`mailto:${tile.email}`} className="mt-0.5 block text-xs font-bold text-gray-900 hover:underline">{tile.email}</a>
-                  </div>
+              <p className="mt-4 flex-1 text-sm text-gray-500">{tile.description}</p>
+              <div className="mt-4 w-full flex items-center gap-8">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Phone</p>
+                  <a href={`tel:${tile.phone}`} className="mt-0.5 block text-sm font-bold text-gray-900 hover:underline">{tile.phone}</a>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Email</p>
+                  <a href={`mailto:${tile.email}`} className="mt-0.5 block text-sm font-bold text-gray-900 hover:underline">{tile.email}</a>
                 </div>
               </div>
             </div>
