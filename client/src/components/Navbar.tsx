@@ -196,12 +196,11 @@ export default function Navbar() {
 
   return (
     <header
+      className={scrolled ? "nav-scrolled" : ""}
       style={{
         width: "100%",
-        background: scrolled ? "rgba(251, 251, 255, 0.6)" : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-        transition: "background 0.3s ease, backdrop-filter 0.3s ease",
+        background: scrolled ? "rgba(251, 251, 255, 0.9)" : "transparent",
+        transition: "background 0.3s ease",
         position: "sticky",
         top: 0,
         zIndex: 50,

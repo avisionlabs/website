@@ -140,6 +140,8 @@ export default function ProductOverview() {
               <img
                 src={product.imageUrl}
                 alt={product.model}
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full object-contain p-8"
               />
             ) : (

@@ -60,6 +60,8 @@ export default function ProductsTable({
                   <img
                     alt={product.model}
                     src={product.imageUrl}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75"
                   />
                   <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 rounded-b-lg bg-gradient-to-t from-black/30 to-transparent" />
@@ -85,6 +87,8 @@ export default function ProductsTable({
                 <img
                   alt={product.model}
                   src={product.imageUrl}
+                  loading="lazy"
+                  decoding="async"
                   className="h-16 w-16 rounded-md bg-gray-200 object-cover shrink-0"
                 />
               ) : (
