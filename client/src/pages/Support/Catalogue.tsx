@@ -52,8 +52,7 @@ export default function Catalogue({ search }: { search: string }) {
       setError(null)
       try {
         const params = new URLSearchParams()
-        if (subcategory) params.set('subcategory', subcategory)
-        else if (category) params.set('category', category)
+        if (category) params.set('category', category)
 
         const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
@@ -70,7 +69,7 @@ export default function Catalogue({ search }: { search: string }) {
 
     load()
     return () => { active = false; controller.abort() }
-  }, [category, subcategory])
+  }, [category])
 
   const availableSubcategories = useMemo(() =>
     Array.from(new Set(products.map(p => p.subcategory).filter(Boolean) as string[]))
@@ -78,6 +77,7 @@ export default function Catalogue({ search }: { search: string }) {
 
   const filtered = useMemo(() => {
     let result = products
+    if (subcategory) result = result.filter(p => p.subcategory === subcategory)
     if (search.trim()) {
       const term = search.toLowerCase()
       result = result.filter(p =>
@@ -85,8 +85,8 @@ export default function Catalogue({ search }: { search: string }) {
       )
     }
     if (inStockOnly) result = result.filter(p => p.inStock === true)
-    return result
-  }, [products, search, inStockOnly])
+    return [...result].sort((a, b) => (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0))
+  }, [products, subcategory, search, inStockOnly])
 
   function handleCategoryChange(val: string) {
     setCategory(val)
