@@ -46,7 +46,6 @@ type Downloads = {
 
 type Tab = "specs" | "downloads";
 
-
 export default function ProductOverview() {
   const { model } = useParams<{ model: string }>();
   const navigate = useNavigate();
@@ -164,12 +163,12 @@ export default function ProductOverview() {
               {product.model}
             </h1>
 
-            <div className="mt-3">
+            <div className="mt-1">
               <span
                 className={`inline-block rounded-full px-3 py-0.5 text-xs font-medium ${
                   product.inStock
-                    ? "bg-[var(--accent)] text-white"
-                    : "bg-[var(--text-2)] text-black"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {product.inStock ? "In Stock" : "Out of Stock"}
@@ -183,7 +182,14 @@ export default function ProductOverview() {
             )}
 
             <div className="mt-8 flex gap-3">
-              <Button onClick={() => navigate(`/contact?tab=sales&model=${encodeURIComponent(product.model)}`)} style={{ fontSize: "16px", boxShadow: "none" }}>
+              <Button
+                onClick={() =>
+                  navigate(
+                    `/contact?tab=sales&model=${encodeURIComponent(product.model)}`,
+                  )
+                }
+                style={{ fontSize: "16px", boxShadow: "none" }}
+              >
                 Request a Quote
               </Button>
             </div>
