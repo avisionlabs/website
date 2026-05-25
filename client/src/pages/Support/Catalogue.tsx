@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import ProductsTable from '../../components/ProductsTable'
+import { ProductsSkeleton } from '../../components/Skeletons'
 import { apiUrl } from '../../lib/api'
 
 type Product = {
@@ -176,7 +177,7 @@ export default function Catalogue({ search }: { search: string }) {
 
       {/* Product grid */}
       <div className="lg:col-span-3">
-        {loading && <p className="text-lg text-gray-500">Loading...</p>}
+        {loading && <ProductsSkeleton view={view} />}
         {error && <p className="text-lg text-red-500">Error: {error}</p>}
         {!loading && !error && filtered.length === 0 && (
           <p className="text-lg text-gray-500">No products found.</p>
