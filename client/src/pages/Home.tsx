@@ -1,9 +1,9 @@
 "use client";
 import Button from "../components/Button";
-import heroPrinter from "../assets/hero-printer.png";
-import heroP from "../assets/hero-p.png";
-import heroMfp from "../assets/hero-mfp.png";
-import heroS from "../assets/hero-s.png";
+import heroPrinter from "../assets/hero/hero-printer.png";
+import heroP from "../assets/hero/hero-p.png";
+import heroMfp from "../assets/hero/hero-mfp.png";
+import heroS from "../assets/hero/hero-s.png";
 import { BoltIcon, LockClosedIcon, PrinterIcon } from "@heroicons/react/24/outline";
 
 
@@ -33,7 +33,7 @@ export default function Home() {
 
         {/* Centered content */}
         <div className="flex-1 flex items-start justify-center w-full pt-50">
-          <div className="max-w-2xl text-center animate-fade-slide-up">
+          <div className="max-w-2xl text-center">
             <div className="scan-line-wrapper">
               <h1 className="text-5xl font-bold tracking-tight text-balance text-[var(--text-h)] sm:text-7xl">
                 A Smarter Vision for Every Workspace

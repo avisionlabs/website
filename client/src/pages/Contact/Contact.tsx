@@ -1,6 +1,6 @@
 import { ClockIcon, EnvelopeIcon, PhoneIcon, WrenchIcon, ShieldCheckIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import { GeneralForm, SalesForm } from './Contact/Form'
+import { GeneralForm, SalesForm } from './Form'
 
 export default function Contact() {
   const [result, setResult] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
