@@ -15,14 +15,18 @@ function formatSubcategory(s: string | null): string {
   return s.replace(/([a-z])([A-Z])/g, '$1 $2')
 }
 
-export default function ProductsTable({ 
+const defaultLink = (p: Product) => `/printers/${encodeURIComponent(p.model)}`
+
+export default function ProductsTable({
   products,
   view,
   onViewChange,
-}: { 
+  getProductLink = defaultLink,
+}: {
   products: Product[]
   view: 'grid' | 'list'
   onViewChange: (view: 'grid' | 'list') => void
+  getProductLink?: (product: Product) => string
 }) {
   return (
     <div className="bg-white">
@@ -47,9 +51,9 @@ export default function ProductsTable({
       </div>
 
       {view === 'grid' ? (
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
           {products.map((product) => (
-            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="group relative block">
+            <Link key={product.id} to={getProductLink(product)} className="group relative block">
               {product.imageUrl && (
                 <div className="relative aspect-square w-full xl:aspect-7/8">
                   <img
@@ -75,7 +79,7 @@ export default function ProductsTable({
       ) : (
         <ul className="divide-y divide-gray-200">
           {products.map((product) => (
-            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="flex items-center gap-4 py-4 px-3 hover:bg-gray-50">
+            <Link key={product.id} to={getProductLink(product)} className="flex items-center gap-4 py-4 px-3 hover:bg-gray-50">
               {product.imageUrl ? (
                 <img
                   alt={product.model}

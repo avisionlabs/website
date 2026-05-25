@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import heroPrinter from "../assets/hero-printer.png";
-import xeroxLogo from "../assets/xerox-logo.png";
-import visioneerLogo from "../assets/visioneer-logo.png";
-import pandigitalLogo from "../assets/pandigital-logo.png";
-import map from "../assets/map.png";
-import location from "../assets/location.png";
+import heroPrinter from "../../assets/hero/hero-printer.png";
+import xeroxLogo from "../../assets/about/xerox-logo.png";
+import visioneerLogo from "../../assets/about/visioneer-logo.png";
+import pandigitalLogo from "../../assets/about/pandigital-logo.png";
+import map from "../../assets/about/map.png";
+import location from "../../assets/about/location.png";
 
 import {
   BuildingOffice2Icon,
@@ -76,7 +76,7 @@ export default function Company() {
         <Blobs />
         <div className="px-6 mx-auto lg:max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-8 items-center">
           {/* left: text content */}
-          <div className="animate-fade-slide-up w-full">
+          <div className="w-full">
             <h1 className="mt-30 lg:mt-[120px] md:px-40 lg:px-0 text-center lg:text-left text-[40px] lg:text-[62px] tracking-[0.08em] font-bold leading-[110%] lg:leading-[80px] text-[var(--text-h)]">
               Founded by{" "}
               <span style={{ color: "var(--primary)" }}>Engineers</span>

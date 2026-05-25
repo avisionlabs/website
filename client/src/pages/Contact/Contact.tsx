@@ -1,24 +1,48 @@
 import { ClockIcon, EnvelopeIcon, PhoneIcon, WrenchIcon, ShieldCheckIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import Button from '../components/Button'
+import { GeneralForm, SalesForm } from './Form'
 
 export default function Contact() {
   const [result, setResult] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [tab, setTab] = useState<'general' | 'sales'>('general')
 
   async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setResult('loading')
-
-    const formData = new FormData(e.currentTarget)
+    const formEl = e.currentTarget as HTMLFormElement
+    const formData = new FormData(formEl)
     formData.append('access_key', '8acb327a-7250-40c3-9885-246fafde833a')
+
+    const userEmail = formData.get('email')
+    if (userEmail) formData.append('reply_to', String(userEmail))
+
+    if (tab === 'general') {
+      const userSubject = formData.get('subject')
+      const subjectLine = userSubject ? `General Inquiry: ${String(userSubject)}` : 'General Inquiry'
+      formData.set('subject', subjectLine)
+    } else {
+      const company = formData.get('company')
+      const model = formData.get('model-needed')
+      const subjectLine = company
+        ? `Sales Inquiry: ${String(company)}`
+        : model
+        ? `Sales Inquiry: ${String(model)}`
+        : 'Sales Inquiry'
+      formData.set('subject', subjectLine)
+    }
 
     const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
     const data = await res.json()
-    setResult(data.success ? 'success' : 'error')
+    if (data.success) {
+      formEl.reset()
+      setResult('success')
+    } else {
+      setResult('error')
+    }
   }
 
   return (
-    <div className="isolate relative bg-white px-6 py-24 sm:py-32 lg:px-8">
+    <div className="isolate relative bg-slate-100 px-6 py-24 sm:py-32 lg:px-8">
       {/* Blobs */}
       <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
         <div
@@ -30,7 +54,7 @@ export default function Contact() {
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           {/* Left — info */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-start">
             <h2 className="text-4xl font-semibold tracking-tight text-gray-900">Get in Touch.</h2>
             <h3 className="mt-4 text-base leading-relaxed text-gray-700">
               Please call us during our office hours or send us an inquiry. We'll get back to you promptly. Thank you!
@@ -66,92 +90,46 @@ export default function Contact() {
             </dl>
           </div>
 
-          {/* Right — form */}
-          <form onSubmit={onSubmit}>
-            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              <div>
-                <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First name</label>
-                <div className="mt-2.5">
-                  <input
-                    id="first-name"
-                    name="first-name"
-                    type="text"
-                    autoComplete="given-name"
-                    required
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last name</label>
-                <div className="mt-2.5">
-                  <input
-                    id="last-name"
-                    name="last-name"
-                    type="text"
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email</label>
-                <div className="mt-2.5">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label htmlFor="phone-number" className="block text-sm font-semibold text-gray-900">Phone number</label>
-                <div className="mt-2.5">
-                  <input
-                    id="phone-number"
-                    name="phone-number"
-                    type="tel"
-                    autoComplete="tel"
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-900">Message</label>
-                <div className="mt-2.5">
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={4}
-                    required
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
-                    defaultValue=""
-                  />
-                </div>
-              </div>
+          {/* Right — form with tabs */}
+          <div className="flex flex-col rounded-[32px] border border-slate-200 bg-slate-50 p-8 shadow-sm">
+            <div
+              className="inline-flex w-full gap-2 rounded-2xl border border-blue-100 bg-blue-50 shadow-sm"
+            >
+              <button
+                type="button"
+                onClick={() => setTab('general')}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
+                  tab === 'general'
+                    ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
+                    : 'text-blue-800 hover:bg-blue-100'
+                }`}
+              >
+                General Inquiry
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('sales')}
+                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
+                  tab === 'sales'
+                    ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
+                    : 'text-blue-800 hover:bg-blue-100'
+                }`}
+              >
+                Sales Inquiry
+              </button>
             </div>
 
-            <div className="mt-8 flex items-center justify-end gap-4">
-              {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
-              {result === 'error' && <p className="text-sm text-red-500">Something went wrong. Try again.</p>}
-              <Button variant="outline">
-                {result === 'loading' ? 'Sending...' : 'Send message'}
-              </Button>
+            <div className="mt-6">
+              {tab === 'general' && <GeneralForm onSubmit={onSubmit} result={result} />}
+              {tab === 'sales' && <SalesForm onSubmit={onSubmit} result={result} />}
             </div>
-          </form>
+          </div>
         </div>
       </div>
 
       {/* Support tiles — full width */}
       
-      <div className="mt-24 bg-gray-50 px-6 py-8 lg:px-0">
+      <div className="mt-24 bg-slate-100 px-6 py-8 lg:px-0">
         <h2 className="mx-auto max-w-7xl text-4xl font-semibold tracking-tight text-gray-900 mb-8">We're with you after the sale.</h2>
         <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 lg:grid-cols-3">
           {[
@@ -180,8 +158,8 @@ export default function Contact() {
               email: 'sales@avision-labs.com',
             },
           ].map((tile) => (
-            <div key={tile.title} className="flex gap-4 bg-white px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-base">
+            <div key={tile.title} className="flex gap-4 rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-6" style={{ borderLeft: `3px solid ${tile.accent}` }}>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-100 text-base">
                 <tile.icon className="h-5 w-5" style={{ color: tile.accent }} />
               </div>
               <div>
