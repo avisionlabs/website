@@ -107,6 +107,25 @@ app.get('/api/products/:model/specs', httpCache(), async (req, res) => {
   }
 });
 
+app.get('/api/products/:model/features', httpCache(), async (req, res) => {
+  try {
+    const model = req.params.model;
+    const rows = await db
+      .select({ features: avisionProducts.features })
+      .from(avisionProducts)
+      .where(eq(avisionProducts.model, model));
+
+    if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
+
+    const { features } = rows[0];
+    res.json(Array.isArray(features) ? features : []);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch features' });
+  }
+});
+
+
 app.get('/api/products/:model/downloads', httpCache(), async (req, res) => {
   try {
     const rows = await db

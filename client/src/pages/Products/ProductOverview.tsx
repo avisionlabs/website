@@ -44,13 +44,16 @@ type Downloads = {
   productPhotos?: DownloadFile[];
 };
 
-type Tab = "specs" | "downloads";
+type Feature = { title: string; description: string };
+
+type Tab = "features" | "specs" | "downloads";
 
 export default function ProductOverview() {
   const { model } = useParams<{ model: string }>();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [features, setFeatures] = useState<Feature[]>([]);
   const [specs, setSpecs] = useState<Spec[]>([]);
   const [downloads, setDownloads] = useState<Downloads>({});
   const [loading, setLoading] = useState(true);
@@ -69,22 +72,19 @@ export default function ProductOverview() {
 
     async function load() {
       try {
-        const [productRes, specsRes, downloadsRes] = await Promise.all([
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), {
-            signal: controller.signal,
-          }),
-          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), {
-            signal: controller.signal,
-          }),
-          fetch(
-            apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`),
-            { signal: controller.signal },
-          ),
+        const [productRes, featuresRes, specsRes, downloadsRes] = await Promise.all([
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/features`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/specs`), { signal: controller.signal }),
+          fetch(apiUrl(`/api/products/${encodeURIComponent(model!)}/downloads`), { signal: controller.signal }),
         ]);
 
         if (!productRes.ok) throw new Error("Product not found");
         if (active) {
           setProduct(await productRes.json());
+          const feats: Feature[] = featuresRes.ok ? await featuresRes.json() : [];
+          setFeatures(feats);
+          setActiveTab(feats.length > 0 ? "features" : "specs");
           if (specsRes.ok) setSpecs(await specsRes.json());
           if (downloadsRes.ok) setDownloads(await downloadsRes.json());
         }
@@ -115,8 +115,9 @@ export default function ProductOverview() {
   }
 
   const tabs: { id: Tab; label: string }[] = [
+    ...(features.length > 0 ? [{ id: "features" as Tab, label: "Features" }] : []),
     { id: "specs", label: "Product Specifications" },
-    { id: "downloads", label: "Product Downloads" },
+    { id: "downloads", label: "Product\nDownloads" },
   ];
 
   return (
@@ -200,13 +201,13 @@ export default function ProductOverview() {
         <div className="mt-16">
           <div>
             {/* Tab bar */}
-            <div className="flex border-b border-gray-200">
+            <div className="flex w-full border-b border-gray-200">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`mr-6 pb-3 text-sm font-medium transition-colors ${
+                  className={`flex-1 whitespace-pre-line leading-tight pb-3 text-center text-sm font-medium transition-colors sm:flex-none sm:whitespace-normal sm:mr-6 sm:text-left ${
                     activeTab === tab.id
                       ? "border-b-2 text-[var(--primary)]"
                       : "text-gray-500 hover:text-gray-800"
@@ -224,6 +225,17 @@ export default function ProductOverview() {
 
             {/* Tab content */}
             <div className="mt-6">
+              {activeTab === "features" && (
+                <ul className="space-y-6">
+                  {features.map((f, i) => (
+                    <li key={i}>
+                      <p className="text-sm font-semibold text-gray-900">{f.title}</p>
+                      <p className="mt-1 text-sm text-gray-600">{f.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               {activeTab === "specs" &&
                 (specs.length > 0 ? (
                   <dl className="grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-y-0 sm:gap-x-12">
