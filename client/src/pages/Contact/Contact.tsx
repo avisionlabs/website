@@ -101,7 +101,7 @@ export default function Contact() {
               <button
                 type="button"
                 onClick={() => setTab('general')}
-                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
+                className={`flex-1 rounded-xl px-2 py-2 text-xs leading-tight sm:px-4 sm:py-2.5 sm:text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
                   tab === 'general'
                     ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
                     : 'text-blue-800 hover:bg-blue-100'
@@ -112,7 +112,7 @@ export default function Contact() {
               <button
                 type="button"
                 onClick={() => setTab('sales')}
-                className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
+                className={`flex-1 rounded-xl px-2 py-2 text-xs leading-tight sm:px-4 sm:py-2.5 sm:text-sm font-semibold transition-colors font-[family-name:var(--heading)] ${
                   tab === 'sales'
                     ? 'bg-white text-blue-900 shadow-sm ring-1 ring-blue-100'
                     : 'text-blue-800 hover:bg-blue-100'
