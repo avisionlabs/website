@@ -64,7 +64,7 @@ export default function Home() {
       </div>
 
       {/* Features + screenshot section */}
-      <div className="relative isolate w-full px-6 lg:px-16 py-24">
+      <div className="relative isolate w-full px-6 lg:px-8 py-24">
         <Blobs flip />
         <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
@@ -111,7 +111,7 @@ export default function Home() {
       </div>
 
       {/* Explore Our Products section */}
-      <div id="products" className="w-full px-6 lg:px-16 py-24">
+      <div id="products" className="w-full px-6 lg:px-8 py-24">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-4xl font-bold text-[var(--text-h)] lg:text-5xl">Explore Our Products.</h2>
           <p className="mt-6 text-lg text-[var(--text-2)]">
@@ -137,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* CTA section */}
-      <div className="relative isolate w-full px-6 lg:px-16 py-56 flex items-center justify-center overflow-show">
+      <div className="relative isolate w-full px-6 lg:px-8 py-56 flex items-center justify-center overflow-show">
         <Blobs />
         {/* Concentric rings */}
         {[480, 360, 240, 120].map((size) => (
