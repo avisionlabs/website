@@ -17,7 +17,7 @@ function App() {
     <>
       <Navbar />
       <Suspense fallback={null}>
-        <div key={location.key} className="animate-fade-slide-up">
+        <div key={location.pathname} className="animate-fade-slide-up">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/company/*" element={<Company />} />
