@@ -179,10 +179,7 @@ export default function Catalogue({ search }: { search: string }) {
       <div className="lg:col-span-3">
         {loading && <ProductsSkeleton view={view} />}
         {error && <p className="text-lg text-red-500">Error: {error}</p>}
-        {!loading && !error && filtered.length === 0 && (
-          <p className="text-lg text-gray-500">No products found.</p>
-        )}
-        {!loading && !error && filtered.length > 0 && (
+        {!loading && !error && (
           <ProductsTable
             products={filtered}
             view={view}

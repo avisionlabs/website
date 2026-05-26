@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
+import NoProducts from './NoProducts'
 
 type Product = {
   id: number
@@ -29,6 +30,10 @@ export default function ProductsTable({
   onViewChange: (view: 'grid' | 'list') => void
   getProductLink?: (product: Product) => string
 }) {
+  if (products.length === 0) {
+    return <NoProducts />
+  }
+
   return (
     <div className="bg-white">
       {/* toggle */}

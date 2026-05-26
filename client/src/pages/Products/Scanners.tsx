@@ -153,10 +153,6 @@ export default function Scanners() {
           <div className="lg:col-span-3">
             {loading && <ProductsSkeleton view={view} />}
             {error && <p className="text-lg text-red-500">Error: {error}</p>}
-            {!loading && !error && filtered.length === 0 && (
-              <p className="text-lg text-gray-600">No products found.</p>
-            )}
-
             <ProductsTable products={filtered} view={view} onViewChange={handleViewChange} />
           </div>
         </div>
