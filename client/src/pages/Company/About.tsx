@@ -108,14 +108,14 @@ export default function Company() {
           </div>
 
           {/* right: photo */}
-          <div className="relative overflow-hidden animate-fade-slide-up rounded-2xl shadow-2xl" style={{ animationDelay: "0.15s" }}>
+          <div className="relative overflow-hidden animate-fade-slide-up rounded-2xl shadow-lg" style={{ animationDelay: "0.15s" }}>
             <img src={heroPrinter} alt="Person using an Avision scanner" className="w-full h-full object-cover" />
           </div>
         </div>
       </div>
 
       {/* by the numbers */}
-      <div className="bg-[#F0F0F0] w-full flex items-center justify-center flex-col gap-8 py-12 px-6 lg:px-8">
+      <div className="bg-[#F0F0F0] w-full flex items-center justify-center flex-col gap-8 mt-5 py-12 px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-24 w-full max-w-7xl items-center">
           <p className="text-xs font-light tracking-widest text-[#616262]">BY THE NUMBERS</p>
           <div className="h-px w-full lg:flex-1 bg-[#616262]" />
