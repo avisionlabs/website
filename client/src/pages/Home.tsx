@@ -120,17 +120,17 @@ export default function Home() {
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { img: heroP, alt: "Avision Printer", name: "Printers", desc: "Reliable printing solutions designed for fast, high-quality everyday output" },
-              { img: heroMfp, alt: "Avision Multi-Function Printer", name: "Multi-Function Printers", desc: "All-in-one devices that print, scan, copy, and streamline your workflow" },
-              { img: heroS, alt: "Avision Scanner", name: "Scanners", desc: "Precise technology for capturing documents with clarity and efficiency" },
-            ].map(({ img, alt, name, desc }) => (
-              <div key={name} className="flex flex-col items-center text-center">
-                <div className="w-full flex items-end justify-center h-64">
+              { img: heroP, alt: "Avision Printer", name: "Printers", desc: "Reliable printing solutions designed for fast, high-quality everyday output", route: "/printers" },
+              { img: heroMfp, alt: "Avision Multi-Function Printer", name: "Multi-Function Printers", desc: "All-in-one devices that print, scan, copy, and streamline your workflow", route: "/printers?type=mfp"},
+              { img: heroS, alt: "Avision Scanner", name: "Scanners", desc: "Precise technology for capturing documents with clarity and efficiency", route: "/scanners" },
+            ].map(({ img, alt, name, desc, route }) => (
+              <a key={name} href={route} className="group flex flex-col items-center text-center rounded-2xl px-6 py-8 transition-all duration-200 cursor-pointer">
+                <div className="w-full flex items-end justify-center h-64 transition-transform duration-200 group-hover:-translate-y-1">
                   <img src={img} alt={alt} className="max-h-full object-contain" />
                 </div>
                 <h3 className="mt-8 text-xl font-bold text-[var(--text-h)]">{name}</h3>
                 <p className="mt-2 text-[var(--text-2)] max-w-xs">{desc}</p>
-              </div>
+              </a>
             ))}
           </div>
         </div>
