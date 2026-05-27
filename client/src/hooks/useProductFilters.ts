@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
+import { useDebounce } from './useDebounce'
 
 export function useProductFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,7 +20,7 @@ export function useProductFilters() {
     }, { replace: true })
   }
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useDebounce((value: string) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
       if (value.trim()) {
@@ -29,7 +30,7 @@ export function useProductFilters() {
       }
       return next
     }, { replace: true })
-  }
+  }, 300)
   
   const handleViewChange = (value: 'grid' | 'list') => {
     setSearchParams((prev) => {
@@ -44,6 +45,7 @@ export function useProductFilters() {
   }
 
   const handleClear = () => {
+    handleSearchChange.cancel()
     setSearchParams(
       view === 'list' ? { view: 'list' } : {},
       { replace: true }

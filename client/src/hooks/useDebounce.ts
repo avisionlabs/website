@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo } from "react";
 import debounce from "lodash.debounce";
 
-type AnyFn = (...args: unknown[]) => unknown;
+type AnyFn = (...args: any[]) => any;
 type DebouncedFn<T extends AnyFn> = ((...args: Parameters<T>) => void) & {
   cancel: () => void;
   flush?: () => void;
