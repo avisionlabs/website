@@ -34,10 +34,15 @@ export default function Scanners() {
     handleClear,
   } = useProductFilters()
 
+  const [searchInput, setSearchInput] = useState(search)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [availableSubcategories, setAvailableSubcategories] = useState<Set<string> | null>(null)
+
+  useEffect(() => {
+    setSearchInput(search)
+  }, [search])
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
@@ -129,8 +134,12 @@ export default function Scanners() {
               <h3 className="mb-4 text-md font-semibold text-gray-900">Search</h3>
               <input
                 type="text"
-                value={search}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                value={searchInput}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setSearchInput(value)
+                  handleSearchChange(value)
+                }}
                 placeholder="Search by model..."
                 className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
