@@ -4,6 +4,7 @@ import ProductsTable from '../../components/ProductsTable'
 import { useEffect, useMemo, useState } from 'react'
 import { useProductFilters } from '../../hooks/useProductFilters'
 import { apiUrl } from '../../lib/api'
+import { useSearchParams } from 'react-router-dom'
 
 type Product = {
   id: number
@@ -14,7 +15,11 @@ type Product = {
   subcategory: string | null
 }
 
+
 export default function Printers() {
+  const [searchParams] = useSearchParams()
+  const type = searchParams.get('type')
+
   const {
     search,
     view,
@@ -30,11 +35,12 @@ export default function Printers() {
   const filtered = useMemo(() => {
     return products.filter((p) => {
       if (!p.inStock) return false
+      if (type === 'mfp' && !p.model.toLowerCase().includes('mfp')) return false
       if (!search.trim()) return true
       const term = search.toLowerCase()
       return [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
     })
-  }, [products, search])
+  }, [products, search, type])
 
   useEffect(() => {
     const controller = new AbortController()
