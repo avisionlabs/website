@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline'
+import NoProducts from './NoProducts'
 
 type Product = {
   id: number
@@ -10,15 +11,29 @@ type Product = {
   subcategory: string | null
 }
 
-export default function ProductsTable({ 
+function formatSubcategory(s: string | null): string {
+  if (!s) return ''
+  return s.replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
+
+const defaultLink = (p: Product) => `/printers/${encodeURIComponent(p.model)}`
+
+export default function ProductsTable({
   products,
   view,
   onViewChange,
-}: { 
+  getProductLink = defaultLink,
+}: {
   products: Product[]
   view: 'grid' | 'list'
   onViewChange: (view: 'grid' | 'list') => void
+  getProductLink?: (product: Product) => string
 }) {
+  if (products.length === 0) {
+    return <NoProducts />
+  }
+
   return (
     <div className="bg-white">
       {/* toggle */}
@@ -42,27 +57,29 @@ export default function ProductsTable({
       </div>
 
       {view === 'grid' ? (
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-3 xl:gap-x-8">
           {products.map((product) => (
-            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="group relative block">
+            <Link key={product.id} to={getProductLink(product)} className="group relative block">
               {product.imageUrl && (
                 <div className="relative aspect-square w-full xl:aspect-7/8">
                   <img
                     alt={product.model}
                     src={product.imageUrl}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75"
                   />
                   <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 rounded-b-lg bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
               )}
-              <div className="mt-4 flex justify-between">
-                <div>
-                  <h3 className="text-sm text-gray-700">{product.model}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.subcategory}</p>
+              <div className="mt-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+                  <span className={`self-start shrink-0 rounded-full px-2 py-0.5 text-xs font-medium sm:order-last sm:ml-2 ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {product.inStock ? 'In Stock' : 'Not Available'}
+                  </span>
+                  <h3 className="mt-1 text-sm text-gray-700 sm:order-first sm:mt-0">{product.model}</h3>
                 </div>
-                <p className="text-sm font-medium text-gray-900">
-                  {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </p>
+                <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
               </div>
             </Link>
           ))}
@@ -70,11 +87,13 @@ export default function ProductsTable({
       ) : (
         <ul className="divide-y divide-gray-200">
           {products.map((product) => (
-            <Link key={product.id} to={`/printers/${encodeURIComponent(product.model)}`} className="flex items-center gap-4 py-4 px-3 hover:bg-gray-50">
+            <Link key={product.id} to={getProductLink(product)} className="flex items-center gap-4 py-4 px-3 hover:bg-gray-50">
               {product.imageUrl ? (
                 <img
                   alt={product.model}
                   src={product.imageUrl}
+                  loading="lazy"
+                  decoding="async"
                   className="h-16 w-16 rounded-md bg-gray-200 object-cover shrink-0"
                 />
               ) : (
@@ -83,11 +102,11 @@ export default function ProductsTable({
               <div className="flex flex-1 justify-between">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">{product.model}</h3>
-                  <p className="text-sm text-gray-500">{product.subcategory}</p>
+                  <p className="text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
                 </div>
-                <p className="text-sm font-medium text-gray-900 self-center">
+                <span className={`self-center rounded-full px-2 py-0.5 text-xs font-medium ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </p>
+                </span>
               </div>
             </Link>
           ))}

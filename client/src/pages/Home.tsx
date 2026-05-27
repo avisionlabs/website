@@ -1,9 +1,9 @@
 "use client";
 import Button from "../components/Button";
-import heroPrinter from "../assets/hero-printer.png";
-import heroP from "../assets/hero-p.png";
-import heroMfp from "../assets/hero-mfp.png";
-import heroS from "../assets/hero-s.png";
+import heroPrinter from "../assets/hero/hero-printer.png";
+import heroP from "../assets/hero/hero-p.png";
+import heroMfp from "../assets/hero/hero-mfp.png";
+import heroS from "../assets/hero/hero-s.png";
 import { BoltIcon, LockClosedIcon, PrinterIcon } from "@heroicons/react/24/outline";
 
 
@@ -33,7 +33,7 @@ export default function Home() {
 
         {/* Centered content */}
         <div className="flex-1 flex items-start justify-center w-full pt-50">
-          <div className="max-w-2xl text-center animate-fade-slide-up">
+          <div className="max-w-2xl text-center">
             <div className="scan-line-wrapper">
               <h1 className="text-5xl font-bold tracking-tight text-balance text-[var(--text-h)] sm:text-7xl">
                 A Smarter Vision for Every Workspace
@@ -64,7 +64,7 @@ export default function Home() {
       </div>
 
       {/* Features + screenshot section */}
-      <div className="relative isolate w-full px-6 lg:px-16 py-24">
+      <div className="relative isolate w-full px-6 lg:px-8 py-24">
         <Blobs flip />
         <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
@@ -111,7 +111,7 @@ export default function Home() {
       </div>
 
       {/* Explore Our Products section */}
-      <div id="products" className="w-full px-6 lg:px-16 py-24">
+      <div id="products" className="w-full px-6 lg:px-8 py-24">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-4xl font-bold text-[var(--text-h)] lg:text-5xl">Explore Our Products.</h2>
           <p className="mt-6 text-lg text-[var(--text-2)]">
@@ -120,24 +120,24 @@ export default function Home() {
 
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { img: heroP, alt: "Avision Printer", name: "Printers", desc: "Reliable printing solutions designed for fast, high-quality everyday output" },
-              { img: heroMfp, alt: "Avision Multi-Function Printer", name: "Multi-Function Printers", desc: "All-in-one devices that print, scan, copy, and streamline your workflow" },
-              { img: heroS, alt: "Avision Scanner", name: "Scanners", desc: "Precise technology for capturing documents with clarity and efficiency" },
-            ].map(({ img, alt, name, desc }) => (
-              <div key={name} className="flex flex-col items-center text-center">
-                <div className="w-full flex items-end justify-center h-64">
+              { img: heroP, alt: "Avision Printer", name: "Printers", desc: "Reliable printing solutions designed for fast, high-quality everyday output", route: "/printers" },
+              { img: heroMfp, alt: "Avision Multi-Function Printer", name: "Multi-Function Printers", desc: "All-in-one devices that print, scan, copy, and streamline your workflow", route: "/printers?type=mfp"},
+              { img: heroS, alt: "Avision Scanner", name: "Scanners", desc: "Precise technology for capturing documents with clarity and efficiency", route: "/scanners" },
+            ].map(({ img, alt, name, desc, route }) => (
+              <a key={name} href={route} className="group flex flex-col items-center text-center rounded-2xl px-6 py-8 transition-all duration-200 cursor-pointer">
+                <div className="w-full flex items-end justify-center h-64 transition-transform duration-200 group-hover:-translate-y-1">
                   <img src={img} alt={alt} className="max-h-full object-contain" />
                 </div>
                 <h3 className="mt-8 text-xl font-bold text-[var(--text-h)]">{name}</h3>
                 <p className="mt-2 text-[var(--text-2)] max-w-xs">{desc}</p>
-              </div>
+              </a>
             ))}
           </div>
         </div>
       </div>
 
       {/* CTA section */}
-      <div className="relative isolate w-full px-6 lg:px-16 py-56 flex items-center justify-center overflow-show">
+      <div className="relative isolate w-full px-6 lg:px-8 py-56 flex items-center justify-center overflow-show">
         <Blobs />
         {/* Concentric rings */}
         {[480, 360, 240, 120].map((size) => (

@@ -32,12 +32,8 @@ interface Downloads {
   software:      DriverItem[];
 }
 
-interface SupplyItem { name: string; description: string; url: string; }
-interface FaqItem    { title: string; steps: string[]; }
-
 interface ProductData {
   model:       string;
-  tagline:     string | null;
   description: string | null;
   category:    string;
   series:      string;
@@ -47,8 +43,6 @@ interface ProductData {
   features:    Feature[];
   specs:       Record<string, string>;
   downloads:   Downloads;
-  supplies:    SupplyItem[];
-  faq:         FaqItem[];
 }
 
 // ─── Network helpers ──────────────────────────────────────────────────────────
@@ -78,17 +72,16 @@ function normalizeUrl(raw: string, base: string): string {
 }
 
 function isProductUrl(url: string): boolean {
-  return /\/en\/shop\/[^/]+\/[^/]+\/[^/]+\/?$/.test(new URL(url).pathname);
+  return /\/en\/shop\/[^/]+\/[^/]+(?:\/[^/]+)?\/?$/.test(new URL(url).pathname);
 }
 
 function isSeriesUrl(url: string, categoryUrl: string): boolean {
   const catPath = new URL(categoryUrl).pathname;
   const urlPath = new URL(url).pathname;
   return (
-    urlPath.startsWith(catPath) &&
     urlPath !== catPath &&
-    !urlPath.includes('/en/shop/') &&
-    urlPath.split('/').filter(Boolean).length > catPath.split('/').filter(Boolean).length
+    urlPath.includes('/product-category/') &&
+    !urlPath.includes('/en/shop/')
   );
 }
 
@@ -148,8 +141,9 @@ function parseBreadcrumbs(
     .get()
     .filter(t => t && !/^home$/i.test(t));
 
-  let category = links[links.length - 2] ?? '';
-  let series   = links[links.length - 1] ?? '';
+  // 3-level URL: links = [Category, Series] — 2-level URL: links = [Category]
+  let category = links.length >= 2 ? links[links.length - 2] : (links[0] ?? '');
+  let series   = links.length >= 2 ? links[links.length - 1] : '';
 
   if (!category || !series) {
     const parts = new URL(url).pathname.split('/').filter(Boolean);
@@ -162,24 +156,14 @@ function parseBreadcrumbs(
   return { category, series };
 }
 
-// Tagline + description live in .woocommerce-product-details__short-description
-// <h3><span>Tagline</span></h3>  <p>Description text</p>
-function parseTaglineAndDescription($: cheerio.CheerioAPI): {
-  tagline: string | null;
-  description: string | null;
-} {
+function parseDescription($: cheerio.CheerioAPI): string | null {
   const container = $('.woocommerce-product-details__short-description');
-  if (!container.length) return { tagline: null, description: null };
-
-  const tagline = container.find('h3').first().text().trim() || null;
-  const description =
-    container.find('p')
-      .map((_, el) => $(el).text().replace(/ /g, ' ').trim())
-      .get()
-      .filter(Boolean)
-      .join('\n\n') || null;
-
-  return { tagline, description };
+  if (!container.length) return null;
+  return container.find('p')
+    .map((_, el) => $(el).text().replace(/ /g, ' ').trim())
+    .get()
+    .filter(Boolean)
+    .join('\n\n') || null;
 }
 
 // Main product image has class wp-post-image
@@ -387,71 +371,6 @@ function parseDownloads($: cheerio.CheerioAPI): Downloads {
   return result;
 }
 
-function parseSupplies($: cheerio.CheerioAPI, pageUrl: string): SupplyItem[] {
-  const items: SupplyItem[] = [];
-  const origin = new URL(pageUrl).origin;
-
-  let container = $('[id*="suppli"],[id*="accessor"],[class*="suppli"],[class*="accessor"]').first();
-  if (!container.length) {
-    $('h2,h3,h4,p,strong').each((_, el) => {
-      if (container.length) return false;
-      if (!/suppli|accessor/i.test($(el).text())) return;
-      container = $(el).parent();
-    });
-  }
-  if (!container.length) return items;
-
-  container.find('a[href]').each((_, el) => {
-    const href = $(el).attr('href') ?? '';
-    if (!href.includes('/shop/')) return;
-    const abs = normalizeUrl(href, origin);
-    if (!abs || abs === pageUrl) return;
-    const name = $(el).find('h2,h3,h4,h5,strong,b').first().text().trim()
-               || $(el).attr('title')?.trim() || '';
-    const description = $(el).find('p').first().text().trim();
-    if (name && !items.some(i => i.url === abs)) items.push({ name, description, url: abs });
-  });
-
-  return items;
-}
-
-// FAQ data is in a <script> tag: window.HELPIE_FAQS = [{collection:{},items:[...]}]
-function parseFaq($: cheerio.CheerioAPI): FaqItem[] {
-  const items: FaqItem[] = [];
-
-  $('script').each((_, el) => {
-    const content = $(el).html() ?? '';
-    const match = content.match(/window\.HELPIE_FAQS\s*=\s*(\[[\s\S]*?\]);/);
-    if (!match) return;
-
-    let faqData: any;
-    try { faqData = JSON.parse(match[1]); } catch { return; }
-    if (!Array.isArray(faqData)) return;
-
-    for (const collection of faqData) {
-      if (!Array.isArray(collection?.items)) continue;
-      for (const faqItem of collection.items) {
-        const title    = (faqItem?.post_title ?? '').trim();
-        const bodyHtml = faqItem?.post_content ?? '';
-        if (!title) continue;
-
-        const steps: string[] = [];
-        const $b = cheerio.load(bodyHtml);
-        $b('li, p').each((_, el) => {
-          const text = $b(el).text().trim()
-            .replace(/<Video Link>/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-          if (text) steps.push(text);
-        });
-
-        items.push({ title, steps });
-      }
-    }
-  });
-
-  return items;
-}
 
 // ─── Product scraper ──────────────────────────────────────────────────────────
 
@@ -464,41 +383,103 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
   const model = $('h1').first().text().trim();
   if (!model) return null;
 
-  const { tagline, description } = parseTaglineAndDescription($);
+  const description              = parseDescription($);
   const { category, series }     = parseBreadcrumbs($, url);
   const imageUrl                 = parseImageUrl($);
   const features                 = parseFeatures($);
   const specs                    = parseSpecs($);
   const downloads                = parseDownloads($);
-  const supplies                 = parseSupplies($, url);
-  const faq                      = parseFaq($);
 
   return {
-    model, tagline, description, category, series,
+    model, description, category, series,
     url, imageUrl, scrapedAt: new Date(),
-    features, specs, downloads, supplies, faq,
+    features, specs, downloads,
   };
 }
 
 // ─── DB upsert ────────────────────────────────────────────────────────────────
 
-async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated'> {
+type ExistingRow = {
+  model:       string;
+  description: string | null;
+  category:    string;
+  series:      string;
+  imageUrl:    string | null;
+  features:    unknown;
+  specs:       unknown;
+  downloads:   unknown;
+};
+
+// Postgres JSONB sorts object keys alphabetically on storage, so we must sort
+// keys before comparing to avoid false positives on every scrape.
+function stableStr(val: unknown): string {
+  if (val === null || typeof val !== 'object') return JSON.stringify(val);
+  if (Array.isArray(val)) return '[' + (val as unknown[]).map(stableStr).join(',') + ']';
+  const obj = val as Record<string, unknown>;
+  return '{' + Object.keys(obj).sort().map(k => JSON.stringify(k) + ':' + stableStr(obj[k])).join(',') + '}';
+}
+
+export function getChangedFields(ex: ExistingRow, data: ProductData, debug = false): string[] {
+  const changed: string[] = [];
+
+  function checkText(field: string, a: string | null | undefined, b: string | null | undefined) {
+    if (a !== b) {
+      changed.push(field);
+      if (debug) console.log(`    [diff] ${field}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);
+    }
+  }
+
+  function checkJson(field: string, a: unknown, b: unknown) {
+    const sa = stableStr(a), sb = stableStr(b);
+    if (sa !== sb) {
+      changed.push(field);
+      if (debug) {
+        const preview = (s: string) => s.length > 120 ? s.slice(0, 120) + '…' : s;
+        console.log(`    [diff] ${field}:`);
+        console.log(`      db:      ${preview(sa)}`);
+        console.log(`      scraped: ${preview(sb)}`);
+      }
+    }
+  }
+
+  checkText('model',       ex.model,       data.model);
+  checkText('description', ex.description, data.description);
+  checkText('category',    ex.category,    data.category);
+  checkText('series',      ex.series,      data.series);
+  checkText('image',       ex.imageUrl,    data.imageUrl);
+  checkJson('features',    ex.features,    data.features);
+  checkJson('specs',       ex.specs,       data.specs);
+  checkJson('downloads',   ex.downloads,   data.downloads);
+
+  return changed;
+}
+
+export function hasProductChanged(ex: ExistingRow, data: ProductData): boolean {
+  return getChangedFields(ex, data).length > 0;
+}
+
+type UpsertOutcome =
+  | { outcome: 'inserted' }
+  | { outcome: 'updated'; changedFields: string[] }
+  | { outcome: 'unchanged' };
+
+async function upsertProduct(data: ProductData): Promise<UpsertOutcome> {
   const existing = await db
-    .select({ url: avisionProducts.url, downloads: avisionProducts.downloads })
+    .select({
+      model:       avisionProducts.model,
+      description: avisionProducts.description,
+      category:    avisionProducts.category,
+      series:      avisionProducts.series,
+      imageUrl:    avisionProducts.imageUrl,
+      features:    avisionProducts.features,
+      specs:       avisionProducts.specs,
+      downloads:   avisionProducts.downloads,
+    })
     .from(avisionProducts)
     .where(eq(avisionProducts.url, data.url));
 
-  const isNew = existing.length === 0;
-
-  if (!isNew && existing[0].downloads) {
-    const oldDrivers = JSON.stringify((existing[0].downloads as any)?.drivers);
-    const newDrivers = JSON.stringify(data.downloads.drivers);
-    if (oldDrivers !== newDrivers) console.log(`    ↻ driver versions changed for ${data.model}`);
-  }
-
   const row = {
     model:       data.model,
-    tagline:     data.tagline,
     description: data.description,
     category:    data.category,
     series:      data.series,
@@ -507,52 +488,82 @@ async function upsertProduct(data: ProductData): Promise<'inserted' | 'updated'>
     features:    data.features  as unknown,
     specs:       data.specs     as unknown,
     downloads:   data.downloads as unknown,
-    supplies:    data.supplies  as unknown,
-    faq:         data.faq       as unknown,
     scrapedAt:   data.scrapedAt,
   };
 
-  await db
-    .insert(avisionProducts)
-    .values(row)
-    .onConflictDoUpdate({
-      target: avisionProducts.url,
-      set: { ...row, updatedAt: new Date() },
-    });
+  if (existing.length === 0) {
+    await db.insert(avisionProducts).values(row);
+    return { outcome: 'inserted' };
+  }
 
-  return isNew ? 'inserted' : 'updated';
+  const changedFields = getChangedFields(existing[0], data, true);
+  if (changedFields.length === 0) {
+    return { outcome: 'unchanged' };
+  }
+
+  await db
+    .update(avisionProducts)
+    .set({ ...row, updatedAt: new Date() })
+    .where(eq(avisionProducts.url, data.url));
+
+  return { outcome: 'updated', changedFields };
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('Starting Avision product scrape…\n');
+  const { sendScrapeReport } = await import('./emailService');
 
-  const productUrls = await discoverProductUrls();
-  console.log(`\nFound ${productUrls.size} product pages. Scraping…\n`);
+  try {
+    console.log('Starting Avision product scrape…\n');
 
-  let inserted = 0, updated = 0, failed = 0;
+    const productUrls = await discoverProductUrls();
+    console.log(`\nFound ${productUrls.size} product pages. Scraping…\n`);
 
-  for (const url of productUrls) {
-    console.log(`Scraping: ${url}`);
-    const data = await scrapeProduct(url);
-    await sleep(DELAY_MS);
+    const insertedProducts: { model: string; category: string; url: string }[] = [];
+    const updatedProducts:  { model: string; category: string; url: string; changedFields: string[] }[] = [];
+    const failedUrls:       string[] = [];
+    let unchanged = 0;
 
-    if (!data) { failed++; continue; }
+    for (const url of productUrls) {
+      console.log(`Scraping: ${url}`);
+      const data = await scrapeProduct(url);
+      await sleep(DELAY_MS);
 
-    const outcome = await upsertProduct(data);
-    if (outcome === 'inserted') inserted++;
-    else updated++;
-    console.log(`  ${outcome === 'inserted' ? '+' : '~'} ${data.model} (${data.category})`);
+      if (!data) {
+        failedUrls.push(url);
+        continue;
+      }
+
+      const result = await upsertProduct(data);
+      if (result.outcome === 'inserted') {
+        insertedProducts.push({ model: data.model, category: data.category, url: data.url });
+      } else if (result.outcome === 'updated') {
+        updatedProducts.push({ model: data.model, category: data.category, url: data.url, changedFields: result.changedFields });
+      } else {
+        unchanged++;
+      }
+      const icon = result.outcome === 'inserted' ? '+' : result.outcome === 'updated' ? '~' : '=';
+      console.log(`  ${icon} ${data.model} (${data.category})`);
+    }
+
+    console.log('\n─── Scrape complete ───────────────────────');
+    console.log(`  Inserted  : ${insertedProducts.length}`);
+    console.log(`  Updated   : ${updatedProducts.length}`);
+    console.log(`  Unchanged : ${unchanged}`);
+    console.log(`  Failed    : ${failedUrls.length}`);
+
+    await sendScrapeReport({ inserted: insertedProducts, updated: updatedProducts, failed: failedUrls, unchanged });
+    process.exit(0);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const stack   = err instanceof Error ? (err.stack ?? message) : message;
+    console.error('Fatal scrape error:', stack);
+    await sendScrapeReport({ inserted: [], updated: [], failed: [], unchanged: 0, error: stack });
+    process.exit(1);
   }
-
-  console.log('\n─── Scrape complete ───────────────────────');
-  console.log(`  Inserted : ${inserted}`);
-  console.log(`  Updated  : ${updated}`);
-  console.log(`  Failed   : ${failed}`);
-  process.exit(0);
 }
 
 if (require.main === module) {
-  main().catch(err => { console.error(err); process.exit(1); });
+  main();
 }
