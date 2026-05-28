@@ -15,10 +15,17 @@ type Product = {
   subcategory: string | null
 }
 
+const typeOptions = [
+  { value: 'Printer', label: 'Printer' },
+  { value: 'MFP',     label: 'MFP' },
+]
+
 export default function Printers() {
   const {
+    selectedSubcategory,
     search,
     view,
+    handleSubcategoryChange,
     handleSearchChange,
     handleViewChange,
     handleClear,
@@ -36,11 +43,12 @@ export default function Printers() {
   const filtered = useMemo(() => {
     return products.filter((p) => {
       if (!p.inStock) return false
+      if (selectedSubcategory && p.subcategory !== selectedSubcategory) return false
       if (!search.trim()) return true
       const term = search.toLowerCase()
       return [p.model, p.subcategory ?? ''].join(' ').toLowerCase().includes(term)
     })
-  }, [products, search])
+  }, [products, search, selectedSubcategory])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -50,7 +58,6 @@ export default function Printers() {
     setError(null)
 
     async function load() {
-
       try {
         const params = new URLSearchParams({ category: 'Printers and MFPs' })
 
@@ -106,6 +113,29 @@ export default function Printers() {
 
             <hr className="border-gray-200" />
 
+            {/* Type */}
+            <div className="py-6">
+              <h3 className="mb-4 text-md font-semibold text-gray-900">Type</h3>
+              <div className="grid grid-cols-1 gap-2">
+                {typeOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`rounded border px-2 py-1 text-sm ${
+                      selectedSubcategory === opt.value
+                        ? 'bg-[var(--accent)] text-white'
+                        : 'bg-white text-gray-800 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleSubcategoryChange(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
             {/* Clear filters */}
             <div className="py-6">
               <button
@@ -121,7 +151,7 @@ export default function Printers() {
           <div className="lg:col-span-3">
             {loading && <ProductsSkeleton view={view} />}
             {error && <p className="text-lg text-red-500">Error: {error}</p>}
-            <ProductsTable products={filtered} view={view} onViewChange={handleViewChange}/>
+            <ProductsTable products={filtered} view={view} onViewChange={handleViewChange} />
           </div>
         </div>
       </main>

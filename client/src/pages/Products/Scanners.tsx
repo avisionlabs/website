@@ -106,8 +106,26 @@ export default function Scanners() {
         <div className="grid grid-cols-1 gap-x-8 pb-24 lg:grid-cols-4">
           {/* Sidebar */}
           <aside className="hidden lg:block">
+            {/* Search (responsive input; debounced query update) */}
+            <div className="py-6">
+              <h3 className="mb-4 text-md font-semibold text-gray-900">Search</h3>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setSearchInput(value)
+                  handleSearchChange(value)
+                }}
+                placeholder="Search by model..."
+                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+
+            <hr className="border-gray-200" />
+
             {/* Subcategory */}
-            <div className="pb-6">
+            <div className="py-6">
               <h3 className="mb-4 text-md font-semibold text-gray-900">Type</h3>
               <div className="grid grid-cols-1 gap-2">
                 {subcategoryOptions.filter(opt => !availableSubcategories || availableSubcategories.has(opt.value)).map((opt) => (
@@ -129,23 +147,6 @@ export default function Scanners() {
 
             <hr className="border-gray-200" />
 
-            {/* Search */}
-            <div className="py-6">
-              <h3 className="mb-4 text-md font-semibold text-gray-900">Search</h3>
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setSearchInput(value)
-                  handleSearchChange(value)
-                }}
-                placeholder="Search by model..."
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
-
-            <hr className="border-gray-200" />
 
             {/* Clear filters */}
             <div className="py-6">
