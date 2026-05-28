@@ -122,7 +122,7 @@ export default function ProductOverview() {
 
   return (
     <div className="bg-white">
-      <main className="mx-auto max-w-4xl px-6 py-12">
+      <main className="mx-auto max-w-5xl px-6 py-12">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
@@ -247,8 +247,8 @@ export default function ProductOverview() {
                             <tbody>
                               {items.map((spec, i) => (
                                 <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                  <td className="w-1/2 px-4 py-2.5 text-gray-500">{spec.specName}</td>
-                                  <td className="w-1/2 px-4 py-2.5 font-medium text-gray-900">{spec.specValue}</td>
+                                  <td className="w-2/5 px-4 py-2.5 font-semibold text-gray-900">{spec.specName}</td>
+                                  <td className="w-3/5 px-4 py-2.5 text-black">{spec.specValue}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -327,20 +327,17 @@ export default function ProductOverview() {
                     );
 
                   return (
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                       {sections.map((section) => (
-                        <div key={section.label}>
-                          <h2
-                            className="mb-2 text-sm font-semibold"
-                            style={{ color: "var(--primary)" }}
-                          >
-                            {section.label}
-                          </h2>
+                        <div key={section.label} className="overflow-hidden rounded-lg border border-gray-200">
+                          <div className="px-4 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: "var(--accent)" }}>
+                            <h2>{section.label}</h2>
+                          </div>
                           <ul className="divide-y divide-gray-100">
                             {section.items.map((item, i) => (
                               <li
                                 key={i}
-                                className="flex items-center justify-between py-3"
+                                className={`flex items-center justify-between px-4 py-3 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                               >
                                 <div>
                                   <p className="text-sm font-medium text-gray-900">
