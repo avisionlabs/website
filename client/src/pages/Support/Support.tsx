@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import Catalogue from './Catalogue'
+import { useDebounce } from '../../hooks/useDebounce'
 
 export default function Support() {
+  const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
+  const debouncedSetSearch = useDebounce(setSearch, 300)
 
   return (
     <div className="bg-white">
@@ -19,8 +22,12 @@ export default function Support() {
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 shrink-0" />
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => {
+                const value = e.target.value
+                setSearchInput(value)
+                debouncedSetSearch(value)
+              }}
               placeholder="Which model are you looking for?"
               className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 text-base focus:outline-none min-w-0"
             />
