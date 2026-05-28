@@ -122,7 +122,7 @@ export default function ProductOverview() {
 
   return (
     <div className="bg-white">
-      <main className="mx-auto max-w-7xl px-6 py-12 lg:px-0">
+      <main className="mx-auto max-w-4xl px-6 py-12">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
@@ -166,20 +166,8 @@ export default function ProductOverview() {
               {product.model}
             </h1>
 
-            <div className="mt-1">
-              <span
-                className={`inline-block rounded-full px-3 py-0.5 text-xs font-medium ${
-                  product.inStock
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                {product.inStock ? "In Stock" : "Not Available"}
-              </span>
-            </div>
-
             {product.description && (
-              <p className="mt-8 flex gap-3 text-base leading-relaxed text-black">
+              <p className="text-sm mt-8 flex gap-3 text-base leading-relaxed text-black">
                 {product.description}
               </p>
             )}
@@ -239,23 +227,37 @@ export default function ProductOverview() {
               )}
 
               {activeTab === "specs" &&
-                (specs.length > 0 ? (
-                  <dl className="grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-y-0 sm:gap-x-12">
-                    {specs.map((spec, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start justify-between gap-6 border-b border-gray-100 py-3 text-sm"
-                      >
-                        <dt className="shrink-0 text-gray-500">
-                          {spec.specName}
-                        </dt>
-                        <dd className="text-right font-medium text-gray-900">
-                          {spec.specValue}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : (
+                (specs.length > 0 ? (() => {
+                  const groups = specs.reduce<Record<string, Spec[]>>((acc, spec) => {
+                    const cat = spec.specCategory || 'General Specification'
+                    ;(acc[cat] ??= []).push(spec)
+                    return acc
+                  }, {})
+                  const sortedEntries = Object.entries(groups).sort(([a], [b]) =>
+                    a === 'General Specification' ? -1 : b === 'General Specification' ? 1 : 0
+                  )
+                  return (
+                    <div className="space-y-6">
+                      {sortedEntries.map(([category, items]) => (
+                        <div key={category} className="overflow-hidden rounded-lg border border-gray-200">
+                          <div className="px-4 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: 'var(--accent)' }}>
+                            <h2>{category}</h2>
+                          </div>
+                          <table className="w-full text-sm">
+                            <tbody>
+                              {items.map((spec, i) => (
+                                <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                  <td className="w-1/2 px-4 py-2.5 text-gray-500">{spec.specName}</td>
+                                  <td className="w-1/2 px-4 py-2.5 font-medium text-gray-900">{spec.specValue}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })() : (
                   <p className="text-sm text-gray-400">
                     No specifications available.
                   </p>

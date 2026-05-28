@@ -74,10 +74,7 @@ export default function ProductsTable({
               )}
               <div className="mt-4">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
-                  <span className={`self-start shrink-0 rounded-full px-2 py-0.5 text-xs font-medium sm:order-last sm:ml-2 ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {product.inStock ? 'In Stock' : 'Not Available'}
-                  </span>
-                  <h3 className="mt-1 text-sm text-gray-700 sm:order-first sm:mt-0">{product.model}</h3>
+                  <h3 className="mt-1 text-sm text-gray-700">{product.model}</h3>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
               </div>
@@ -99,14 +96,11 @@ export default function ProductsTable({
               ) : (
                 <div className="h-16 w-16 rounded-md bg-gray-100 shrink-0" />
               )}
-              <div className="flex flex-1 justify-between">
+              <div className="flex flex-1">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">{product.model}</h3>
                   <p className="text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
                 </div>
-                <span className={`self-center rounded-full px-2 py-0.5 text-xs font-medium ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </span>
               </div>
             </Link>
           ))}
