@@ -74,7 +74,7 @@ export default function ProductsTable({
               )}
               <div className="mt-4">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
-                  <h3 className="mt-1 text-sm text-gray-700">{product.model}</h3>
+                  <h3 className="mt-1 text-md text-gray-700">{product.model}</h3>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">{formatSubcategory(product.subcategory)}</p>
               </div>
