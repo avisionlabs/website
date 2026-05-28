@@ -13,6 +13,7 @@ export const avisionProducts = pgTable('avision_products', {
   specs:       jsonb('specs'),
   downloads:   jsonb('downloads'),
   inStock:     boolean('in_stock').default(false).notNull(),
+  onWebsite:   boolean('on_website').default(true).notNull(),
   scrapedAt:   timestamp('scraped_at', { mode: 'date' }).notNull(),
   createdAt:   timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt:   timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),

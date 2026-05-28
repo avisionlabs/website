@@ -383,9 +383,12 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
   const model = $('h1').first().text().trim();
   if (!model) return null;
 
-  const description              = parseDescription($);
-  const { category, series }     = parseBreadcrumbs($, url);
-  const imageUrl                 = parseImageUrl($);
+  const description                    = parseDescription($);
+  const { category: rawCategory, series } = parseBreadcrumbs($, url);
+  const category = /printer.?mfp/i.test(rawCategory)
+    ? (/^am/i.test(model) ? 'MFP' : 'Printer')
+    : rawCategory;
+  const imageUrl                       = parseImageUrl($);
   const features                 = parseFeatures($);
   const specs                    = parseSpecs($);
   const downloads                = parseDownloads($);
