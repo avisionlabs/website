@@ -167,7 +167,7 @@ export default function ProductOverview() {
             </h1>
 
             {product.description && (
-              <p className="text-sm mt-8 flex gap-3 text-base leading-relaxed text-black">
+              <p className="text-sm mt-4 flex gap-3 text-base leading-relaxed text-black">
                 {product.description}
               </p>
             )}
