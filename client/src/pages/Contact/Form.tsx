@@ -14,7 +14,7 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
     <form onSubmit={onSubmit}>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name</label>
+          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="first-name"
@@ -28,20 +28,21 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
         </div>
 
         <div>
-          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name</label>
+          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="last-name"
               name="last-name"
               type="text"
               autoComplete="family-name"
+              required
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address</label>
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="email"
@@ -74,14 +75,13 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
               id="subject"
               name="subject"
               type="text"
-              required
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="message" className="block text-sm font-semibold text-gray-900">Messages / Comments</label>
+          <label htmlFor="message" className="block text-sm font-semibold text-gray-900">Messages / Comments<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <textarea
               id="message"
@@ -94,6 +94,8 @@ export function GeneralForm({ onSubmit, result }: FormProps) {
           </div>
         </div>
       </div>
+
+      <p className="mt-4 text-sm text-gray-600 sm:col-span-2">Fields marked with <span className="text-red-600" aria-hidden="true">*</span> are required.</p>
 
       <div className="mt-8 flex items-center justify-end gap-4">
         {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
@@ -109,7 +111,7 @@ export function SalesForm({ onSubmit, result, defaultModel }: FormProps) {
     <form onSubmit={onSubmit}>
       <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name</label>
+          <label htmlFor="first-name" className="block text-sm font-semibold text-gray-900">First Name<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="first-name"
@@ -123,20 +125,21 @@ export function SalesForm({ onSubmit, result, defaultModel }: FormProps) {
         </div>
 
         <div>
-          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name</label>
+          <label htmlFor="last-name" className="block text-sm font-semibold text-gray-900">Last Name<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="last-name"
               name="last-name"
               type="text"
               autoComplete="family-name"
+              required
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address</label>
+          <label htmlFor="email" className="block text-sm font-semibold text-gray-900">Email Address<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="email"
@@ -187,26 +190,28 @@ export function SalesForm({ onSubmit, result, defaultModel }: FormProps) {
         </div>
 
         <div>
-          <label htmlFor="model-needed" className="block text-sm font-semibold text-gray-900">Model Needed</label>
+          <label htmlFor="model-needed" className="block text-sm font-semibold text-gray-900">Model Needed<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="model-needed"
               name="model-needed"
               type="text"
               defaultValue={defaultModel}
+              required
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="quantity" className="block text-sm font-semibold text-gray-900">Quantity</label>
+          <label htmlFor="quantity" className="block text-sm font-semibold text-gray-900">Quantity<span className="text-red-600 ml-1" aria-hidden="true">*</span></label>
           <div className="mt-2.5">
             <input
               id="quantity"
               name="quantity"
               type="number"
               min={1}
+              required
               className="block w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--primary)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]"
             />
           </div>
@@ -238,6 +243,8 @@ export function SalesForm({ onSubmit, result, defaultModel }: FormProps) {
           </div>
         </div>
       </div>
+
+      <p className="mt-4 text-sm text-gray-600 sm:col-span-2">Fields marked with <span className="text-red-600" aria-hidden="true">*</span> are required.</p>
 
       <div className="mt-8 flex items-center justify-end gap-4">
         {result === 'success' && <p className="text-sm text-green-600">Message sent!</p>}
