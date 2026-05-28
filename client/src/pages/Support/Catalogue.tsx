@@ -18,10 +18,12 @@ function getLink(p: Product): string {
 }
 
 const CATEGORY_OPTIONS = [
-  { label: 'All Products',    value: '' },
-  { label: 'Scanners',        value: 'Scanners' },
-  { label: 'Printers & MFPs', value: 'Printers and MFPs' },
+  { label: 'Scanner', value: 'Scanners' },
+  { label: 'Printer',  value: 'Printer' },
+  { label: 'MFP',      value: 'MFP' },
 ]
+
+const PRINTER_SUBCATEGORIES = new Set(['Printer', 'MFP'])
 
 const SUBCATEGORY_LABELS: Record<string, string> = {
   DocumentScanner:  'Document Scanner',
@@ -53,7 +55,8 @@ export default function Catalogue({ search }: { search: string }) {
       setError(null)
       try {
         const params = new URLSearchParams()
-        if (category) params.set('category', category)
+        if (PRINTER_SUBCATEGORIES.has(category)) params.set('subcategory', category)
+        else if (category) params.set('category', category)
 
         const res = await fetch(apiUrl(`/api/products?${params}`), { signal: controller.signal })
         if (!res.ok) throw new Error(`Failed to load products: ${res.status}`)
@@ -90,7 +93,7 @@ export default function Catalogue({ search }: { search: string }) {
   }, [products, subcategory, search, inStockOnly])
 
   function handleCategoryChange(val: string) {
-    setCategory(val)
+    setCategory(category === val ? '' : val)
     setSubcategory('')
   }
 
@@ -122,7 +125,7 @@ export default function Catalogue({ search }: { search: string }) {
         <hr className="border-gray-200" />
 
         {/* Subcategory */}
-        {availableSubcategories.length > 0 && (
+        {availableSubcategories.length > 1 && !PRINTER_SUBCATEGORIES.has(category) && (
           <>
             <div className="py-6">
               <h3 className="mb-4 text-md font-semibold text-gray-900">Type</h3>
@@ -131,7 +134,11 @@ export default function Catalogue({ search }: { search: string }) {
                   <button
                     key={sub}
                     type="button"
-                    onClick={() => setSubcategory(subcategory === sub ? '' : sub)}
+                    onClick={() => {
+                      const next = subcategory === sub ? '' : sub
+                      setSubcategory(next)
+                      if (next && SUBCATEGORY_LABELS[next] !== undefined) setCategory('Scanners')
+                    }}
                     className={`rounded border px-2 py-1 text-sm text-left ${
                       subcategory === sub
                         ? 'bg-[var(--accent)] text-white'
