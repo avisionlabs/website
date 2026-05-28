@@ -64,9 +64,45 @@ cd client && npm run dev
 cd main folder && npm run dev
 ```
 
+## Database Schema
+
+### `avision_products`
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | serial | Primary key |
+| `model` | text | Product model name |
+| `description` | text | Short product description |
+| `category` | text | Scanner type (e.g. `DocumentScanner`) or `Printer` / `MFP` |
+| `series` | text | Product series slug |
+| `url` | text | Canonical product URL (unique) |
+| `image_url` | text | Main product image |
+| `features` | jsonb | Array of `{ title, description }` |
+| `specs` | jsonb | Object of `"Section / Key": "value"` pairs |
+| `downloads` | jsonb | Drivers, manuals, brochures, quick guides, photos |
+| `in_stock` | boolean | Whether the product is currently listed as in stock |
+| `on_website` | boolean | Whether the product should appear on the site (default `true`) |
+| `scraped_at` | timestamp | When the product page was last scraped |
+| `created_at` | timestamp | Row creation time |
+| `updated_at` | timestamp | Last update time |
+
+#### Category values
+
+| Value | Meaning |
+|---|---|
+| `DocumentScanner` | Document scanner |
+| `Flatbed Scanner` | Flatbed scanner |
+| `Network Scanner` | Network scanner |
+| `Mobile Scanner` | Mobile / portable scanner |
+| `PaperAir Series` | PaperAir compact scanner |
+| `Printer` | Printer (model name does **not** start with `AM`) |
+| `MFP` | Multifunction printer (model name starts with `AM`) |
+
 ## Scraper
 
 Crawls all product pages on avision.com and stores structured data in the `avision_products` table. Extracts features, specs, drivers, manuals, brochures, quick guides, and product photos.
+
+Printer/MFP products are automatically classified: models whose name starts with `AM` are stored as `MFP`, all others as `Printer`.
 
 After each run, a summary email is sent via Resend listing inserted, updated, unchanged, and failed products — if `RESEND_API_KEY` and `REPORT_EMAIL` are set.
 
