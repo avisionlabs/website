@@ -10,6 +10,7 @@ const Scanners = lazy(() => import('./pages/Products/Scanners'))
 const ProductOverview = lazy(() => import('./pages/Products/ProductOverview'))
 const Contact = lazy(() => import('./pages/Contact/Contact'))
 const Support = lazy(() => import('./pages/Support/Support'))
+const Sustainability = lazy(() => import('./pages/Company/Sustainability'))
 
 function App() {
   const location = useLocation()
@@ -26,6 +27,7 @@ function App() {
             <Route path="/scanners/:model" element={<ProductOverview />} />
             <Route path="/scanners/*" element={<Scanners />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/sustainability" element={<Sustainability />} />
             <Route path="/support" element={<Support />} />
           </Routes>
         </div>
