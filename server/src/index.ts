@@ -176,6 +176,39 @@ app.get('/api/products/:model', httpCache(), async (req, res) => {
 });
 
 
+app.get('/api/admin/products', async (_req, res) => {
+  try {
+    const rows = await db
+      .select({
+        id: avisionProducts.id,
+        model: avisionProducts.model,
+        imageUrl: avisionProducts.imageUrl,
+        inStock: avisionProducts.inStock,
+        onWebsite: avisionProducts.onWebsite,
+        avCategory: avisionProducts.category,
+        series: avisionProducts.series,
+      })
+      .from(avisionProducts);
+
+    const result = rows.map(r => ({
+      id: r.id,
+      model: r.model,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      onWebsite: r.onWebsite,
+      category: isScanner(r.avCategory) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.avCategory,
+      series: r.series,
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch admin products' });
+  }
+});
+
+
 app.get('/api/categories', httpCache(), async (_req, res) => {
   res.json([
     { id: 1, name: 'Scanners' },
