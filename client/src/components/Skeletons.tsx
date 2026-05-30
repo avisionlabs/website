@@ -48,45 +48,56 @@ export function ProductsSkeleton({ view }: { view: 'grid' | 'list' }) {
 export function ProductOverviewSkeleton() {
   return (
     <div className="bg-white">
-      <main className="mx-auto max-w-7xl px-6 py-12 lg:px-0">
-        <div className="mb-8 h-4 w-12 rounded bg-gray-200 animate-pulse" />
+      <main className="mx-auto max-w-5xl px-6 py-12">
+        <div className="mb-8 h-4 w-16 rounded bg-gray-200 animate-pulse" />
+
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 animate-pulse">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg
-                className="h-10 w-10 animate-spin text-gray-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-              </svg>
-            </div>
-          </div>
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100 animate-pulse" />
+
           <div className="flex flex-col animate-pulse">
-            <div className="mb-2 h-3 w-36 rounded bg-gray-100" />
-            <div className="h-8 w-64 rounded bg-gray-200" />
-            <div className="mt-3 h-5 w-16 rounded-full bg-gray-200" />
-            <div className="mt-8 space-y-2">
+            <div className="mb-2 h-3 w-40 rounded bg-gray-100" />
+            <div className="h-9 w-3/4 rounded bg-gray-200" />
+            <div className="mt-4 space-y-2">
               <div className="h-3.5 w-full rounded bg-gray-100" />
               <div className="h-3.5 w-full rounded bg-gray-100" />
               <div className="h-3.5 w-5/6 rounded bg-gray-100" />
               <div className="h-3.5 w-4/6 rounded bg-gray-100" />
             </div>
-            <div className="mt-8 h-11 w-36 rounded-lg bg-gray-200" />
+            <div className="mt-8 h-10 w-40 rounded-lg bg-gray-200" />
           </div>
         </div>
+
         <div className="mt-16 animate-pulse">
           <div className="flex gap-6 border-b border-gray-200 pb-3">
-            <div className="h-4 w-40 rounded bg-gray-200" />
-            <div className="h-4 w-36 rounded bg-gray-100" />
+            <div className="h-4 w-20 rounded bg-gray-200" />
+            <div className="h-4 w-32 rounded bg-gray-100" />
+            <div className="h-4 w-28 rounded bg-gray-100" />
           </div>
-          <div className="mt-6 grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-y-0 sm:gap-x-12">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="flex items-center justify-between gap-6 border-b border-gray-100 py-3">
-                <div className="h-3 rounded bg-gray-100" style={{ width: `${90 + (i % 4) * 20}px` }} />
-                <div className="h-3 rounded bg-gray-200" style={{ width: `${60 + (i % 3) * 15}px` }} />
+
+          <div className="mt-6 space-y-6">
+            {[8, 5, 4].map((rowCount, groupIdx) => (
+              <div
+                key={groupIdx}
+                className="overflow-hidden rounded-lg border border-gray-200"
+              >
+                <div className="h-9 w-full bg-gray-200" />
+                {Array.from({ length: rowCount }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between px-4 py-2.5 ${
+                      i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
+                  >
+                    <div
+                      className="h-3 rounded bg-gray-200"
+                      style={{ width: `${100 + (i % 3) * 24}px` }}
+                    />
+                    <div
+                      className="h-3 rounded bg-gray-100"
+                      style={{ width: `${80 + (i % 4) * 16}px` }}
+                    />
+                  </div>
+                ))}
               </div>
             ))}
           </div>
