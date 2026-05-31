@@ -35,6 +35,10 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   html, body { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+
+  .sustainability-carousel-track {
+    animation: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -94,6 +98,25 @@ html, body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes sustainabilityCarouselLoop {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 0.5rem)); }
+}
+
+.sustainability-carousel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(58, 93, 195, 0.45) transparent;
+}
+
+.sustainability-carousel-track {
+  animation: sustainabilityCarouselLoop 40s linear infinite;
+  will-change: transform;
+}
+
+.sustainability-carousel:hover .sustainability-carousel-track {
+  animation-play-state: paused;
 }
 
 .animate-fade-slide-up {
