@@ -35,7 +35,7 @@ export default function Admin() {
 
   return (
     <main className="flex min-h-screen items-center justify-center">
-      <div className="mx-auto w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/30 backdrop-blur">
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 mx-8 shadow-2xl shadow-black/30 backdrop-blur">
         <div className="flex justify-center">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--accent)]">
             <LockClosedIcon className="h-10 w-10 text-white" />
@@ -43,7 +43,7 @@ export default function Admin() {
         </div>
         <h1 className="mt-4 text-center text-3xl font-semibold">Admin Page</h1>
         <p className="mt-2 text-center text-sm">
-          Enter the admin password for this visit.
+          Enter the password for this visit.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
