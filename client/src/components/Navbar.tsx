@@ -169,7 +169,6 @@ const mobileNavItems: MobileNavItem[] = [
     label: "Company",
     items: [
       { name: "About Us", href: "/company" },
-      { name: "Team", href: "/team" },
       { name: "Sustainability", href: "/sustainability" },
     ],
   },
@@ -237,7 +236,6 @@ export default function Navbar() {
             label="Company"
             items={[
               { name: "About Us", href: "/company" },
-              { name: "Team", href: "/team" },
               { name: "Sustainability", href: "/sustainability" },
             ]}
           />
