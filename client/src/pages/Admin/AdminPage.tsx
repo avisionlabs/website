@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import { useDebounce } from '../../hooks/useDebounce'
+import AdminDrawer from './AdminDrawer'
 
-type AdminProduct = {
+export type AdminProduct = {
   id: number
   model: string
   imageUrl: string | null
@@ -12,6 +13,20 @@ type AdminProduct = {
   category: string
   subcategory: string
   series: string
+  url: string
+  description: string | null
+}
+
+export type DrawerProduct = {
+  id: number
+  model: string
+  category: string
+  series: string
+  url: string
+  imageUrl: string | null
+  description: string | null
+  inStock: boolean
+  onWebsite: boolean
 }
 
 type FilterType = 'all' | 'scanner' | 'printer' | 'mfp'
@@ -27,13 +42,13 @@ const FILTERS: { key: FilterType; label: string }[] = [
   { key: 'mfp', label: 'MFP' },
 ]
 
-const COLUMNS: { key: SortKey; label: string }[] = [
+const COLUMNS: { key: SortKey; label: string; center?: boolean }[] = [
   { key: 'model', label: 'Model' },
   { key: 'category', label: 'Category' },
   { key: 'subcategory', label: 'Type' },
   { key: 'series', label: 'Series' },
-  { key: 'inStock', label: 'In Stock' },
-  { key: 'onWebsite', label: 'On Website' },
+  { key: 'inStock', label: 'In Stock', center: true },
+  { key: 'onWebsite', label: 'On Website', center: true },
 ]
 
 function formatSubcategory(s: string): string {
@@ -55,7 +70,6 @@ function sortProducts(products: AdminProduct[], key: SortKey, dir: SortDir): Adm
     const bv = String(b[key] ?? '').toLowerCase()
     const primary = av < bv ? -1 : av > bv ? 1 : 0
     if (primary !== 0) return dir === 'asc' ? primary : -primary
-    // tiebreakers: inStock desc → onWebsite desc → model asc
     const stockCmp = (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0)
     if (stockCmp !== 0) return stockCmp
     const webCmp = (b.onWebsite ? 1 : 0) - (a.onWebsite ? 1 : 0)
@@ -74,6 +88,10 @@ export default function AdminPage() {
   const [sortKey, setSortKey] = useState<SortKey>('inStock')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create')
+  const [selectedProduct, setSelectedProduct] = useState<DrawerProduct | null>(null)
+
   const debouncedSearch = useDebounce((value: string) => {
     setSearchQuery(value)
     setPage(1)
@@ -89,6 +107,15 @@ export default function AdminPage() {
       .catch(() => setLoading(false))
   }, [])
 
+  const categoryOptions = useMemo(
+    () => [...new Set(products.map(p => p.subcategory))].sort(),
+    [products],
+  )
+  const seriesOptions = useMemo(
+    () => [...new Set(products.map(p => p.series).filter(Boolean))].sort(),
+    [products],
+  )
+
   function handleSort(key: SortKey) {
     if (key === sortKey) {
       setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -102,6 +129,55 @@ export default function AdminPage() {
   function handleFilterChange(f: FilterType) {
     setFilter(f)
     setPage(1)
+  }
+
+  function handleRowDoubleClick(p: AdminProduct) {
+    setSelectedProduct({
+      id: p.id,
+      model: p.model,
+      category: p.subcategory,
+      series: p.series,
+      url: p.url,
+      imageUrl: p.imageUrl,
+      description: p.description,
+      inStock: p.inStock,
+      onWebsite: p.onWebsite,
+    })
+    setDrawerMode('edit')
+    setDrawerOpen(true)
+  }
+
+  function handleAddProduct() {
+    setSelectedProduct(null)
+    setDrawerMode('create')
+    setDrawerOpen(true)
+  }
+
+  function handleProductSaved(saved: AdminProduct) {
+    setProducts(prev => {
+      const idx = prev.findIndex(p => p.id === saved.id)
+      if (idx !== -1) {
+        const next = [...prev]
+        next[idx] = saved
+        return next
+      }
+      return [...prev, saved]
+    })
+  }
+
+  function handleToggle(e: React.MouseEvent, p: AdminProduct, field: 'inStock' | 'onWebsite') {
+    e.stopPropagation()
+    const newValue = !p[field]
+    setProducts(prev => prev.map(x => x.id === p.id ? { ...x, [field]: newValue } : x))
+    fetch(apiUrl(`/api/admin/products/${p.id}`), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: newValue }),
+    }).then(r => {
+      if (!r.ok) setProducts(prev => prev.map(x => x.id === p.id ? { ...x, [field]: p[field] } : x))
+    }).catch(() => {
+      setProducts(prev => prev.map(x => x.id === p.id ? { ...x, [field]: p[field] } : x))
+    })
   }
 
   const filtered = sortProducts(
@@ -151,7 +227,7 @@ export default function AdminPage() {
             {label}
           </button>
         ))}
-        <div className="ml-auto flex items-center gap-3 pb-1.5">
+        <div className="ml-auto flex items-center gap-3 pb-1.5 mb-3">
           <input
             type="search"
             placeholder="Search model, type, series…"
@@ -162,9 +238,13 @@ export default function AdminPage() {
             }}
             className="w-full max-w-md rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
           />
-          <span className="text-sm text-gray-500 whitespace-nowrap">
-            {loading ? '…' : `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`}
-          </span>
+          <button
+            type="button"
+            onClick={handleAddProduct}
+            className="shrink-0 rounded-lg bg-[var(--accent)] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[var(--primary)]"
+          >
+            + Add product
+          </button>
         </div>
       </div>
 
@@ -178,7 +258,7 @@ export default function AdminPage() {
                 <th
                   key={col.key}
                   onClick={() => handleSort(col.key)}
-                  className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 cursor-pointer select-none hover:text-gray-800 whitespace-nowrap"
+                  className={`px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-500 cursor-pointer select-none hover:text-gray-800 whitespace-nowrap ${col.center ? 'text-center' : 'text-left'}`}
                 >
                   <span className="inline-flex items-center gap-1">
                     {col.label}
@@ -215,7 +295,7 @@ export default function AdminPage() {
                 <tr
                   key={p.id}
                   className="cursor-pointer select-none hover:bg-gray-50"
-                  onDoubleClick={() => {/* drawer — coming soon */}}
+                  onDoubleClick={() => handleRowDoubleClick(p)}
                 >
                   <td className="px-4 py-3">
                     {p.imageUrl ? (
@@ -233,19 +313,35 @@ export default function AdminPage() {
                   <td className="px-4 py-3 text-sm text-gray-600">{p.category}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">{formatSubcategory(p.subcategory)}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">{p.series || '—'}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                      p.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {p.inStock ? 'Yes' : 'No'}
-                    </span>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={p.inStock}
+                      onClick={e => handleToggle(e, p, 'inStock')}
+                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
+                        p.inStock ? 'bg-[var(--secondary)]' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span className={`inline-block h-4 w-4 translate-y-0.5 rounded-full bg-white shadow transition-transform duration-200 ${
+                        p.inStock ? 'translate-x-4' : 'translate-x-0.5'
+                      }`} />
+                    </button>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                      p.onWebsite ? 'bg-blue-50 text-[var(--accent)]' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {p.onWebsite ? 'Visible' : 'Hidden'}
-                    </span>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={p.onWebsite}
+                      onClick={e => handleToggle(e, p, 'onWebsite')}
+                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
+                        p.onWebsite ? 'bg-[var(--accent)]' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span className={`inline-block h-4 w-4 translate-y-0.5 rounded-full bg-white shadow transition-transform duration-200 ${
+                        p.onWebsite ? 'translate-x-4' : 'translate-x-0.5'
+                      }`} />
+                    </button>
                   </td>
                 </tr>
               ))
@@ -278,6 +374,16 @@ export default function AdminPage() {
           </button>
         </div>
       </div>
+
+      <AdminDrawer
+        mode={drawerMode}
+        product={selectedProduct}
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onSaved={handleProductSaved}
+        categoryOptions={categoryOptions}
+        seriesOptions={seriesOptions}
+      />
     </main>
   )
 }
