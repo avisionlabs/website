@@ -176,6 +176,132 @@ app.get('/api/products/:model', httpCache(), async (req, res) => {
 });
 
 
+app.get('/api/admin/products', async (_req, res) => {
+  try {
+    const rows = await db
+      .select({
+        id: avisionProducts.id,
+        model: avisionProducts.model,
+        imageUrl: avisionProducts.imageUrl,
+        inStock: avisionProducts.inStock,
+        onWebsite: avisionProducts.onWebsite,
+        avCategory: avisionProducts.category,
+        series: avisionProducts.series,
+        url: avisionProducts.url,
+        description: avisionProducts.description,
+      })
+      .from(avisionProducts);
+
+    const result = rows.map(r => ({
+      id: r.id,
+      model: r.model,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      onWebsite: r.onWebsite,
+      category: isScanner(r.avCategory) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.avCategory,
+      series: r.series,
+      url: r.url,
+      description: r.description,
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch admin products' });
+  }
+});
+
+
+app.post('/api/admin/products', async (req, res) => {
+  try {
+    const { model, category, series, url, imageUrl, description, inStock, onWebsite, features, specs, downloads } = req.body;
+
+    if (!model?.trim() || !category?.trim() || !url?.trim()) {
+      return res.status(400).json({ error: 'model, category, and url are required' });
+    }
+
+    const rows = await db.insert(avisionProducts).values({
+      model: model.trim(),
+      category: category.trim(),
+      series: series?.trim() ?? '',
+      url: url.trim(),
+      imageUrl: imageUrl?.trim() || null,
+      description: description?.trim() || null,
+      inStock: inStock ?? false,
+      onWebsite: onWebsite ?? true,
+      features: features ?? null,
+      specs: specs ?? null,
+      downloads: downloads ?? null,
+      scrapedAt: new Date(),
+    }).returning();
+
+    const r = rows[0];
+    res.status(201).json({
+      id: r.id,
+      model: r.model,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      onWebsite: r.onWebsite,
+      category: isScanner(r.category) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.category,
+      series: r.series,
+      url: r.url,
+      description: r.description,
+    });
+  } catch (err: any) {
+    if (err?.code === '23505') return res.status(409).json({ error: 'A product with that URL already exists' });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create product' });
+  }
+});
+
+
+app.patch('/api/admin/products/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: 'Invalid product id' });
+
+    const b = req.body;
+    const update = {
+      updatedAt: new Date(),
+      ...(b.model       !== undefined && { model:       String(b.model) }),
+      ...(b.category    !== undefined && { category:    String(b.category) }),
+      ...(b.series      !== undefined && { series:      String(b.series) }),
+      ...(b.url         !== undefined && { url:         String(b.url) }),
+      ...(b.imageUrl    !== undefined && { imageUrl:    b.imageUrl    ? String(b.imageUrl)    : null }),
+      ...(b.description !== undefined && { description: b.description ? String(b.description) : null }),
+      ...(b.inStock     !== undefined && { inStock:     Boolean(b.inStock) }),
+      ...(b.onWebsite   !== undefined && { onWebsite:   Boolean(b.onWebsite) }),
+      ...(b.features    !== undefined && { features:    b.features }),
+      ...(b.specs       !== undefined && { specs:       b.specs }),
+      ...(b.downloads   !== undefined && { downloads:   b.downloads }),
+    };
+
+    const rows = await db.update(avisionProducts).set(update).where(eq(avisionProducts.id, id)).returning();
+    if (rows.length === 0) return res.status(404).json({ error: 'Product not found' });
+
+    const r = rows[0];
+    res.json({
+      id: r.id,
+      model: r.model,
+      imageUrl: r.imageUrl,
+      inStock: r.inStock,
+      onWebsite: r.onWebsite,
+      category: isScanner(r.category) ? 'Scanners' : 'Printers and MFPs',
+      subcategory: r.category,
+      series: r.series,
+      url: r.url,
+      description: r.description,
+    });
+  } catch (err: any) {
+    if (err?.code === '23505') return res.status(409).json({ error: 'A product with that URL already exists' });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+});
+
+
 app.get('/api/categories', httpCache(), async (_req, res) => {
   res.json([
     { id: 1, name: 'Scanners' },
