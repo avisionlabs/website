@@ -115,10 +115,6 @@ html, body {
   will-change: transform;
 }
 
-.sustainability-carousel:hover .sustainability-carousel-track {
-  animation-play-state: paused;
-}
-
 .animate-fade-slide-up {
   animation: fadeIn 0.4s ease both;
 }
