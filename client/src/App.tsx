@@ -11,7 +11,7 @@ const Scanners = lazy(() => import('./pages/Products/Scanners'))
 const ProductOverview = lazy(() => import('./pages/Products/ProductOverview'))
 const Contact = lazy(() => import('./pages/Contact/Contact'))
 const Support = lazy(() => import('./pages/Support/Support'))
-const Admin = lazy(() => import('./pages/Admin/Admin'))
+// const Admin = lazy(() => import('./pages/Admin/Admin'))
 
 function App() {
   const location = useLocation()
