@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import { useDebounce } from '../../hooks/useDebounce'
 
@@ -14,6 +15,8 @@ type AdminProduct = {
 }
 
 type FilterType = 'all' | 'scanner' | 'printer' | 'mfp'
+type SortKey = 'model' | 'category' | 'subcategory' | 'series' | 'inStock' | 'onWebsite'
+type SortDir = 'asc' | 'desc'
 
 const PAGE_SIZE = 50
 
@@ -22,6 +25,15 @@ const FILTERS: { key: FilterType; label: string }[] = [
   { key: 'scanner', label: 'Scanner' },
   { key: 'printer', label: 'Printer' },
   { key: 'mfp', label: 'MFP' },
+]
+
+const COLUMNS: { key: SortKey; label: string }[] = [
+  { key: 'model', label: 'Model' },
+  { key: 'category', label: 'Category' },
+  { key: 'subcategory', label: 'Type' },
+  { key: 'series', label: 'Series' },
+  { key: 'inStock', label: 'In Stock' },
+  { key: 'onWebsite', label: 'On Website' },
 ]
 
 function formatSubcategory(s: string): string {
@@ -37,6 +49,21 @@ function matchesFilter(p: AdminProduct, filter: FilterType): boolean {
   return true
 }
 
+function sortProducts(products: AdminProduct[], key: SortKey, dir: SortDir): AdminProduct[] {
+  return [...products].sort((a, b) => {
+    const av = String(a[key] ?? '').toLowerCase()
+    const bv = String(b[key] ?? '').toLowerCase()
+    const primary = av < bv ? -1 : av > bv ? 1 : 0
+    if (primary !== 0) return dir === 'asc' ? primary : -primary
+    // tiebreakers: inStock desc → onWebsite desc → model asc
+    const stockCmp = (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0)
+    if (stockCmp !== 0) return stockCmp
+    const webCmp = (b.onWebsite ? 1 : 0) - (a.onWebsite ? 1 : 0)
+    if (webCmp !== 0) return webCmp
+    return a.model.toLowerCase() < b.model.toLowerCase() ? -1 : 1
+  })
+}
+
 export default function AdminPage() {
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [loading, setLoading] = useState(true)
@@ -44,6 +71,8 @@ export default function AdminPage() {
   const [search, setSearch] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
+  const [sortKey, setSortKey] = useState<SortKey>('inStock')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   const debouncedSearch = useDebounce((value: string) => {
     setSearchQuery(value)
@@ -60,25 +89,40 @@ export default function AdminPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const filtered = products.filter(p => {
-    if (!matchesFilter(p, filter)) return false
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      return (
-        p.model.toLowerCase().includes(q) ||
-        p.subcategory.toLowerCase().includes(q) ||
-        p.series.toLowerCase().includes(q)
-      )
+  function handleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
     }
-    return true
-  })
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    setPage(1)
+  }
 
   function handleFilterChange(f: FilterType) {
     setFilter(f)
     setPage(1)
   }
+
+  const filtered = sortProducts(
+    products.filter(p => {
+      if (!matchesFilter(p, filter)) return false
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase()
+        return (
+          p.model.toLowerCase().includes(q) ||
+          p.subcategory.toLowerCase().includes(q) ||
+          p.series.toLowerCase().includes(q)
+        )
+      }
+      return true
+    }),
+    sortKey,
+    sortDir,
+  )
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <main className="mx-auto max-w-7xl px-6 lg:px-0">
@@ -91,49 +135,60 @@ export default function AdminPage() {
         <hr className="mt-6 border-gray-200" />
       </div>
 
-      {/* Filters + count */}
-      <div className="mb-4 flex items-center gap-2">
+      {/* Filters + search + count */}
+      <div className="mb-0 flex items-end gap-0 border-b border-gray-200">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
             type="button"
             onClick={() => handleFilterChange(key)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+            className={`px-5 py-2.5 text-sm font-medium transition border-x border-t rounded-t-lg -mb-px ${
               filter === key
-                ? 'bg-[var(--accent)] text-white'
-                : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                ? 'border-gray-200 bg-white text-[var(--accent)] border-b-white'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
             }`}
           >
             {label}
           </button>
         ))}
-        <input
-          type="search"
-          placeholder="Search model, type, series…"
-          value={search}
-          onChange={e => {
-            setSearch(e.target.value)
-            debouncedSearch(e.target.value)
-          }}
-          className="ml-0 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-        />
-        <span className="ml-auto text-sm text-gray-500">
-          {loading ? '…' : `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`}
-        </span>
+        <div className="ml-auto flex items-center gap-3 pb-1.5">
+          <input
+            type="search"
+            placeholder="Search model, type, series…"
+            value={search}
+            onChange={e => {
+              setSearch(e.target.value)
+              debouncedSearch(e.target.value)
+            }}
+            className="w-full max-w-md rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+          />
+          <span className="text-sm text-gray-500 whitespace-nowrap">
+            {loading ? '…' : `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`}
+          </span>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200">
+      <div className="overflow-hidden rounded-b-xl rounded-tr-xl border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-50">
               <th className="w-16 px-4 py-3" />
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Model</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Category</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Type</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Series</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">In Stock</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">On Website</th>
+              {COLUMNS.map(col => (
+                <th
+                  key={col.key}
+                  onClick={() => handleSort(col.key)}
+                  className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 cursor-pointer select-none hover:text-gray-800 whitespace-nowrap"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    {col.label}
+                    <span className="flex flex-col leading-none">
+                      <ChevronUpIcon className={`h-2.5 w-2.5 ${sortKey === col.key && sortDir === 'asc' ? 'text-[var(--accent)]' : 'text-gray-300'}`} />
+                      <ChevronDownIcon className={`h-2.5 w-2.5 ${sortKey === col.key && sortDir === 'desc' ? 'text-[var(--accent)]' : 'text-gray-300'}`} />
+                    </span>
+                  </span>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
@@ -187,9 +242,7 @@ export default function AdminPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                      p.onWebsite
-                        ? 'bg-blue-50 text-[var(--accent)]'
-                        : 'bg-gray-100 text-gray-500'
+                      p.onWebsite ? 'bg-blue-50 text-[var(--accent)]' : 'bg-gray-100 text-gray-500'
                     }`}>
                       {p.onWebsite ? 'Visible' : 'Hidden'}
                     </span>
