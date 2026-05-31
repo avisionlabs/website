@@ -43,6 +43,11 @@ RESEND_API_KEY=re_...
 REPORT_EMAIL=you@example.com
 ```
 
+Create `client/.env`:
+```
+VITE_ADMIN_PASSWORD=examplepassword123
+```
+
 ### Install & run
 
 ```bash
