@@ -3,10 +3,19 @@ import printerImage from '../../assets/sustainability/printer.png'
 import boxesImage from '../../assets/sustainability/boxes.png'
 import pagesImage from '../../assets/sustainability/pages.jpg'
 import moverImage from '../../assets/sustainability/mover.jpg'
+import mover2Image from "../../assets/sustainability/mover2.jpg"
 
-function Pill(text: string) {
+function Pill({
+    text,
+    borderColor = 'rgba(255, 255, 255, 0.3)',
+    textColor = 'inherit',
+}: {
+    text: string
+    borderColor?: string
+    textColor?: string
+}) {
     return (
-        <div>
+        <div className="w-max rounded-full border px-4 py-2" style={{ borderColor, color: textColor }}>
             <p>{text}</p>
         </div>
     )
@@ -27,14 +36,14 @@ export default function Sustainability() {
                 </div>
             </div>
             {/* mission */}
-            <div className="relative flex flex-col px-8 py-12 gap-6">
+            <div className="relative flex flex-col px-10 py-12 gap-6">
                 <h3 className="font-semibold text-5xl text-[var(--primary)]">Mission</h3>
                 <h4 className="font-regular text-lg w-1/2">Avision labs is committed to conserving natural resources and minimizing our impact on the environment. We actively implement measures to increase efficiency, conserve energy and water, improve air quality, and reduce waste through our office building operations, waste management, product development, and recycling programs.</h4>
             </div>
 
             {/* TODO: stats */}
             {/* energy efficient products */}
-            <div className="relative flex flex-col px-8 py-12 gap-6">
+            <div className="relative flex flex-col px-10 py-12 gap-6">
                 <h3 className="font-semibold text-5xl text-[var(--primary)]">Energy Efficient Products</h3>
                 <h4 className="font-regular text-lg">Avision Scanners meet and exceed applicable environmental regulatory requirements, including ENERGY STAR® and RoHS (Restriction of Hazardous Substances), and are manufactured under ISO 9001 and ISO 14001 certified quality and environmental management systems. Visioneer is an EPEAT Participating Manufacturer, with eligible products registered in the EPEAT program of the Global Electronics Council, supporting more sustainable electronics.</h4>
             </div>
@@ -55,17 +64,34 @@ export default function Sustainability() {
                                 <p>Waste to landfills</p>
                             </div>
                         </div>
+                        <div className="flex flex-row gap-4">
+                            <Pill text="100% Recyclable" />
+                            <Pill text="Installation Service" />
+                            <Pill text="Eco-Disposal" />
+                        </div>
                     </div>
                     {/* images */}
-                    <div>
-                        <div className="flex flex-row gap-6">
-                            <img src={boxesImage} alt="printer" className="w-1/2 h-[15em] object-cover" />
-                            <img src={moverImage} alt="printer" className="w-1/2 h-[15em] object-cover" />
-                        </div>
-                        <div className="flex flex-row gap-4 mt-4">
-                            <img src={pagesImage} alt="printer" className="w-full h-[15em] object-cover" />
-                        </div>
+                    <div className="grid grid-cols-2 gap-6">
+                        <img src={boxesImage} alt="boxes being delivered" className="h-[15em] w-full object-cover" />
+                        <img src={moverImage} alt="mover carrying a box" className="h-[15em] w-full object-cover" />
+                        <img src={pagesImage} alt="stack of recyclable paper" className="col-span-2 h-[15em] w-full object-cover" />
                     </div>
+                </div>
+            </div>
+            {/* green facilities */}
+            <div className="relative px-10 py-12 flex flex-col gap-6">
+                <img src={mover2Image} alt="mover carrying a box" className="h-[35em] w-full object-cover my-6" />
+                <h3 className="font-semibold text-5xl text-[var(--primary)]">Green Facilities</h3>
+                <h4 className="font-regular text-lg w-full">Active recycling programs divert up to 95% of solid waste from landfills across all facilities.</h4>
+                <h4 className="font-semibold text-lg capitalize">Materials Recycled:</h4>
+                <div className="flex flex-row gap-3">
+                    <Pill text="Paper" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Cardboard" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Plastic" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Glass" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Cans" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Printer Toner" borderColor="#CAD5E2" textColor="#616262" />
+                    <Pill text="Batteries" borderColor="#CAD5E2" textColor="#616262" />
                 </div>
             </div>
 
