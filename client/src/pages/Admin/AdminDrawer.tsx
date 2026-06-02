@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, PlusIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import type { AdminProduct, DrawerProduct } from './AdminPage'
 
 // ── JSONB types ────────────────────────────────────────────────────────────────
 
 type Feature = { title: string; description: string }
-type SpecRow = { key: string; value: string }
+type SpecRow = { section: string; name: string; value: string }
 type DownloadFile = { language?: string; resolution?: string; size?: string; url: string }
 type DriverItem = { name: string; version?: string; size?: string; os?: string; url: string }
 type Downloads = {
@@ -99,12 +99,12 @@ function DeleteBtn({ onClick }: { onClick: () => void }) {
   )
 }
 
-function AddBtn({ label, onClick }: { label: string; onClick: () => void }) {
+function AddBtn({ label, onClick, className }: { label: string; onClick: () => void; className?: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
+      className={className ?? "flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 hover:border-[var(--accent)] hover:text-[var(--accent)] transition"}
     >
       <PlusIcon className="h-4 w-4" />
       {label}
@@ -171,38 +171,80 @@ function SpecsTab({ specs, onChange, loading }: {
 }) {
   if (loading) return <SkeletonRows />
 
-  function update(i: number, field: keyof SpecRow, value: string) {
+  const sections = Array.from(
+    specs.reduce((acc, s) => { acc.add(s.section); return acc }, new Set<string>())
+  )
+
+  function updateSpec(i: number, field: keyof SpecRow, value: string) {
     const next = [...specs]
     next[i] = { ...next[i], [field]: value }
     onChange(next)
   }
 
+  function removeSpec(i: number) {
+    onChange(specs.filter((_, idx) => idx !== i))
+  }
+
+  function renameSection(oldName: string, newName: string) {
+    onChange(specs.map(s => s.section === oldName ? { ...s, section: newName } : s))
+  }
+
   return (
-    <div className="space-y-2">
-      {specs.length > 0 && (
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 px-1 text-xs font-medium uppercase tracking-wider text-gray-400">
-          <span>Key</span><span>Value</span><span />
-        </div>
-      )}
-      {specs.map((s, i) => (
-        <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-center gap-2">
-          <input
-            placeholder="Section / Name"
-            value={s.key}
-            onChange={e => update(i, 'key', e.target.value)}
-            className={inputCls}
-          />
-          <input
-            placeholder="Value"
-            value={s.value}
-            onChange={e => update(i, 'value', e.target.value)}
-            className={inputCls}
-          />
-          <DeleteBtn onClick={() => onChange(specs.filter((_, idx) => idx !== i))} />
-        </div>
-      ))}
-      <p className="px-1 text-xs text-gray-400">Use "Section / Name" format to group specs (e.g. "Scanning / Resolution").</p>
-      <AddBtn label="Add spec" onClick={() => onChange([...specs, { key: '', value: '' }])} />
+    <div className="space-y-4">
+      {sections.map((section, si) => {
+        const items = specs.map((s, idx) => ({ ...s, _idx: idx })).filter(s => s.section === section)
+        return (
+          <div key={si} className="overflow-hidden rounded-lg border border-gray-200">
+            <div className="group flex items-center justify-between bg-gray-100 px-4 py-2.5">
+              <div className="flex min-w-0 flex-1 items-center gap-1.5">
+                <input
+                  value={section}
+                  onChange={e => renameSection(section, e.target.value)}
+                  placeholder="Section name"
+                  className="min-w-0 flex-1 rounded bg-white px-1 py-0.5 text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400 ring-1 ring-gray-300 focus:ring-2 focus:ring-[var(--accent)] transition"
+                />
+                <PencilIcon className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+              </div>
+              <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">{items.length}</span>
+            </div>
+            <div className="space-y-3 p-3">
+              {items.map(item => (
+                <div key={item._idx} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <div className="mb-2 flex justify-end">
+                    <DeleteBtn onClick={() => removeSpec(item._idx)} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className={labelCls}>Name</label>
+                      <input
+                        value={item.name}
+                        onChange={e => updateSpec(item._idx, 'name', e.target.value)}
+                        placeholder="e.g. Resolution"
+                        className={inputCls}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Value</label>
+                      <input
+                        value={item.value}
+                        onChange={e => updateSpec(item._idx, 'value', e.target.value)}
+                        placeholder="e.g. 600 dpi"
+                        className={inputCls}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <AddBtn
+                label="Add spec"
+                onClick={() => onChange([...specs, { section, name: '', value: '' }])}
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition"
+              />
+            </div>
+          </div>
+        )
+      })}
+      <AddBtn label="Add section" onClick={() => onChange([...specs, { section: 'New Section', name: '', value: '' }])} />
     </div>
   )
 }
@@ -294,7 +336,7 @@ function DownloadsTab({ downloads, onChange, loading }: {
         const items = downloads[section.key] as Record<string, string>[]
         return (
           <div key={section.key} className="overflow-hidden rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between bg-gray-50 px-4 py-2.5">
+            <div className="flex items-center justify-between bg-gray-100 px-4 py-2.5">
               <span className="text-sm font-medium text-gray-700">{section.label}</span>
               <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">{items.length}</span>
             </div>
@@ -368,7 +410,8 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
         fetch(apiUrl(`/api/products/${m}/downloads`), noCache).then(r => r.json()),
       ]).then(([features, specsArr, downloads]) => {
         const specs: SpecRow[] = (specsArr as { specCategory: string; specName: string; specValue: string }[]).map(s => ({
-          key: s.specCategory ? `${s.specCategory} / ${s.specName}` : s.specName,
+          section: s.specCategory ?? '',
+          name: s.specName,
           value: s.specValue,
         }))
         setForm(prev => ({
@@ -416,7 +459,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
       inStock: form.inStock,
       onWebsite: form.onWebsite,
       features: form.features,
-      specs: Object.fromEntries(form.specs.map(r => [r.key, r.value])),
+      specs: Object.fromEntries(form.specs.map(r => [r.section ? `${r.section} / ${r.name}` : r.name, r.value])),
       downloads: form.downloads,
     }
 
