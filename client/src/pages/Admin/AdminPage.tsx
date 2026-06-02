@@ -3,6 +3,7 @@ import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import { useDebounce } from '../../hooks/useDebounce'
 import AdminDrawer from './AdminDrawer'
+import { AdminTableSkeleton } from '../../components/Skeletons'
 
 export type AdminProduct = {
   id: number
@@ -273,17 +274,7 @@ export default function AdminPage() {
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {loading ? (
-              Array.from({ length: 12 }).map((_, i) => (
-                <tr key={i} className="animate-pulse">
-                  <td className="px-4 py-3"><div className="h-10 w-10 rounded bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-4 w-36 rounded bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-4 w-24 rounded bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-4 w-28 rounded bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-4 w-20 rounded bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-5 w-10 rounded-full bg-gray-200" /></td>
-                  <td className="px-4 py-3"><div className="h-5 w-14 rounded-full bg-gray-200" /></td>
-                </tr>
-              ))
+              <AdminTableSkeleton />
             ) : paginated.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-16 text-center text-sm text-gray-400">

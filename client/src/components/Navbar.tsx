@@ -203,7 +203,7 @@ export default function Navbar() {
         transition: "background 0.3s ease",
         position: "sticky",
         top: 0,
-        zIndex: 50,
+        zIndex: 10,
       }}
     >
       <nav

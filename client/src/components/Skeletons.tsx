@@ -106,3 +106,35 @@ export function ProductOverviewSkeleton() {
     </div>
   )
 }
+
+export function AdminTableSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 12 }).map((_, i) => (
+        <tr key={i} className="animate-pulse">
+          <td className="px-4 py-3">
+            <div className="h-10 w-10 rounded bg-gray-100" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="h-4 w-full rounded bg-gray-200" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="h-4 w-full rounded bg-gray-100" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="h-4 w-full rounded bg-gray-100" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="h-4 w-full rounded bg-gray-100" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="mx-auto h-5 w-9 rounded-full bg-gray-200" />
+          </td>
+          <td className="px-4 py-3">
+            <div className="mx-auto h-5 w-9 rounded-full bg-gray-200" />
+          </td>
+        </tr>
+      ))}
+    </>
+  )
+}

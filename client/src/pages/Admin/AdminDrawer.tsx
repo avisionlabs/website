@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import type { AdminProduct, DrawerProduct } from './AdminPage'
@@ -452,6 +453,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
   ]
 
   return (
+    createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -462,7 +464,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
       />
 
       {/* Panel */}
-      <div className={`fixed left-0 top-0 z-[60] flex h-full w-[520px] max-w-[95vw] flex-col bg-white shadow-xl transition-transform duration-[250ms] ease-out ${
+      <div className={`fixed left-0 top-0 z-[60] flex h-full w-[520px] max-w-[95vw] flex-col bg-white shadow-xl transition-transform duration-[250ms] ease-out isolate ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
 
@@ -584,5 +586,6 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
         </div>
       </div>
     </>
+    , document.body)
   )
 }
