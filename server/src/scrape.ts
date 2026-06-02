@@ -385,7 +385,7 @@ export async function scrapeProduct(url: string): Promise<ProductData | null> {
 
   const description                    = parseDescription($);
   const { category: rawCategory, series } = parseBreadcrumbs($, url);
-  const category = /printer.?mfp/i.test(rawCategory)
+  const category = /printer.{0,5}mfp/i.test(rawCategory)
     ? (/^am/i.test(model) ? 'MFP' : 'Printer')
     : rawCategory;
   const imageUrl                       = parseImageUrl($);
