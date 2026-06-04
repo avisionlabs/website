@@ -216,8 +216,29 @@ export default function AdminPage() {
         <hr className="mt-6 border-gray-200" />
       </div>
 
-      {/* Filters + search + count */}
-      <div className="mb-0 flex flex-col gap-3 border-b border-gray-200 sm:flex-row sm:items-end sm:gap-0">
+      {/* Search + actions */}
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        <input
+          type="search"
+          placeholder="Search model, type, series…"
+          value={search}
+          onChange={e => {
+            setSearch(e.target.value)
+            debouncedSearch(e.target.value)
+          }}
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] sm:max-w-md sm:py-1.5"
+        />
+        <button
+          type="button"
+          onClick={handleAddProduct}
+          className="shrink-0 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--primary)] sm:py-1.5"
+        >
+          + Add product
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="mb-0 border-b border-gray-200">
         <div className="flex flex-wrap gap-2 overflow-x-auto sm:gap-0">
           {FILTERS.map(({ key, label }) => (
             <button
@@ -233,25 +254,6 @@ export default function AdminPage() {
               {label}
             </button>
           ))}
-        </div>
-        <div className="flex w-full flex-col gap-3 pb-3 sm:ml-auto sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:pb-1.5 sm:mb-3">
-          <input
-            type="search"
-            placeholder="Search model, type, series…"
-            value={search}
-            onChange={e => {
-              setSearch(e.target.value)
-              debouncedSearch(e.target.value)
-            }}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] sm:max-w-md sm:py-1.5"
-          />
-          <button
-            type="button"
-            onClick={handleAddProduct}
-            className="shrink-0 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--primary)] sm:py-1.5"
-          >
-            + Add product
-          </button>
         </div>
       </div>
 
