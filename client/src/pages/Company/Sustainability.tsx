@@ -236,9 +236,9 @@ export default function Sustainability() {
       </section>
       <section>
         <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0">
-          <h4 className="font-regular w-full py-4 text-center text-base sm:text-lg">
-            Avision labs is committed to sustainable electronics and
-            environmental responsibility
+          <h4 className="font-regular w-full py-4 mb-3 text-center text-base sm:text-lg italic text-green-600">
+            Avision Labs is committed to sustainable electronics and
+            environmental responsibility.
           </h4>
         </div>
       </section>
