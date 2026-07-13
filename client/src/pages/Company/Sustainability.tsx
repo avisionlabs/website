@@ -52,22 +52,23 @@ export default function Sustainability() {
         </div>
       </section>
       {/* mission */}
-      <section className="relative flex flex-col gap-5 px-4 py-8 sm:gap-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-          <h3 className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl lg:text-5xl">
-          Mission
-        </h3>
-          <h4 className="font-regular text-base sm:text-lg lg:w-1/2">
-          Avision labs is committed to conserving natural resources and
-          minimizing our impact on the environment. We actively implement
-          measures to increase efficiency, conserve energy and water, improve
-          air quality, and reduce waste through our office building operations,
-          waste management, product development, and recycling programs.
-        </h4>
-
-        <div className="grid grid-cols-1 justify-items-center gap-4 px-0 py-4 sm:grid-cols-2 sm:gap-6 sm:py-6 lg:grid-cols-3 lg:gap-8 lg:px-10 lg:py-12">
-            <div
-              className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7"
-            >
+      <section className="relative py-8 sm:py-10 lg:py-12">
+        <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0 flex flex-col gap-8">
+          <div className="flex flex-col gap-5 sm:gap-6 text-center items-center">
+            <h3 className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl lg:text-5xl">
+              Mission
+            </h3>
+            <h4 className="font-regular text-base sm:text-lg">
+              Avision labs is committed to conserving natural resources and
+              minimizing our impact on the environment. We actively implement
+              measures to increase efficiency, conserve energy and water, improve
+              air quality, and reduce waste through our office building
+              operations, waste management, product development, and recycling
+              programs.
+            </h4>
+          </div>
+          <div className="grid grid-cols-1 justify-items-center gap-4 py-4 sm:grid-cols-2 sm:gap-6 sm:py-6 lg:grid-cols-3 lg:gap-8 lg:py-8">
+            <div className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7">
               {/* Corner brackets */}
               <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-[var(--primary)]" />
               <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-[var(--primary)]" />
@@ -81,9 +82,7 @@ export default function Sustainability() {
                 Waste diverted from landfills
               </span>
             </div>
-            <div
-              className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7"
-            >
+            <div className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7">
               {/* Corner brackets */}
               <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-[var(--primary)]" />
               <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-[var(--primary)]" />
@@ -97,9 +96,7 @@ export default function Sustainability() {
                 Recyclable packaging
               </span>
             </div>
-            <div
-              className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:col-span-2 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7 lg:col-span-1"
-            >
+            <div className="relative flex w-full max-w-[15rem] flex-col items-center justify-center gap-2 px-3 py-6 sm:col-span-2 sm:max-w-[20rem] sm:gap-3 sm:px-4 sm:py-7 lg:col-span-1">
               {/* Corner brackets */}
               <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-[var(--primary)]" />
               <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-[var(--primary)]" />
@@ -113,105 +110,112 @@ export default function Sustainability() {
                 9001 & 14001 Certified
               </span>
             </div>
+          </div>
         </div>
       </section>
       {/* energy efficient products */}
-      <section className="relative flex flex-col gap-5 px-4 py-8 sm:gap-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-        <h3 className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl lg:text-5xl">
-          Energy Efficient Products
-        </h3>
-        <h4 className="font-regular text-base sm:text-lg">
-          Avision Scanners meet and exceed applicable environmental regulatory
-          requirements, including ENERGY STAR® and RoHS (Restriction of
-          Hazardous Substances), and are manufactured under ISO 9001 and ISO
-          14001 certified quality and environmental management systems.
-          Visioneer is an EPEAT Participating Manufacturer, with eligible
-          products registered in the EPEAT program of the Global Electronics
-          Council, supporting more sustainable electronics.
-        </h4>
-        <img
-          src={printerImage}
-          alt="printer"
-          className="h-[18em] w-full object-cover sm:h-[24em] lg:h-[35em]"
-        />
+      <section className="relative py-8 sm:py-10 lg:py-12">
+        <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0 flex flex-col gap-5 sm:gap-6">
+          <h3 className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl lg:text-5xl">
+            Energy Efficient Products
+          </h3>
+          <h4 className="font-regular text-base sm:text-lg">
+            Avision Scanners meet and exceed applicable environmental regulatory
+            requirements, including ENERGY STAR® and RoHS (Restriction of
+            Hazardous Substances), and are manufactured under ISO 9001 and ISO
+            14001 certified quality and environmental management systems.
+            Visioneer is an EPEAT Participating Manufacturer, with eligible
+            products registered in the EPEAT program of the Global Electronics
+            Council, supporting more sustainable electronics.
+          </h4>
+          <img
+            src={printerImage}
+            alt="printer"
+            className="h-[18em] w-full object-cover sm:h-[24em] lg:h-[35em]"
+          />
+        </div>
       </section>
-      <section className="relative flex flex-col gap-5 bg-[var(--primary)] px-4 py-8 text-white sm:gap-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-          <div className="grid gap-6 px-0 py-3 sm:px-4 lg:grid-cols-2 lg:px-16 lg:py-10">
-          {/* clean delivery & recycling */}
-          <div className="flex flex-col gap-6 p-0 sm:gap-8 sm:p-2 lg:gap-10 lg:p-4">
-            <h3 className="text-3xl font-semibold sm:text-4xl lg:text-5xl">
-              Clean Delivery & Recycling
-            </h3>
-            <p className="text-base sm:text-lg lg:text-xl">
-              All products packaged with 100% recyclable materials. Installation
-              services include removal, re-use, and environmentally sensitive
-              disposal.
-            </p>
-            <div className="grid grid-cols-2 gap-3 py-2 sm:gap-4">
-              <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
-                <h3 className="text-4xl font-semibold sm:text-5xl">100%</h3>
-                <p>Recyclable Packaging</p>
+      <section className="relative bg-[var(--primary)] py-8 text-white sm:py-10 lg:py-12">
+        <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0">
+          <div className="grid gap-6 py-3 lg:grid-cols-2 lg:py-10">
+            {/* clean delivery & recycling */}
+            <div className="flex flex-col gap-6 p-0 sm:gap-8 sm:p-2 lg:gap-10 lg:p-4">
+              <h3 className="text-3xl font-semibold sm:text-4xl lg:text-5xl">
+                Clean Delivery & Recycling
+              </h3>
+              <p className="text-base sm:text-lg lg:text-xl">
+                All products packaged with 100% recyclable materials.
+                Installation services include removal, re-use, and
+                environmentally sensitive disposal.
+              </p>
+              <div className="grid grid-cols-2 gap-3 py-2 sm:gap-4">
+                <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
+                  <h3 className="text-4xl font-semibold sm:text-5xl">100%</h3>
+                  <p>Recyclable Packaging</p>
+                </div>
+                <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
+                  <h3 className="text-4xl font-semibold sm:text-5xl">0</h3>
+                  <p>Waste to landfills</p>
+                </div>
               </div>
-              <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-left">
-                <h3 className="text-4xl font-semibold sm:text-5xl">0</h3>
-                <p>Waste to landfills</p>
+              <div className="flex flex-wrap gap-3 sm:gap-4">
+                <Pill text="100% Recyclable" />
+                <Pill text="Installation Service" />
+                <Pill text="Eco-Disposal" />
               </div>
             </div>
-            <div className="flex flex-wrap gap-3 sm:gap-4">
-              <Pill text="100% Recyclable" />
-              <Pill text="Installation Service" />
-              <Pill text="Eco-Disposal" />
+            {/* images */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+              <img
+                src={boxesImage}
+                alt="boxes being delivered"
+                className="h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
+              />
+              <img
+                src={moverImage}
+                alt="mover carrying a box"
+                className="h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
+              />
+              <img
+                src={pagesImage}
+                alt="stack of recyclable paper"
+                className="col-span-2 h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
+              />
             </div>
-          </div>
-          {/* images */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-            <img
-              src={boxesImage}
-              alt="boxes being delivered"
-              className="h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
-            />
-            <img
-              src={moverImage}
-              alt="mover carrying a box"
-              className="h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
-            />
-            <img
-              src={pagesImage}
-              alt="stack of recyclable paper"
-              className="col-span-2 h-[10em] w-full object-cover sm:h-[12em] lg:h-[15em]"
-            />
           </div>
         </div>
       </section>
       {/* green facilities */}
-      <section className="relative flex flex-col gap-5 px-4 py-8 sm:gap-6 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-        <img
-          src={mover2Image}
-          alt="mover carrying a box"
-          className="my-2 h-[18em] w-full object-cover sm:my-4 sm:h-[24em] lg:my-6 lg:h-[35em]"
-        />
-        <h3 className="text-3xl font-semibold text-[var(--primary)] sm:text-4xl lg:text-5xl">
-          Green Facilities
-        </h3>
-        <h4 className="font-regular w-full text-base sm:text-lg">
-          Active recycling programs divert up to 95% of solid waste from
-          landfills across all facilities.
-        </h4>
-        <h4 className="font-semibold text-lg capitalize">
-          Materials Recycled:
-        </h4>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          <Pill text="Paper" borderColor="#CAD5E2" textColor="#616262" />
-          <Pill text="Cardboard" borderColor="#CAD5E2" textColor="#616262" />
-          <Pill text="Plastic" borderColor="#CAD5E2" textColor="#616262" />
-          <Pill text="Glass" borderColor="#CAD5E2" textColor="#616262" />
-          <Pill text="Cans" borderColor="#CAD5E2" textColor="#616262" />
-          <Pill
-            text="Printer Toner"
-            borderColor="#CAD5E2"
-            textColor="#616262"
+      <section className="relative py-8 mt-8 sm:py-10 lg:py-12">
+        <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0 flex flex-col gap-5 sm:gap-4">
+          <img
+            src={mover2Image}
+            alt="mover carrying a box"
+            className="h-[18em] w-full object-cover sm:h-[24em] lg:h-[35em]"
           />
-          <Pill text="Batteries" borderColor="#CAD5E2" textColor="#616262" />
+          <h3 className="text-3xl font-semibold text-[var(--primary)] mt-5  sm:text-4xl lg:text-5xl">
+            Green Facilities
+          </h3>
+          <h4 className="font-regular w-full text-base sm:text-lg">
+            Active recycling programs divert up to 95% of solid waste from
+            landfills across all facilities.
+          </h4>
+          <h4 className="font-semibold text-lg capitalize">
+            Materials Recycled:
+          </h4>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <Pill text="Paper" borderColor="#CAD5E2" textColor="#616262" />
+            <Pill text="Cardboard" borderColor="#CAD5E2" textColor="#616262" />
+            <Pill text="Plastic" borderColor="#CAD5E2" textColor="#616262" />
+            <Pill text="Glass" borderColor="#CAD5E2" textColor="#616262" />
+            <Pill text="Cans" borderColor="#CAD5E2" textColor="#616262" />
+            <Pill
+              text="Printer Toner"
+              borderColor="#CAD5E2"
+              textColor="#616262"
+            />
+            <Pill text="Batteries" borderColor="#CAD5E2" textColor="#616262" />
+          </div>
         </div>
       </section>
       {/* image carousel */}
@@ -231,9 +235,12 @@ export default function Sustainability() {
         </div>
       </section>
       <section>
-        <h4 className="font-regular w-full px-4 py-4 text-center text-base sm:text-lg">
-          Avision labs is committed to sustainable electronics and environmental responsibility
-        </h4>
+        <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0">
+          <h4 className="font-regular w-full py-4 text-center text-base sm:text-lg">
+            Avision labs is committed to sustainable electronics and
+            environmental responsibility
+          </h4>
+        </div>
       </section>
     </main>
   );
