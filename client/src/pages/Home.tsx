@@ -1,5 +1,6 @@
 "use client";
 import Button from "../components/Button";
+import Carousel from "../components/Carousel";
 import heroPrinter from "../assets/hero/hero-printer.png";
 import heroP from "../assets/hero/hero-p.png";
 import heroMfp from "../assets/hero/hero-mfp.png";
@@ -24,43 +25,48 @@ function Blobs({ flip = false }: { flip?: boolean }) {
   );
 }
 
+const HERO_SLIDES = [
+  {
+    src: "https://www.avision.com/en/wp-content/uploads/2021/09/Banner-1.jpg",
+    alt: "Avision Banner",
+    caption: "A Smarter Vision for Every Workspace",
+    sub: "Avision imaging solutions — reliability, speed, and precision.",
+  },
+  {
+    src: "https://www.avision.com/en/wp-content/uploads/2025/01/AP40-Series.jpg",
+    alt: "Avision AP40 Series",
+    caption: "Fast. Precise. Reliable.",
+    sub: "From A4 to large-format, Avision has you covered.",
+  },
+  {
+    src: "https://www.avision.com/en/wp-content/uploads/2021/11/1_Banner-scaled.jpg",
+    alt: "Avision Products",
+    caption: "Enterprise-Grade. Office-Ready.",
+    sub: "Secure by default. Seamless in every workflow.",
+  },
+];
+
 export default function Home() {
 
   return (
     <div className="w-full bg-[var(--bg)]">
-      <div className="relative isolate min-h-screen flex flex-col items-center px-6 lg:px-8">
-        <Blobs />
-
-        {/* Centered content */}
-        <div className="flex-1 flex items-start justify-center w-full pt-50">
-          <div className="max-w-2xl text-center">
-            <div className="scan-line-wrapper">
-              <h1 className="text-5xl font-bold tracking-tight text-balance text-[var(--text-h)] sm:text-7xl">
-                A Smarter Vision for Every Workspace
-              </h1>
-              <h1 aria-hidden="true" className="scan-text-reveal text-5xl font-bold tracking-tight text-balance sm:text-7xl">
-                A Smarter Vision for Every Workspace
-              </h1>
-            </div>
-            <p
-              className="mt-8 text-lg font-regular text-pretty text-[var(--text-2)] sm:text-xl/8 animate-fade-slide-up"
-              style={{ animationDelay: "0.15s" }}
-            >
-              From document scanners to large-format digitizers, Avision manufactures a complete range of imaging solutions engineered for reliability, speed, and precision.
-            </p>
-            <div
-              className="mt-10 flex items-center justify-center gap-x-6 animate-fade-slide-up"
-              style={{ animationDelay: "0.3s" }}
-            >
+      {/* ── Full-viewport hero carousel ── */}
+      <div className="relative w-full" style={{ height: "80svh" }}>
+        <Carousel
+          slides={HERO_SLIDES}
+          interval={5000}
+          className="h-full"
+          actions={
+            <>
               <Button href="#products">
                 Get Started
               </Button>
-              <Button href="/company" variant="outline">
+              <Button href="/company" variant="outline" style={{ color: "#fff", borderColor: "#fff" }}>
                 About Us
               </Button>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+        />
       </div>
 
       {/* Features + screenshot section */}

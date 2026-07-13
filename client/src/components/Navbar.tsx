@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import Button from "./Button";
@@ -128,6 +128,107 @@ function DropdownNavItem({
 
 // ─── Mobile menu ──────────────────────────────────────────────────────────────
 
+type NavLink = { label: string; href: string; items?: never };
+type NavGroup = { label: string; href?: never; items: { name: string; href: string }[] };
+type MobileNavItem = NavLink | NavGroup;
+
+const mobileStyles = {
+  groupWrapper: {
+    borderBottom: "1px solid var(--border)",
+  } as React.CSSProperties,
+  groupButton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    padding: "14px 0",
+    background: "none",
+    border: "none",
+    fontSize: "17px",
+    color: "var(--text-2)",
+    cursor: "pointer",
+    textAlign: "left" as const,
+  } as React.CSSProperties,
+  chevron: {
+    width: "16px",
+    height: "16px",
+    opacity: 0.6,
+    transition: "transform 0.2s",
+  } as React.CSSProperties,
+  subList: {
+    paddingBottom: "8px",
+    paddingLeft: "12px",
+  } as React.CSSProperties,
+  subLink: {
+    display: "block",
+    padding: "8px 0",
+    fontSize: "15px",
+    color: "var(--text-2)",
+    textDecoration: "none",
+  } as React.CSSProperties,
+  plainLink: {
+    display: "block",
+    padding: "14px 0",
+    borderBottom: "1px solid var(--border)",
+    fontSize: "17px",
+    color: "var(--text-2)",
+    textDecoration: "none",
+  } as React.CSSProperties,
+};
+
+interface MobileNavItemProps {
+  item: MobileNavItem;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}
+
+function isNavGroup(item: MobileNavItem): item is NavGroup {
+  return (item as NavGroup).items !== undefined;
+}
+
+function MobileNavItem({ item, isExpanded, onToggle, onClose }: MobileNavItemProps) {
+  if (isNavGroup(item)) {
+    return (
+      <div style={mobileStyles.groupWrapper}>
+        <button onClick={onToggle} style={mobileStyles.groupButton}>
+          {item.label}
+          <ChevronDownIcon
+            style={{
+              ...mobileStyles.chevron,
+              transform: isExpanded ? "rotate(180deg)" : "none",
+            }}
+          />
+        </button>
+        {isExpanded && (
+          <div style={mobileStyles.subList}>
+            {item.items.map((sub) => (
+              <a
+                key={sub.name}
+                href={sub.href}
+                onClick={onClose}
+                style={mobileStyles.subLink}
+              >
+                {sub.name}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={item.href}
+      onClick={onClose}
+      style={mobileStyles.plainLink}
+    >
+      {item.label}
+    </a>
+  );
+}
+
 function HamburgerIcon({ open }: { open: boolean }) {
   const barStyle: React.CSSProperties = {
     display: "block",
@@ -159,10 +260,6 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 
-type MobileNavItem =
-  | { label: string; href: string; items?: never }
-  | { label: string; href?: never; items: { name: string; href: string }[] }
-
 const mobileNavItems: MobileNavItem[] = [
   { label: "Home", href: "/" },
   {
@@ -186,6 +283,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const handleToggle = useCallback((label: string) => {
+    setExpandedSection((prev) => (prev === label ? null : label));
+  }, []);
+
+  const handleClose = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -283,61 +386,15 @@ export default function Navbar() {
             padding: "16px 24px 24px",
           }}
         >
-          {mobileNavItems.map((item) =>
-            'items' in item ? (
-              <div key={item.label} style={{ borderBottom: "1px solid var(--border)" }}>
-                <button
-                  onClick={() => setExpandedSection(expandedSection === item.label ? null : item.label)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    padding: "14px 0",
-                    background: "none",
-                    border: "none",
-                    fontSize: "17px",
-                    color: "var(--text-2)",
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  {item.label}
-                  <ChevronDownIcon style={{ width: "16px", height: "16px", opacity: 0.6, transform: expandedSection === item.label ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
-                </button>
-                {expandedSection === item.label && (
-                  <div style={{ paddingBottom: "8px", paddingLeft: "12px" }}>
-                    {item.items?.map((sub) => (
-                      <a
-                        key={sub.name}
-                        href={sub.href}
-                        onClick={() => setMobileOpen(false)}
-                        style={{ display: "block", padding: "8px 0", fontSize: "15px", color: "var(--text-2)", textDecoration: "none" }}
-                      >
-                        {sub.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "14px 0",
-                  borderBottom: "1px solid var(--border)",
-                  fontSize: "17px",
-                  color: "var(--text-2)",
-                  textDecoration: "none",
-                }}
-              >
-                {item.label}
-              </a>
-            )
-          )}
+          {mobileNavItems.map((item) => (
+            <MobileNavItem
+              key={item.label}
+              item={item}
+              isExpanded={expandedSection === item.label}
+              onToggle={() => handleToggle(item.label)}
+              onClose={handleClose}
+            />
+          ))}
           <Button href="/support" className="mt-5">
             Support
           </Button>

@@ -145,6 +145,45 @@ code {
   background: var(--code-bg);
 }
 
+/* ── Carousel ───────────────────────────────────────────────────────────── */
+.carousel-slide {
+  transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1),
+              opacity   0.55s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+.carousel-active  { transform: translateX(0);     opacity: 1; z-index: 1; }
+.carousel-inactive{ transform: translateX(100%);  opacity: 0; z-index: 0; }
+
+.carousel-enter-right { transform: translateX(0);    opacity: 1; }
+.carousel-enter-left  { transform: translateX(0);    opacity: 1; }
+.carousel-exit-left   { transform: translateX(-100%);opacity: 0; }
+.carousel-exit-right  { transform: translateX(100%); opacity: 0; }
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.carousel-arrow:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.08);
+}
+
+
 @view-transition {
   navigation: auto;
 }
