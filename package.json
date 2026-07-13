@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/avisionlabs/website#readme",
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "concurrently": "^9.2.1",
     "lodash.debounce": "^4.0.8"
   },
