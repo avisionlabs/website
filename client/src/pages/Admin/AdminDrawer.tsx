@@ -149,7 +149,7 @@ function FeaturesTab({ features, onChange, loading }: {
               />
               <textarea
                 placeholder="Feature description"
-                rows={2}
+                rows={4}
                 value={f.description}
                 onChange={e => update(i, 'description', e.target.value)}
                 className={inputCls + ' resize-none'}
@@ -580,7 +580,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
               </FieldRow>
 
               <FieldRow label="Description">
-                <textarea rows={3} value={form.description}
+                <textarea rows={7} value={form.description}
                   onChange={e => set('description', e.target.value)}
                   placeholder="Short product description…"
                   className={inputCls + ' resize-none'} />
