@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ChevronUpIcon, ChevronDownIcon, PencilIcon } from '@heroicons/react/24/outline'
 import { apiUrl } from '../../lib/api'
 import { useDebounce } from '../../hooks/useDebounce'
 import AdminDrawer from './AdminDrawer'
@@ -133,6 +133,10 @@ export default function AdminPage() {
   }
 
   function handleRowDoubleClick(p: AdminProduct) {
+    openEditor(p)
+  }
+
+  function openEditor(p: AdminProduct) {
     setSelectedProduct({
       id: p.id,
       model: p.model,
@@ -202,56 +206,60 @@ export default function AdminPage() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
-    <main className="mx-auto max-w-7xl px-6 lg:px-0">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-0">
       {/* Header */}
-      <div className="pt-16 pb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">Admin Page</h1>
-        <p className="mt-2 text-md text-gray-500">
+      <div className="pt-10 pb-6 sm:pt-16">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Admin Page</h1>
+        <p className="mt-2 text-sm text-gray-500 sm:text-md">
           Add, edit, and hide products here. Make sure to save edits to see changes.
         </p>
         <hr className="mt-6 border-gray-200" />
       </div>
 
-      {/* Filters + search + count */}
-      <div className="mb-0 flex items-end gap-0 border-b border-gray-200">
-        {FILTERS.map(({ key, label }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => handleFilterChange(key)}
-            className={`px-5 py-2.5 text-sm font-medium transition border-x border-t rounded-t-lg -mb-px ${
-              filter === key
-                ? 'border-gray-200 bg-white text-[var(--accent)] border-b-white'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-        <div className="ml-auto flex items-center gap-3 pb-1.5 mb-3">
-          <input
-            type="search"
-            placeholder="Search model, type, series…"
-            value={search}
-            onChange={e => {
-              setSearch(e.target.value)
-              debouncedSearch(e.target.value)
-            }}
-            className="w-full max-w-md rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
-          />
-          <button
-            type="button"
-            onClick={handleAddProduct}
-            className="shrink-0 rounded-lg bg-[var(--accent)] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[var(--primary)]"
-          >
-            + Add product
-          </button>
+      {/* Search + actions */}
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        <input
+          type="search"
+          placeholder="Search model, type, series…"
+          value={search}
+          onChange={e => {
+            setSearch(e.target.value)
+            debouncedSearch(e.target.value)
+          }}
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] sm:max-w-md sm:py-1.5"
+        />
+        <button
+          type="button"
+          onClick={handleAddProduct}
+          className="shrink-0 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--primary)] sm:py-1.5"
+        >
+          + Add product
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="mb-0 border-b border-gray-200">
+        <div className="flex flex-wrap gap-2 overflow-x-auto sm:gap-0">
+          {FILTERS.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => handleFilterChange(key)}
+              className={`px-4 py-2 text-sm font-medium transition border rounded-t-lg sm:px-5 sm:py-2.5 sm:border-x sm:border-t sm:-mb-px ${
+                filter === key
+                  ? 'border-gray-200 bg-white text-[var(--accent)] sm:border-b-white'
+                  : 'border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 sm:border-transparent'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-b-xl rounded-tr-xl border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
+      <div className="overflow-x-auto rounded-b-xl rounded-tr-xl border border-gray-200 bg-white sm:-mx-4">
+        <table className="min-w-[920px] divide-y divide-gray-200 sm:min-w-full">
           <thead>
             <tr className="bg-gray-50">
               <th className="w-16 px-4 py-3" />
@@ -270,6 +278,9 @@ export default function AdminPage() {
                   </span>
                 </th>
               ))}
+              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:hidden">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
@@ -277,7 +288,7 @@ export default function AdminPage() {
               <AdminTableSkeleton />
             ) : paginated.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-16 text-center text-sm text-gray-400">
+                <td colSpan={8} className="px-4 py-16 text-center text-sm text-gray-400">
                   No products found.
                 </td>
               </tr>
@@ -334,6 +345,20 @@ export default function AdminPage() {
                       }`} />
                     </button>
                   </td>
+                  <td className="px-4 py-3 text-right sm:hidden">
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation()
+                        openEditor(p)
+                      }}
+                      className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600 shadow-sm transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      aria-label={`Edit ${p.model}`}
+                    >
+                      <PencilIcon className="h-3.5 w-3.5" />
+                      Edit
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
@@ -342,11 +367,11 @@ export default function AdminPage() {
       </div>
 
       {/* Pagination */}
-      <div className="mt-4 flex items-center justify-between pb-12">
+      <div className="mt-4 flex flex-col gap-3 pb-12 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-gray-500">
           {loading ? '' : `Page ${page} of ${totalPages} · ${filtered.length} total`}
         </p>
-        <div className="flex gap-2">
+        <div className="flex gap-2 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setPage(p => Math.max(1, p - 1))}

@@ -507,13 +507,13 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
       />
 
       {/* Panel */}
-      <div className={`fixed left-0 top-0 z-[60] flex h-full w-[520px] max-w-[95vw] flex-col bg-white shadow-xl transition-transform duration-[250ms] ease-out isolate ${
+      <div className={`fixed left-0 top-0 z-[60] flex h-full w-screen max-w-none flex-col bg-white shadow-xl transition-transform duration-[250ms] ease-out isolate sm:w-[520px] sm:max-w-[95vw] ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
 
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-4 sm:px-6">
+          <h2 className="text-base font-semibold text-gray-900 sm:text-lg">
             {mode === 'edit' ? `Edit — ${product?.model ?? 'Product'}` : 'Add Product'}
           </h2>
           <button type="button" onClick={onClose} className="rounded-md p-1 text-gray-400 hover:text-gray-600 transition">
@@ -522,13 +522,13 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
         </div>
 
         {/* Tab bar */}
-        <div className="flex shrink-0 border-b border-gray-200">
+        <div className="flex shrink-0 gap-1 overflow-x-auto border-b border-gray-200 px-2 sm:px-0">
           {TABS.map(t => (
             <button
               key={t.key}
               type="button"
               onClick={() => setTab(t.key)}
-              className={`px-5 py-3 text-sm font-medium transition border-b-2 whitespace-nowrap ${
+              className={`px-3 py-3 text-sm font-medium transition border-b-2 whitespace-nowrap sm:px-5 ${
                 tab === t.key
                   ? 'border-[var(--accent)] text-[var(--accent)]'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -540,7 +540,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
         </div>
 
         {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
           {tab === 'basic' && (
             <div className="space-y-4">
               <FieldRow label="Model *">
@@ -586,7 +586,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
                   className={inputCls + ' resize-none'} />
               </FieldRow>
 
-              <div className="flex gap-8 pt-1">
+              <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:gap-8">
                 <div className="flex items-center gap-3">
                   <Toggle value={form.inStock} onChange={v => set('inStock', v)} />
                   <span className="text-sm text-gray-700">In Stock</span>
@@ -611,7 +611,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
         </div>
 
         {/* Footer */}
-        <div className="flex shrink-0 items-center justify-between border-t border-gray-200 px-6 py-4">
+        <div className="flex shrink-0 flex-col gap-3 border-t border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <button type="button" onClick={onClose} className="text-sm text-gray-500 hover:text-gray-700 transition">
             Cancel
           </button>
@@ -622,7 +622,7 @@ export default function AdminDrawer({ mode, product, isOpen, onClose, onSaved, c
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50 sm:self-auto"
           >
             {saving ? 'Saving…' : mode === 'edit' ? 'Save changes' : 'Create product'}
           </button>
