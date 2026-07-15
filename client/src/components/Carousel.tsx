@@ -89,7 +89,7 @@ export default function Carousel({ slides, interval = 5000, className = "", acti
             <div className="absolute bottom-0 left-0 right-0 pb-10 text-white">
               <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-0">
               {slide.caption && (
-                <h1 className="text-6xl font-bold leading-tight sm:text-5xl">
+                <h1 className="text-3xl sm:text-6xl font-bold leading-tight">
                   {slide.caption}
                 </h1>
               )}
