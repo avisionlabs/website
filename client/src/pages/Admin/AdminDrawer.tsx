@@ -205,8 +205,12 @@ function FeaturesTab({
   return (
     <div className="space-y-3">
       {features.map((f, i) => (
-        <div key={i} className="rounded-lg border border-gray-200 p-3">
-          <div className="flex items-start gap-2">
+        <div key={i} className="rounded-lg border border-gray-200 bg-white p-3">
+          <div className="mb-2 flex items-start gap-2">
+            <span className="mt-0 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
+              {i + 1}
+            </span>
+
             <div className="flex-1 space-y-2">
               <input
                 placeholder="Feature title"
@@ -214,6 +218,7 @@ function FeaturesTab({
                 onChange={(e) => update(i, "title", e.target.value)}
                 className={inputCls}
               />
+
               <textarea
                 placeholder="Feature description"
                 rows={4}
@@ -222,6 +227,7 @@ function FeaturesTab({
                 className={inputCls + " resize-none"}
               />
             </div>
+
             <DeleteBtn
               onClick={() => onChange(features.filter((_, idx) => idx !== i))}
             />
@@ -805,8 +811,8 @@ export default function AdminDrawer({
 
   const TABS: { key: Tab; label: string }[] = [
     { key: "basic", label: "Basic Info" },
-    { key: "features", label: "Features", },
-    { key: "specs", label: "Specs", },
+    { key: "features", label: "Features" },
+    { key: "specs", label: "Specs" },
     { key: "downloads", label: "Downloads" },
   ];
 
