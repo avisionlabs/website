@@ -1,4 +1,4 @@
-import { ClockIcon, EnvelopeIcon, PhoneIcon, WrenchIcon, ShieldCheckIcon, CpuChipIcon } from '@heroicons/react/24/outline'
+import { ClockIcon, EnvelopeIcon, PhoneIcon, MapPinIcon, WrenchIcon, CpuChipIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { GeneralForm, SalesForm } from './Form'
@@ -66,12 +66,10 @@ export default function Contact() {
             <dl className="mt-10 space-y-4 text-base text-gray-600">
               <div className="flex gap-x-4">
                 <dt className="flex-none">
-                  <ClockIcon className="h-7 w-6 text-gray-400" />
+                  <EnvelopeIcon className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                  <span className="font-semibold">Our Office Hours</span><br />
-                  Weekdays: 9 AM - 5 PM<br />
-                  Weekends: Closed<br />
+                  <a href="mailto:support@avision-labs.com" className="hover:text-gray-900">support@avision-labs.com</a>
                 </dd>
               </div>
               <div className="flex gap-x-4">
@@ -79,15 +77,25 @@ export default function Contact() {
                   <PhoneIcon className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                  <a href="tel:+18886282209" className="hover:text-gray-900">+1 (888) 628-2209</a>
+                  <a href="tel:+15107392369" className="hover:text-gray-900">(510) 739-2369</a>
                 </dd>
               </div>
               <div className="flex gap-x-4">
                 <dt className="flex-none">
-                  <EnvelopeIcon className="h-7 w-6 text-gray-400" />
+                  <MapPinIcon className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                  <a href="mailto:service@avision.com.tw" className="hover:text-gray-900">service@avision.com.tw</a>
+                  5694 Stewart Avenue, Fremont, CA 94538
+                </dd>
+              </div>
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
+                  <ClockIcon className="h-7 w-6 text-gray-400" />
+                </dt>
+                <dd>
+                  <span className="font-semibold">Our Office Hours</span><br />
+                  Mon–Fri: 9 AM – 5 PM<br />
+                  Sat–Sun: Closed<br />
                 </dd>
               </div>
             </dl>
@@ -134,21 +142,13 @@ export default function Contact() {
       
       <div className="mt-24 bg-slate-100 px-6 py-8 lg:px-0">
         <h2 className="mx-auto max-w-7xl text-4xl font-semibold tracking-tight text-gray-900 mb-8">We're with you after the sale.</h2>
-        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-6 lg:grid-cols-2">
           {[
             {
               icon: WrenchIcon,
               accent: 'var(--primary)',
               title: 'Technical Support & Services',
               description: 'If you need help with our products, please call or email our technical support team.',
-              phone: '510-739-2369',
-              email: 'support@avision-labs.com',
-            },
-            {
-              icon: ShieldCheckIcon,
-              accent: 'var(--secondary)',
-              title: 'Manufacturer Warranty',
-              description: 'All Avision products include a 1-Year Parts & Labor Warranty. Contact our warranty support team for claims and assistance.',
               phone: '510-739-2369',
               email: 'support@avision-labs.com',
             },
