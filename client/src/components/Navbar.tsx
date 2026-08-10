@@ -269,13 +269,8 @@ const mobileNavItems: MobileNavItem[] = [
       { name: "Sustainability", href: "/sustainability" },
     ],
   },
-  {
-    label: "Products",
-    items: [
-      { name: "Printers & MFPs", href: "/printers" },
-      { name: "Scanners", href: "/scanners" },
-    ],
-  },
+  { label: "Printers / MFPs", href: "/printers" },
+  { label: "Scanners", href: "/scanners" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -342,19 +337,14 @@ export default function Navbar() {
               { name: "Sustainability", href: "/sustainability" },
             ]}
           />
-          <DropdownNavItem
-            label="Products"
-            items={[
-              { name: "Printers & MFPs", href: "/printers" },
-              { name: "Scanners", href: "/scanners" },
-            ]}
-          />
+          <NavLink href="/printers">Printers / MFPs</NavLink>
+          <NavLink href="/scanners">Scanners</NavLink>
           <NavLink href="/contact">Contact</NavLink>
         </div>
 
         {/* CTA Button */}
         <Button href="/support" className="desktop-nav" style={{ fontSize: "16px" }}>
-          Support
+          Download Center
         </Button>
 
         {/* Hamburger (mobile) */}
@@ -396,7 +386,7 @@ export default function Navbar() {
             />
           ))}
           <Button href="/support" className="mt-5">
-            Support
+            Download Center
           </Button>
         </div>
       )}
